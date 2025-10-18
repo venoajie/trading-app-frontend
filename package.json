@@ -1,0 +1,40 @@
+{
+  "name": "trading-app-frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/venoajie/trading-app-frontend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/venoajie/trading-app-frontend/issues"
+  },
+  "homepage": "https://github.com/venoajie/trading-app-frontend#readme",
+  "dependencies": {
+    "@mantine/core": "^8.3.5",
+    "@mantine/dates": "^8.3.5",
+    "@mantine/form": "^8.3.5",
+    "@mantine/hooks": "^8.3.5",
+    "@mantine/notifications": "^8.3.5",
+    "@tabler/icons-react": "^3.35.0",
+    "axios": "^1.12.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.4",
+    "zustand": "^5.0.8"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.0.4",
+    "postcss": "^8.5.6",
+    "postcss-preset-mantine": "^1.18.0",
+    "postcss-simple-vars": "^7.0.1",
+    "vite": "^7.1.10"
+  }
+}
