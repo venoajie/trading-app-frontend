@@ -13,14 +13,14 @@ import { TransactionsPage } from './pages/TransactionsPage/TransactionsPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 
+// --- Import the Auth Store ---
+import useAuthStore from './store/authStore';
+
 
 // --- Protective Route Component ---
-// This component will wrap our authenticated layout.
-// It checks for the access token in localStorage.
-// If the token exists, it shows the content (the AppLayout).
-// If not, it redirects the user to the login page.
+// This component's logic is now simpler and uses the store.
 const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem('accessToken');
+  const { isAuthenticated } = useAuthStore();
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -38,20 +38,23 @@ function App() {
       <Route path="/terms-of-service" element={<TermsOfServicePage />} />
       <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
 
-      {/* --- Authenticated Routes --- */}
-      {/* This entire section is now wrapped by our ProtectedRoute. */}
-      {/* If a user tries to access '/', '/transactions', etc., the ProtectedRoute */}
-      {/* will check for authentication first. */}
-      <Route 
-        path="/" 
-        element={
-          <ProtectedRoute>
-            <AppLayout />
-          </ProtectedRoute>
-        }
-      >
+      {/* --- Main Application Routes with Shared Layout --- */}
+      {/* The AppLayout is now public, allowing visitors to see the main shell. */}
+      <Route path="/" element={<AppLayout />}>
+        {/* The Dashboard is now the public landing page */}
         <Route index element={<DashboardPage />} />
-        <Route path="transactions" element={<TransactionsPage />} />
+
+        {/* The Transactions page is sensitive and remains PROTECTED. */}
+        <Route 
+          path="transactions" 
+          element={
+            <ProtectedRoute>
+              <TransactionsPage />
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* Add any other future protected routes here using the same pattern */}
       </Route>
     </Routes>
   );
