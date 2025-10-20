@@ -70,7 +70,7 @@ function RegisterPage() {
     };
 
     try {
-      await apiClient.post('/api/v1/auth/register', payload);
+      await apiClient.post('/auth/register', payload);
 
       // On success, display notification and redirect to login page.
       notifications.show({

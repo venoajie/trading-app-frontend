@@ -60,7 +60,7 @@ function LoginPage() {
     formBody.append('password', values.password);
 
     try {
-      const response = await apiClient.post('/api/v1/auth/login', formBody, {
+      const response = await apiClient.post('/auth/login', formBody, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
