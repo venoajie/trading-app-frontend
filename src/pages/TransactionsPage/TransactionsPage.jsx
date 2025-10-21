@@ -1,9 +1,10 @@
 
 // src/pages/TransactionsPage/TransactionsPage.jsx
 import { useState, useEffect } from 'react';
-import { Title, Button, Stack, LoadingOverlay } from '@mantine/core';
+import { Title, Button, Stack, LoadingOverlay, Alert, Center } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications'; // Need to add this provider in main.jsx
+import { IconInfoCircle } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
 import apiClient from '../../services/apiClient';
 import { TransactionsTable } from './components/TransactionsTable';
 import { TransactionModal } from './components/TransactionModal';
@@ -12,16 +13,11 @@ export function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
-  
-  // A placeholder portfolio ID. In a real app, this would come from user data.
-  const portfolioId = 'a1b2c3d4-e5f6-7890-1234-567890abcdef';
 
   const fetchTransactions = async () => {
     try {
       setLoading(true);
-      // This endpoint needs to be created in the backend.
-      // GET /portfolios/{portfolio_id}/transactions
-      const response = await apiClient.get(`/portfolios/${portfolioId}/transactions`);
+      const response = await apiClient.get('/transactions');
       setTransactions(response.data);
     } catch (error) {
       notifications.show({
@@ -54,12 +50,21 @@ export function TransactionsPage() {
         opened={modalOpened} 
         onClose={closeModal} 
         onSave={handleTransactionSave}
-        portfolioId={portfolioId}
+        // [MODIFIED] The portfolioId prop is no longer passed.
       />
 
       <div style={{ position: 'relative' }}>
         <LoadingOverlay visible={loading} />
-        <TransactionsTable transactions={transactions} />
+        {/* [NEW] Handle the case where there are no transactions */}
+        {!loading && transactions.length === 0 ? (
+          <Center style={{ height: '200px' }}>
+            <Alert icon={<IconInfoCircle size="1rem" />} title="No Transactions Found" color="blue">
+              You haven't recorded any transactions yet. Click "Add Transaction" to get started!
+            </Alert>
+          </Center>
+        ) : (
+          <TransactionsTable transactions={transactions} />
+        )}
       </div>
     </Stack>
   );
