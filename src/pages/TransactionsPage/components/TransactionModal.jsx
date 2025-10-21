@@ -4,8 +4,8 @@ import { Modal, Button, Stack, TextInput, NumberInput, SegmentedControl } from '
 import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import  useAuthStore from '../../../store/authStore';
-import apiClient from '../../services/apiClient';
+import useAuthStore from '../../../store/authStore';
+import apiClient from '../../../services/apiClient';
 
 export function TransactionModal({ opened, onClose, onSave }) {
   const [loading, setLoading] = React.useState(false);
