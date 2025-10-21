@@ -21,8 +21,7 @@ const useAuthStore = create((set, get) => ({
 
   fetchUser: async () => {
     try {
-
-      const response = await apiClient.get('/me'); 
+      const response = await apiClient.get('/users/me');
       set({ user: response.data, isLoadingUser: false });
     } catch (error) {
       console.error("Failed to fetch user:", error);
