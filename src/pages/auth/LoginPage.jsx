@@ -15,27 +15,16 @@ import {
 import { notifications } from '@mantine/notifications';
 import { Link, useNavigate } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
-// We'll import the useAuthStore hook to manage global authentication state.
-// import useAuthStore from '../../store/authStore'; // This would be the actual import
 
-// --- Placeholder for Zustand Store ---
-// In a real application, this would be in `src/store/authStore.js`
-// For this task, we will simulate its behavior directly in the component.
-const mockAuthStore = {
-  setToken: (token) => {
-    console.log('Storing token...');
-    localStorage.setItem('accessToken', token);
-    // CRITICAL: Update the apiClient's default headers for all future requests
-    apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    console.log('apiClient headers updated.');
-  },
-};
-// --- End Placeholder ---
+// --- [MODIFIED] Import the real auth store ---
+import useAuthStore from '../../store/authStore';
 
 function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  // const { setToken } = useAuthStore(); // This is how we'd use the real store
+  
+  // --- [MODIFIED] Get actions from the real store ---
+  const { setToken, fetchUser } = useAuthStore();
 
   const form = useForm({
     initialValues: {
@@ -51,10 +40,6 @@ function LoginPage() {
   const handleLogin = async (values) => {
     setLoading(true);
 
-    // --- CRITICAL: Adherence to API Contract ---
-    // The blueprint specifies an `application/x-www-form-urlencoded` body.
-    // We use URLSearchParams to construct it correctly.
-    // The API expects the email under the 'username' key.
     const formBody = new URLSearchParams();
     formBody.append('username', values.email);
     formBody.append('password', values.password);
@@ -68,9 +53,13 @@ function LoginPage() {
 
       const { access_token } = response.data;
 
-      // Use our auth store/logic to persist the token and update the app state
-      mockAuthStore.setToken(access_token);
-      // setToken(access_token); // Real implementation
+      // --- [MODIFIED] Full authentication flow ---
+      // 1. Set the token in the store. This also updates apiClient headers.
+      setToken(access_token);
+      
+      // 2. Immediately fetch the user's profile data.
+      await fetchUser();
+      // --- [END MODIFIED] ---
 
       notifications.show({
         title: 'Login Successful',
@@ -78,13 +67,12 @@ function LoginPage() {
         color: 'green',
       });
 
-      // Redirect to the main dashboard after successful login
+      // 3. Redirect to the dashboard only after the user profile is fetched.
       navigate('/dashboard');
 
     } catch (error) {
       let errorMessage = 'An unexpected error occurred.';
       if (error.response && error.response.data && error.response.data.detail) {
-        // As per the blueprint, the error message is in the "detail" field.
         errorMessage = error.response.data.detail;
       }
       notifications.show({
