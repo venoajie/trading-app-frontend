@@ -1,6 +1,6 @@
 
 // src/layouts/AppLayout.jsx
-import { AppShell, Burger, Group, Title, Button, Text } from '@mantine/core'; // Add Text
+import { AppShell, Burger, Group, Title, Button, Text, LoadingOverlay } from '@mantine/core'; // Add LoadingOverlay
 import { useDisclosure } from '@mantine/hooks';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useUiStore } from '../store/uiStore';
@@ -11,14 +11,23 @@ export function AppLayout() {
   const [mobileNavOpened, { toggle: toggleMobileNav }] = useDisclosure();
   const { isSidebarOpen, toggleSidebar } = useUiStore();
   
-  // --- CHANGE 1: Get the 'user' object from the store ---
-  const { isAuthenticated, logout, user } = useAuthStore();
+  // --- [MODIFIED] Get the 'isLoadingUser' state from the store ---
+  const { isAuthenticated, logout, user, isLoadingUser } = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
+
+  // --- [NEW] The definitive fix for the race condition ---
+  // If the app is still in the process of fetching the initial user,
+  // show a full-page loading screen. This prevents the "visitor" view
+  // from ever flashing on the screen for a logged-in user.
+  if (isLoadingUser) {
+    return <LoadingOverlay visible={true} overlayProps={{ radius: "sm", blur: 2 }} />;
+  }
+  // --- [END NEW] ---
 
   return (
     <AppShell
@@ -36,7 +45,6 @@ export function AppLayout() {
           <Title order={3}>Portopilot</Title>
           <Group justify="flex-end" style={{ flex: 1 }}>
             
-            {/* --- CHANGE 2: Update the conditional block --- */}
             {isAuthenticated && user ? (
               // If the user IS logged in, show their email AND the buttons
               <Group>
