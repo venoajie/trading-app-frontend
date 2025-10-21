@@ -50,7 +50,7 @@ export function TransactionModal({ opened, onClose, onSave }) {
     };
 
     try {
-      await apiClient.post('/transactions', payload);
+      await apiClient.post('/transactions/', payload);
       notifications.show({
         title: 'Success',
         message: 'Transaction recorded successfully!',
