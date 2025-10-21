@@ -1,12 +1,16 @@
-
 // src/pages/TransactionsPage/components/TransactionModal.jsx
-import { Modal, TextInput, Select, NumberInput, Button, Group } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates'; // Requires npm install @mantine/dates
+import React from 'react';
+import { Modal, Button, Stack, TextInput, NumberInput, SegmentedControl } from '@mantine/core';
+import { DateTimePicker } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import apiClient from '../../../services/apiClient';
+import useAuthStore from '../../store/authStore';
+import apiClient from '../../services/apiClient';
 
-export function TransactionModal({ opened, onClose, onSave, portfolioId }) {
+export function TransactionModal({ opened, onClose, onSave }) {
+  const [loading, setLoading] = React.useState(false);
+  const { portfolioId } = useAuthStore(); // Get the portfolioId from our global store
+
   const form = useForm({
     initialValues: {
       instrument_ticker: '',
@@ -16,47 +20,99 @@ export function TransactionModal({ opened, onClose, onSave, portfolioId }) {
       transaction_date: new Date(),
     },
     validate: {
-      instrument_ticker: (value) => (value ? null : 'Ticker is required'),
-      quantity: (value) => (value > 0 ? null : 'Quantity must be positive'),
-      price: (value) => (value > 0 ? null : 'Price must be positive'),
+      instrument_ticker: (value) => (value.trim().length > 0 ? null : 'Ticker is required'),
+      quantity: (value) => (value > 0 ? null : 'Quantity must be greater than zero'),
+      price: (value) => (value > 0 ? null : 'Price must be greater than zero'),
+      transaction_date: (value) => (value ? null : 'Transaction date is required'),
     },
   });
 
   const handleSubmit = async (values) => {
-    try {
-      await apiClient.post('/transactions', { ...values, portfolio_id: portfolioId });
+    if (!portfolioId) {
       notifications.show({
-        title: 'Success',
-        message: 'Transaction saved successfully.',
-        color: 'green',
-      });
-      onSave();
-    } catch (error) {
-      notifications.show({
-        title: 'Error saving transaction',
-        message: error.response?.data?.detail || 'An unknown error occurred.',
+        title: 'Error',
+        message: 'No portfolio found for your account. Cannot create transaction.',
         color: 'red',
       });
+      return;
+    }
+
+    setLoading(true);
+
+    // Construct the payload exactly as the API expects it
+    const payload = {
+      ...values,
+      portfolio_id: portfolioId,
+      quantity: String(values.quantity), // API expects a string
+      price: String(values.price),       // API expects a string
+      transaction_date: values.transaction_date.toISOString(), // API expects ISO 8601 format
+    };
+
+    try {
+      await apiClient.post('/transactions/', payload);
+      notifications.show({
+        title: 'Success',
+        message: 'Transaction recorded successfully!',
+        color: 'green',
+      });
+      onSave(); // This calls the parent's onSave, which closes the modal and refreshes data
+      form.reset(); // Reset form for the next time it opens
+    } catch (error) {
+      notifications.show({
+        title: 'Failed to create transaction',
+        message: error.response?.data?.detail || 'An unexpected error occurred.',
+        color: 'red',
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} title="New Transaction">
+    <Modal opened={opened} onClose={onClose} title="Add New Transaction" centered>
       <form onSubmit={form.onSubmit(handleSubmit)}>
-        <TextInput label="Ticker" {...form.getInputProps('instrument_ticker')} withAsterisk />
-        <Select
-          label="Type"
-          data={['BUY', 'SELL']}
-          {...form.getInputProps('transaction_type')}
-          withAsterisk
-        />
-        <NumberInput label="Quantity" {...form.getInputProps('quantity')} min={0} decimalScale={8} withAsterisk />
-        <NumberInput label="Price" {...form.getInputProps('price')} min={0} decimalScale={8} withAsterisk />
-        <DatePickerInput label="Transaction Date" {...form.getInputProps('transaction_date')} withAsterisk />
-        <Group justify="flex-end" mt="md">
-          <Button variant="default" onClick={onClose}>Cancel</Button>
-          <Button type="submit">Save</Button>
-        </Group>
+        <Stack>
+          <TextInput
+            required
+            label="Ticker Symbol"
+            placeholder="e.g., AAPL, BTC-USD"
+            {...form.getInputProps('instrument_ticker')}
+          />
+          <SegmentedControl
+            fullWidth
+            data={[
+              { label: 'Buy', value: 'BUY' },
+              { label: 'Sell', value: 'SELL' },
+            ]}
+            {...form.getInputProps('transaction_type')}
+          />
+          <NumberInput
+            required
+            label="Quantity"
+            placeholder="e.g., 10.5"
+            min={0}
+            decimalScale={8}
+            {...form.getInputProps('quantity')}
+          />
+          <NumberInput
+            required
+            label="Price per Unit (USD)"
+            placeholder="e.g., 150.25"
+            prefix="$"
+            min={0}
+            decimalScale={2}
+            {...form.getInputProps('price')}
+          />
+          <DateTimePicker
+            required
+            label="Transaction Date and Time"
+            placeholder="Pick date and time"
+            {...form.getInputProps('transaction_date')}
+          />
+          <Button type="submit" loading={loading} mt="md">
+            Save Transaction
+          </Button>
+        </Stack>
       </form>
     </Modal>
   );
