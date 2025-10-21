@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect } from 'react'; // <-- Add useEffect
+// src/pages/auth/LoginPage.jsx
+import React, { useState, useEffect } from 'react';
 import { useForm } from '@mantine/form';
 import {
   TextInput,
@@ -21,16 +22,13 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
-  // --- [MODIFIED] Get isAuthenticated from the store as well ---
   const { setToken, fetchUser, isAuthenticated } = useAuthStore();
 
-  // --- [NEW] This effect will run when isAuthenticated changes ---
   useEffect(() => {
-    // If the user becomes authenticated, THEN we navigate.
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate('/');
     }
-  }, [isAuthenticated, navigate]); // Dependency array
+  }, [isAuthenticated, navigate]);
 
   const form = useForm({
     initialValues: { email: '', password: '' },
@@ -55,14 +53,9 @@ function LoginPage() {
       setToken(access_token);
       await fetchUser();
       
-      // --- [REMOVED] We no longer navigate from here ---
-      // navigate('/dashboard'); 
-
-      // The success notification is now optional, as the user will be redirected immediately.
-      // You can keep it if you want a brief flash of the message.
       notifications.show({
         title: 'Login Successful',
-        message: 'Redirecting to your dashboard...',
+        message: 'Redirecting...',
         color: 'green',
       });
 
@@ -76,9 +69,8 @@ function LoginPage() {
         message: errorMessage,
         color: 'red',
       });
-      setLoading(false); // Make sure to stop loading on failure
+      setLoading(false);
     } 
-    // We don't need a finally block anymore, as success handles its own flow.
   };
 
   return (
