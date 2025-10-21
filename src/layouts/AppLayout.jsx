@@ -1,28 +1,23 @@
 
 // src/layouts/AppLayout.jsx
-import { AppShell, Burger, Group, Title, Button } from '@mantine/core'; // Added Button
+import { AppShell, Burger, Group, Title, Button, Text } from '@mantine/core'; // Add Text
 import { useDisclosure } from '@mantine/hooks';
-import { Outlet, Link, useNavigate } from 'react-router-dom'; // Added Link and useNavigate
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { useUiStore } from '../store/uiStore';
 import { AssistantSidebar } from '../components/AssistantSidebar/AssistantSidebar';
-
-// --- Import the authentication store ---
 import useAuthStore from '../store/authStore';
 
 export function AppLayout() {
-  // This local state is for the mobile navigation (hamburger menu), not the AI sidebar
   const [mobileNavOpened, { toggle: toggleMobileNav }] = useDisclosure();
-  
-  // Global state for the AI sidebar from Zustand
   const { isSidebarOpen, toggleSidebar } = useUiStore();
-
-  // --- Get authentication state and actions from the store ---
-  const { isAuthenticated, logout } = useAuthStore();
+  
+  // --- CHANGE 1: Get the 'user' object from the store ---
+  const { isAuthenticated, logout, user } = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout(); // Clear the token and state
-    navigate('/login'); // Redirect the user to the login page
+    logout();
+    navigate('/login');
   };
 
   return (
@@ -38,13 +33,14 @@ export function AppLayout() {
       <AppShell.Header>
         <Group h="100%" px="md">
           <Burger opened={mobileNavOpened} onClick={toggleMobileNav} hiddenFrom="sm" size="sm" />
-          <Title order={3}>Portopilot</Title> {/* Renamed for branding */}
+          <Title order={3}>Portopilot</Title>
           <Group justify="flex-end" style={{ flex: 1 }}>
             
-            {/* --- Conditional Authentication Buttons --- */}
-            {isAuthenticated ? (
-              // If the user IS logged in, show these buttons
+            {/* --- CHANGE 2: Update the conditional block --- */}
+            {isAuthenticated && user ? (
+              // If the user IS logged in, show their email AND the buttons
               <Group>
+                <Text size="sm" c="dimmed" visibleFrom="sm">Welcome, {user.email}</Text>
                 <Button component={Link} to="/transactions" variant="default">
                   My Transactions
                 </Button>
@@ -63,7 +59,6 @@ export function AppLayout() {
                 </Button>
               </Group>
             )}
-            {/* --- [END NEW] --- */}
 
             <Burger opened={isSidebarOpen} onClick={toggleSidebar} visibleFrom="sm" size="sm" />
           </Group>
@@ -75,7 +70,6 @@ export function AppLayout() {
       </AppShell.Navbar>
 
       <AppShell.Main>
-        {/* All child routes defined in App.jsx will render here */}
         <Outlet />
       </AppShell.Main>
     </AppShell>
