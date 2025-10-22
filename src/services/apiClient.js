@@ -3,10 +3,13 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: '/api/v1', // Proxied by Nginx in production
+  // By making the baseURL relative, it will automatically inherit the
+  // protocol (http vs https) and domain from the main window location.
+  // This solves all Mixed Content errors.
+  baseURL: '/api/v1',
 });
 
-// Interceptor to add the auth token to every request
+// This interceptor is correct and should remain.
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');
