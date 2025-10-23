@@ -61,8 +61,15 @@ All communication with the backend **MUST** go through the singleton Axios insta
 
 ## 5. Core Component Architecture
 
-*   **`/layouts/AppLayout.jsx`**: The primary application shell.
-    *   **Responsibility:** Renders the main header and the navigation sidebar (`AppShell.Navbar`). It contains the `<Outlet />` where the active page component is rendered.
+*   **Public View (Visitors):** Unauthenticated users see a public-facing landing page and can navigate to other public pages like "Market Update." The login and registration pages are standalone.
+*   **Private View (Authenticated Users):** After logging in, the layout transforms into a three-column dashboard.
+
+*   **`/layouts/AppLayout.jsx`**: The primary application shell, managed by Mantine's `AppShell`.
+    *   **Responsibility:** Renders the main header, navigation sidebar, AI assistant sidebar, and the `<Outlet />` where the active page component is rendered.
+    *   **Layout Structure (Authenticated View):** It establishes the application's core three-column layout:
+        *   **`AppShell.Navbar` (Left):** Contains the primary navigation (`MainNav.jsx`).
+        *   **`AppShell.Main` (Center):** Renders the active page via the router's `<Outlet />`.
+        *   **`AppShell.Aside` (Right):** Contains the `AssistantSidebar.jsx`.
     *   **Critical Behavior:** It observes the `isLoadingUser` state from `authStore` to display a full-page loading overlay, preventing the "visitor" view from flashing for an authenticated user during initial page load.
 *   **`/pages/**/`**: Each subdirectory in `/pages` corresponds to a feature or section of the application.
 *   **`/components/**/`**: Contains reusable components that are not tied to a single page.
