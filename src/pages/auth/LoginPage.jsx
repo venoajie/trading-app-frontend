@@ -24,9 +24,11 @@ function LoginPage() {
   
   const { setToken, fetchUser, isAuthenticated } = useAuthStore();
 
+  // This effect is correct for redirecting users who are ALREADY logged in.
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/');
+      // --- [MODIFICATION] Redirect to the private portfolio dashboard ---
+      navigate('/portfolio');
     }
   }, [isAuthenticated, navigate]);
 
@@ -55,9 +57,13 @@ function LoginPage() {
       
       notifications.show({
         title: 'Login Successful',
-        message: 'Redirecting...',
+        message: 'Redirecting to your portfolio...',
         color: 'green',
       });
+
+      // --- [ADDITION] Explicitly navigate after successful login. ---
+      // We don't rely on the useEffect for the post-login redirect.
+      navigate('/portfolio');
 
     } catch (error) {
       let errorMessage = 'An unexpected error occurred.';
@@ -69,6 +75,8 @@ function LoginPage() {
         message: errorMessage,
         color: 'red',
       });
+    } finally {
+      // --- [ADDITION] Ensure loading is always set to false after the attempt. ---
       setLoading(false);
     } 
   };
