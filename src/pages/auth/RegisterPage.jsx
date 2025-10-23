@@ -10,33 +10,33 @@ import {
   Container,
   Stack,
   Anchor,
-  Checkbox, // Assuming ConsentCheckbox is in this file for simplicity
-  Text,     // Added Text for the link below the form
+  Checkbox,
+  Text,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Link, useNavigate } from 'react-router-dom';
-import apiClient from '../../services/apiClient'; // The pre-configured Axios instance
+import apiClient from '../../services/apiClient';
 
-// For the purpose of this file being self-contained, here is a placeholder
-// implementation of the ConsentCheckbox. In a real project, this would be in its own file.
+// --- [REFACTOR] Moved the component outside for better structure ---
 const ConsentCheckbox = ({ formProps }) => (
   <Checkbox
     {...formProps}
     label={
       <>
         I accept the{' '}
-        <Anchor component={Link} to="/terms" target="_blank">
+        {/* --- [FIX] Corrected the link paths --- */}
+        <Anchor component={Link} to="/terms-of-service" target="_blank">
           Terms of Service
         </Anchor>{' '}
         and{' '}
-        <Anchor component={Link} to="/privacy" target="_blank">
+        <Anchor component={Link} to="/privacy-policy" target="_blank">
           Privacy Policy
         </Anchor>
+        {/* --- [END FIX] --- */}
       </>
     }
   />
 );
-
 
 function RegisterPage() {
   const [loading, setLoading] = useState(false);
@@ -59,11 +59,9 @@ function RegisterPage() {
     },
   });
 
-  // --- Step 1.2: API Call Logic ---
   const handleRegister = async (values) => {
     setLoading(true);
 
-    // Per PROJECT_BLUEPRINT.md, only 'email' and 'password' are sent to the backend.
     const payload = {
       email: values.email,
       password: values.password,
@@ -72,7 +70,6 @@ function RegisterPage() {
     try {
       await apiClient.post('/auth/register', payload);
 
-      // On success, display notification and redirect to login page.
       notifications.show({
         title: 'Registration Successful',
         message: 'Your account has been created. Please log in to continue.',
@@ -82,11 +79,9 @@ function RegisterPage() {
       navigate('/login');
 
     } catch (error) {
-      // Handle API errors gracefully.
       let errorMessage = 'An unexpected error occurred. Please try again.';
       
-      // Check if the error is from the API and contains the specific "detail" message.
-      if (error.response && error.response.data && error.response.data.detail) {
+      if (error.response?.data?.detail) {
         errorMessage = error.response.data.detail;
       }
       
@@ -96,7 +91,6 @@ function RegisterPage() {
         color: 'red',
       });
     } finally {
-      // Ensure the loading state is always turned off after the request.
       setLoading(false);
     }
   };
