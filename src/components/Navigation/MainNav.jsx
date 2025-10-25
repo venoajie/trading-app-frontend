@@ -20,26 +20,28 @@ export function MainNav() {
           <NavLink
             component={RouterNavLink}
             to="/portfolio"
-            label="Portfolio"
+
+           label="Dashboard"
             leftSection={<IconHome size="1rem" stroke={1.5} />}
           />
+         <NavLink
+           component={RouterNavLink}
+           to="/decision-workspace"
+           label="Decision Workspace"
+           leftSection={<IconBrain size="1rem" stroke={1.5} />}
+         />
           <NavLink
             component={RouterNavLink}
             to="/transactions"
             label="Transactions"
             leftSection={<IconArrowsExchange size="1rem" stroke={1.5} />}
           />
+            leftSection={<IconHome size="1rem" stroke={1.5} />}
           <NavLink
             component={RouterNavLink}
-            to="/performance"
-            label="Performance"
-            leftSection={<IconChartPie size="1rem" stroke={1.5} />}
-          />
-          <NavLink
-            component={RouterNavLink}
-            to="/risk-management"
-            label="Risk Management"
-            leftSection={<IconShieldHalf size="1rem" stroke={1.5} />}
+            to="/transactions"
+            label="Transactions"
+            leftSection={<IconArrowsExchange size="1rem" stroke={1.5} />}
           />
           <Divider my="sm" />
         </>

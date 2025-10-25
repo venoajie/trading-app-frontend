@@ -11,13 +11,13 @@ import { TransactionsPage } from './pages/TransactionsPage/TransactionsPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 
-// --- [ADD NEW PAGE IMPORTS] ---
 import { PortfolioPage } from './pages/PortfolioPage';
-import { RiskManagementPage } from './pages/RiskManagementPage';
-import { PerformancePage } from './pages/PerformancePage';
 import { MarketUpdatePage } from './pages/MarketUpdatePage';
 import { TechnicalAnalysisPage } from './pages/TechnicalAnalysisPage';
-// --- [END NEW IMPORTS] ---
+import { PortfolioPage } from './pages/PortfolioPage';
+import { MarketUpdatePage } from './pages/MarketUpdatePage';
+import { TechnicalAnalysisPage } from './pages/TechnicalAnalysisPage';
+import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
 
 import useAuthStore from './store/authStore';
 
@@ -55,15 +55,10 @@ function App() {
           path="transactions" 
           element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} 
         />
-        <Route 
-          path="risk-management" 
-          element={<ProtectedRoute><RiskManagementPage /></ProtectedRoute>} 
-        />
-        <Route 
-          path="performance" 
-          element={<ProtectedRoute><PerformancePage /></ProtectedRoute>} 
-        />
-        
+      <Route 
+        path="decision-workspace" 
+        element={<ProtectedRoute><DecisionWorkspacePage /></ProtectedRoute>}
+      />
       </Route>
     </Routes>
   );
