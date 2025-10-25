@@ -1,13 +1,13 @@
 
 // src/layouts/AppLayout.jsx
-import { AppShell, Burger, Group, Title, Button, Menu, ActionIcon, LoadingOverlay, Avatar } from '@mantine/core';
+import { AppShell, Burger, Group, Title, Menu, ActionIcon, LoadingOverlay } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { IconUserCircle, IconLogin, IconUserPlus, IconLogout } from '@tabler/icons-react';
 
 import { useUiStore } from '../store/uiStore';
 import useAuthStore from '../store/authStore';
-import { MainNav } from '../components/Navigation/MainNav'; // <-- Import MainNav
+import { MainNav } from '../components/Navigation/MainNav';
 import { AssistantSidebar } from '../components/AssistantSidebar/AssistantSidebar';
 
 export function AppLayout() {
@@ -29,14 +29,15 @@ export function AppLayout() {
     <AppShell
       header={{ height: 60 }}
       navbar={{
-        width: 250, // Adjusted width for a cleaner look
+        width: 250,
         breakpoint: 'sm',
         collapsed: { mobile: !mobileNavOpened, desktop: !isSidebarOpen },
       }}
       aside={{
         width: 350,
         breakpoint: 'md',
-        collapsed: { desktop: !isAuthenticated, mobile: true }, // Example: AI sidebar always open on desktop
+        // The presence of the 'aside' is now controlled by isAuthenticated
+        collapsed: { desktop: !isAuthenticated, mobile: true },
       }}
       padding="md"
     >
@@ -81,14 +82,15 @@ export function AppLayout() {
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
-        {/* --- [NAVIGATION IS NOW HERE] --- */}
         <MainNav />
       </AppShell.Navbar>
 
-      <AppShell.Aside p="md">
-        {/* --- AI Assistant is now in the right-hand sidebar --- */}
-        <AssistantSidebar />
-      </AppShell.Aside>
+      {/* --- Conditionally render the entire AI sidebar --- */}
+      {isAuthenticated && (
+        <AppShell.Aside p="md">
+          <AssistantSidebar />
+        </AppShell.Aside>
+      )}
 
       <AppShell.Main>
         <Outlet />
