@@ -1,6 +1,6 @@
 
 // src/App.jsx
-import { useEffect } from 'react'; // [ADD] Import useEffect
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // --- Layout and Page Imports ---
@@ -28,37 +28,26 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
-  // [ADD] This entire useEffect block is new
   useEffect(() => {
     const initializeAuth = () => {
       const token = useAuthStore.getState().token;
       if (token) {
-        useAuthStore.getState().fetchUser();
+        // [MODIFIED] Pass the token from the store to the fetchUser function
+        useAuthStore.getState().fetchUser(token);
       } else {
-        // If there's no token, we're done loading.
         useAuthStore.getState().setLoadingComplete();
       }
     };
     initializeAuth();
-  }, []); // The empty array ensures this runs only once on app startup
+  }, []);
 
   return (
     <Routes>
-      {/* --- Standalone Public Routes (No Layout) --- */}
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/terms-of-service" element={<TermsOfServicePage />} />
-      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-
-      {/* --- Main Application Routes (with Shared Layout) --- */}
+      {/* ... routes ... */}
       <Route path="/" element={<AppLayout />}>
-        
-        {/* --- Public Pages --- */}
         <Route index element={<DashboardPage />} />
         <Route path="market-update" element={<MarketUpdatePage />} />
         <Route path="technical-analysis" element={<TechnicalAnalysisPage />} />
-
-        {/* --- Private/Protected Pages --- */}
         <Route 
           path="portfolio" 
           element={<ProtectedRoute><PortfolioPage /></ProtectedRoute>} 
