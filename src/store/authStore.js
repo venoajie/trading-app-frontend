@@ -2,14 +2,13 @@
 // src/store/authStore.js
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';
+import { notifications } from '@mantine/notifications'; // Import notifications
 
 const useAuthStore = create((set, get) => ({
   token: localStorage.getItem('accessToken') || null,
   isAuthenticated: !!localStorage.getItem('accessToken'),
   user: null,
   isLoadingUser: true,
-  
-  // --- [NEW] Add state to hold the user's primary portfolio ID ---
   portfolioId: null,
 
   setToken: (token) => {
@@ -19,7 +18,6 @@ const useAuthStore = create((set, get) => ({
 
   logout: () => {
     localStorage.removeItem('accessToken');
-    // Clear all user-related state on logout
     set({ token: null, isAuthenticated: false, user: null, portfolioId: null });
   },
 
@@ -28,20 +26,24 @@ const useAuthStore = create((set, get) => ({
       const response = await apiClient.get('/users/me');
       const userData = response.data;
       
-      // --- [NEW] Logic to extract the portfolio ID ---
       let primaryPortfolioId = null;
       if (userData.portfolios && userData.portfolios.length > 0) {
-        // For now, we assume the first portfolio is the primary one.
-        // In the future, we might add a flag or let the user choose.
         primaryPortfolioId = userData.portfolios[0].id;
       }
       
-      // Update the state with the user data AND the extracted portfolio ID
       set({ user: userData, portfolioId: primaryPortfolioId, isLoadingUser: false });
 
     } catch (error) {
       console.error("Failed to fetch user:", error);
-      get().logout();
+      
+      // [MODIFIED] Add a user-facing notification
+      notifications.show({
+        title: 'Session Expired',
+        message: 'Your session has expired. Please log in again.',
+        color: 'yellow',
+      });
+
+      get().logout(); // Log the user out
       set({ isLoadingUser: false });
     }
   },
@@ -52,7 +54,6 @@ const initialToken = useAuthStore.getState().token;
 if (initialToken) {
   useAuthStore.getState().fetchUser();
 } else {
-  // Directly set loading to false if there's no token
   useAuthStore.setState({ isLoadingUser: false });
 }
 
