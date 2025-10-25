@@ -24,10 +24,8 @@ function LoginPage() {
   
   const { setToken, fetchUser, isAuthenticated } = useAuthStore();
 
-  // This effect is correct for redirecting users who are ALREADY logged in.
   useEffect(() => {
     if (isAuthenticated) {
-      // --- [MODIFICATION] Redirect to the private portfolio dashboard ---
       navigate('/portfolio');
     }
   }, [isAuthenticated, navigate]);
@@ -52,8 +50,18 @@ function LoginPage() {
       });
 
       const { access_token } = response.data;
+      
+      // --- [THE CRITICAL FIX] ---
+      // 1. Set the token in our store and localStorage.
       setToken(access_token);
+      
+      // 2. Explicitly set the header on the apiClient instance for all subsequent requests.
+      // This eliminates the race condition with the interceptor.
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+      
+      // 3. Now, fetch the user with the guaranteed-to-be-present token.
       await fetchUser();
+      // --- [END OF FIX] ---
       
       notifications.show({
         title: 'Login Successful',
@@ -61,8 +69,6 @@ function LoginPage() {
         color: 'green',
       });
 
-      // --- [ADDITION] Explicitly navigate after successful login. ---
-      // We don't rely on the useEffect for the post-login redirect.
       navigate('/portfolio');
 
     } catch (error) {
@@ -76,7 +82,6 @@ function LoginPage() {
         color: 'red',
       });
     } finally {
-      // --- [ADDITION] Ensure loading is always set to false after the attempt. ---
       setLoading(false);
     } 
   };
