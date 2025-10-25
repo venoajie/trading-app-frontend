@@ -21,7 +21,6 @@ import useAuthStore from '../../store/authStore';
 function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
   const { setToken, fetchUser, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
@@ -51,17 +50,11 @@ function LoginPage() {
 
       const { access_token } = response.data;
       
-      // --- [THE CRITICAL FIX] ---
-      // 1. Set the token in our store and localStorage.
+      // 1. Set the token in our store. This also sets it in localStorage.
       setToken(access_token);
       
-      // 2. Explicitly set the header on the apiClient instance for all subsequent requests.
-      // This eliminates the race condition with the interceptor.
-      apiClient.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
-      
-      // 3. Now, fetch the user with the guaranteed-to-be-present token.
-      await fetchUser();
-      // --- [END OF FIX] ---
+      // 2. [MODIFIED] Call fetchUser and pass the new token directly.
+      await fetchUser(access_token);
       
       notifications.show({
         title: 'Login Successful',
