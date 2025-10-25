@@ -1,18 +1,17 @@
 
 // src/services/apiClient.js
 import axios from 'axios';
+import useAuthStore from '../store/authStore'; // [MODIFIED] Import the store
 
 const apiClient = axios.create({
-  // By making the baseURL relative, it will automatically inherit the
-  // protocol (http vs https) and domain from the main window location.
-  // This solves all Mixed Content errors.
   baseURL: '/api/v1',
 });
 
-// This interceptor is correct and should remain.
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
+    // [MODIFIED] Get the token directly from the Zustand store's state.
+    // This is synchronous and avoids all race conditions with localStorage.
+    const token = useAuthStore.getState().token;
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
