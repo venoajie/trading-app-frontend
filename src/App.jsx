@@ -11,12 +11,9 @@ import { TransactionsPage } from './pages/TransactionsPage/TransactionsPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 
-import { PortfolioPage } from './pages/PortfolioPage';
 import { MarketUpdatePage } from './pages/MarketUpdatePage';
 import { TechnicalAnalysisPage } from './pages/TechnicalAnalysisPage';
 import { PortfolioPage } from './pages/PortfolioPage';
-import { MarketUpdatePage } from './pages/MarketUpdatePage';
-import { TechnicalAnalysisPage } from './pages/TechnicalAnalysisPage';
 import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
 
 import useAuthStore from './store/authStore';
