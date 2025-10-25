@@ -15,14 +15,12 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Link, useNavigate } from 'react-router-dom';
-import apiClient from '../../services/apiClient';
 import useAuthStore from '../../store/authStore';
 
 function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  // [MODIFIED] We now get the loginSuccess action from the store.
-  const { loginSuccess, isAuthenticated } = useAuthStore();
+  const { login, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -40,43 +38,16 @@ function LoginPage() {
 
   const handleLogin = async (values) => {
     setLoading(true);
-    try {
-      // Step 1: Get the token
-      const formBody = new URLSearchParams();
-      formBody.append('username', values.email);
-      formBody.append('password', values.password);
-      const loginResponse = await apiClient.post('/auth/login', formBody, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      });
-      const { access_token } = loginResponse.data;
-
-      // Step 2: Use the new token immediately to fetch the user profile
-      const userResponse = await apiClient.get('/users/me', {
-        headers: { Authorization: `Bearer ${access_token}` },
-      });
-      const user = userResponse.data;
-
-      // Step 3: Commit the entire successful transaction to the state store
-      loginSuccess({ token: access_token, user });
-      
+    const success = await login(values.email, values.password);
+    if (success) {
       notifications.show({
         title: 'Login Successful',
         message: 'Redirecting to your portfolio...',
         color: 'green',
       });
-
       navigate('/portfolio');
-
-    } catch (error) {
-      const errorMessage = error.response?.data?.detail || 'An unexpected error occurred.';
-      notifications.show({
-        title: 'Login Failed',
-        message: errorMessage,
-        color: 'red',
-      });
-    } finally {
-      setLoading(false);
-    } 
+    }
+    setLoading(false);
   };
 
   return (
@@ -96,7 +67,7 @@ function LoginPage() {
         </form>
       </Paper>
       <Text color="dimmed" size="sm" align="center" mt={15}>
-        Don't have an account yet?{' '}
+        Don't have an an account yet?{' '}
         <Anchor component={Link} to="/register" size="sm">
           Create account
         </Anchor>
