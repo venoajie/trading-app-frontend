@@ -1,17 +1,16 @@
 
 // src/services/apiClient.js
 import axios from 'axios';
-import useAuthStore from '../store/authStore'; // [MODIFIED] Import the store
 
 const apiClient = axios.create({
   baseURL: '/api/v1',
 });
 
+// This interceptor is now ONLY for validating sessions on page refresh.
+// The login flow will handle the initial token injection manually.
 apiClient.interceptors.request.use(
   (config) => {
-    // [MODIFIED] Get the token directly from the Zustand store's state.
-    // This is synchronous and avoids all race conditions with localStorage.
-    const token = useAuthStore.getState().token;
+    const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
