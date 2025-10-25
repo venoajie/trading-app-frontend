@@ -3,8 +3,8 @@
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { NavLink, Stack, Title, Divider } from '@mantine/core';
 import { 
-  IconHome, IconArrowsExchange, IconChartPie, 
-  IconShieldHalf, IconActivity, IconWorld, IconChartCandle 
+  IconHome, IconArrowsExchange, IconActivity, IconWorld, 
+  IconChartCandle, IconBrain 
 } from '@tabler/icons-react';
 import useAuthStore from '../../store/authStore';
 
@@ -20,23 +20,15 @@ export function MainNav() {
           <NavLink
             component={RouterNavLink}
             to="/portfolio"
-
-           label="Dashboard"
+            label="Dashboard"
             leftSection={<IconHome size="1rem" stroke={1.5} />}
           />
-         <NavLink
-           component={RouterNavLink}
-           to="/decision-workspace"
-           label="Decision Workspace"
-           leftSection={<IconBrain size="1rem" stroke={1.5} />}
-         />
           <NavLink
             component={RouterNavLink}
-            to="/transactions"
-            label="Transactions"
-            leftSection={<IconArrowsExchange size="1rem" stroke={1.5} />}
+            to="/decision-workspace"
+            label="Decision Workspace"
+            leftSection={<IconBrain size="1rem" stroke={1.5} />}
           />
-            leftSection={<IconHome size="1rem" stroke={1.5} />}
           <NavLink
             component={RouterNavLink}
             to="/transactions"
