@@ -1,23 +1,21 @@
 
-// src/services/setupInterceptors.js
-import apiClient from './apiClient';
-import useAuthStore from '../store/authStore';
+// src/main.jsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { MantineProvider } from '@mantine/core';
+import { BrowserRouter } from 'react-router-dom';
+import { Notifications } from '@mantine/notifications';
+import App from './App';
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 
-const setupInterceptors = () => {
-  apiClient.interceptors.request.use(
-    (config) => {
-      // Get the token directly from the Zustand store's state in memory.
-      // This is synchronous and always has the latest value.
-      const token = useAuthStore.getState().token;
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
-};
-
-export default setupInterceptors;
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <MantineProvider defaultColorScheme="dark">
+        <Notifications />
+        <App />
+      </MantineProvider>
+    </BrowserRouter>
+  </React.StrictMode>
+);

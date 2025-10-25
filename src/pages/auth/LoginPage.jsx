@@ -1,18 +1,8 @@
 
 // src/pages/auth/LoginPage.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useForm } from '@mantine/form';
-import {
-  TextInput,
-  PasswordInput,
-  Button,
-  Paper,
-  Title,
-  Container,
-  Stack,
-  Anchor,
-  Text,
-} from '@mantine/core';
+import { TextInput, PasswordInput, Button, Paper, Title, Container, Stack, Anchor, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Link, useNavigate } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
@@ -21,13 +11,7 @@ import useAuthStore from '../../store/authStore';
 function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setToken, fetchUser, isAuthenticated } = useAuthStore();
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/portfolio');
-    }
-  }, [isAuthenticated, navigate]);
+  const { hydrateSession } = useAuthStore();
 
   const form = useForm({
     initialValues: { email: '', password: '' },
@@ -40,6 +24,7 @@ function LoginPage() {
   const handleLogin = async (values) => {
     setLoading(true);
     try {
+      // Step 1: Get the token
       const formBody = new URLSearchParams();
       formBody.append('username', values.email);
       formBody.append('password', values.password);
@@ -48,16 +33,23 @@ function LoginPage() {
       });
       const { access_token } = loginResponse.data;
 
-      // Now this simple flow will work because the interceptor is correctly configured.
-      setToken(access_token);
-      await fetchUser();
+      // Step 2: Use the new token immediately to fetch the user profile. This bypasses the interceptor.
+      const userResponse = await apiClient.get('/users/me', {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      const user = userResponse.data;
+
+      // Step 3: Commit the entire successful transaction to the state store in one atomic action.
+      hydrateSession({ token: access_token, user });
       
       notifications.show({
         title: 'Login Successful',
         message: 'Redirecting to your portfolio...',
         color: 'green',
       });
+
       navigate('/portfolio');
+
     } catch (error) {
       const errorMessage = error.response?.data?.detail || 'An unexpected error occurred.';
       notifications.show({
@@ -67,7 +59,7 @@ function LoginPage() {
       });
     } finally {
       setLoading(false);
-    }
+    } 
   };
 
   return (

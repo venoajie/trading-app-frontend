@@ -2,7 +2,6 @@
 // src/store/authStore.js
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';
-import { notifications } from '@mantine/notifications';
 
 const useAuthStore = create((set, get) => ({
   token: localStorage.getItem('accessToken') || null,
@@ -11,25 +10,31 @@ const useAuthStore = create((set, get) => ({
   isLoadingUser: true,
   portfolioId: null,
 
-  setToken: (token) => {
+  hydrateSession: ({ token, user }) => {
     localStorage.setItem('accessToken', token);
-    set({ token, isAuthenticated: true });
+    let primaryPortfolioId = null;
+    if (user.portfolios && user.portfolios.length > 0) {
+      primaryPortfolioId = user.portfolios[0].id;
+    }
+    set({ token, user, isAuthenticated: true, portfolioId: primaryPortfolioId, isLoadingUser: false });
   },
 
   logout: () => {
+    const oldToken = localStorage.getItem('accessToken');
     localStorage.removeItem('accessToken');
     set({ token: null, isAuthenticated: false, user: null, portfolioId: null });
+    // This helps the storage event listener fire reliably
+    if (oldToken) {
+      window.dispatchEvent(new StorageEvent('storage', { key: 'accessToken', oldValue: oldToken, newValue: null }));
+    }
   },
 
-  fetchUser: async () => {
+  fetchUserOnLoad: async () => {
     try {
       const response = await apiClient.get('/users/me');
-      const userData = response.data;
-      let primaryPortfolioId = null;
-      if (userData.portfolios && userData.portfolios.length > 0) {
-        primaryPortfolioId = userData.portfolios[0].id;
-      }
-      set({ user: userData, portfolioId: primaryPortfolioId, isLoadingUser: false });
+      const user = response.data;
+      const token = get().token;
+      get().hydrateSession({ token, user });
     } catch (error) {
       console.error("Session validation failed:", error);
       get().logout();
