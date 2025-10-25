@@ -2,13 +2,13 @@
 // src/store/authStore.js
 import { create } from 'zustand';
 import apiClient from '../services/apiClient';
-import { notifications } from '@mantine/notifications'; // Import notifications
+import { notifications } from '@mantine/notifications';
 
 const useAuthStore = create((set, get) => ({
   token: localStorage.getItem('accessToken') || null,
   isAuthenticated: !!localStorage.getItem('accessToken'),
   user: null,
-  isLoadingUser: true,
+  isLoadingUser: true, // Start with true
   portfolioId: null,
 
   setToken: (token) => {
@@ -22,6 +22,7 @@ const useAuthStore = create((set, get) => ({
   },
 
   fetchUser: async () => {
+    // [MODIFICATION] We no longer set isLoadingUser to true here, it's set on init.
     try {
       const response = await apiClient.get('/users/me');
       const userData = response.data;
@@ -36,25 +37,26 @@ const useAuthStore = create((set, get) => ({
     } catch (error) {
       console.error("Failed to fetch user:", error);
       
-      // [MODIFIED] Add a user-facing notification
       notifications.show({
         title: 'Session Expired',
         message: 'Your session has expired. Please log in again.',
         color: 'yellow',
       });
 
-      get().logout(); // Log the user out
+      get().logout();
       set({ isLoadingUser: false });
     }
   },
+  // [NEW] Add a simple action to handle the no-token case
+  setLoadingComplete: () => set({ isLoadingUser: false }),
 }));
 
-// Initialize user fetch on app load
-const initialToken = useAuthStore.getState().token;
-if (initialToken) {
-  useAuthStore.getState().fetchUser();
-} else {
-  useAuthStore.setState({ isLoadingUser: false });
-}
+// [REMOVED] The entire block that was here is being moved to App.jsx
+// const initialToken = useAuthStore.getState().token;
+// if (initialToken) {
+//   useAuthStore.getState().fetchUser();
+// } else {
+//   useAuthStore.setState({ isLoadingUser: false });
+// }
 
 export default useAuthStore;
