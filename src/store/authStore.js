@@ -1,7 +1,7 @@
 
 // src/store/authStore.js
 import { create } from 'zustand';
-import apiClient from '../services/apiClient'; // We can import this safely at the top again.
+import apiClient from '../services/apiClient';
 import { notifications } from '@mantine/notifications';
 
 const useAuthStore = create((set, get) => ({
@@ -11,14 +11,42 @@ const useAuthStore = create((set, get) => ({
   isLoadingUser: true,
   portfolioId: null,
 
-  // [NEW] This is our new atomic action for a successful login.
-  loginSuccess: ({ token, user }) => {
-    localStorage.setItem('accessToken', token);
-    let primaryPortfolioId = null;
-    if (user.portfolios && user.portfolios.length > 0) {
-      primaryPortfolioId = user.portfolios[0].id;
+  // [NEW] The complete, atomic login transaction.
+  login: async (email, password) => {
+    try {
+      // Step 1: Get the token
+      const formBody = new URLSearchParams();
+      formBody.append('username', email);
+      formBody.append('password', password);
+      const loginResponse = await apiClient.post('/auth/login', formBody, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+      const { access_token } = loginResponse.data;
+
+      // Step 2: Use the new token immediately to fetch the user profile
+      const userResponse = await apiClient.get('/users/me', {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      const user = userResponse.data;
+
+      // Step 3: Commit the entire successful transaction to the state store
+      localStorage.setItem('accessToken', access_token);
+      let primaryPortfolioId = null;
+      if (user.portfolios && user.portfolios.length > 0) {
+        primaryPortfolioId = user.portfolios[0].id;
+      }
+      set({ token: access_token, user, isAuthenticated: true, portfolioId: primaryPortfolioId, isLoadingUser: false });
+      
+      return true; // Signal success
+    } catch (error) {
+      const errorMessage = error.response?.data?.detail || 'An unexpected error occurred.';
+      notifications.show({
+        title: 'Login Failed',
+        message: errorMessage,
+        color: 'red',
+      });
+      return false; // Signal failure
     }
-    set({ token, user, isAuthenticated: true, portfolioId: primaryPortfolioId, isLoadingUser: false });
   },
 
   logout: () => {
