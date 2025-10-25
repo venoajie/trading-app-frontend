@@ -1,5 +1,4 @@
 
-// src/store/decisionStore.js
 import { create } from 'zustand';
 
 // Helper function to calculate Expected Value
@@ -28,15 +27,21 @@ export const useDecisionStore = create((set) => ({
   // --- Actions ---
   setTradeIdea: (idea) => set({ tradeIdea: idea }),
   updateAssumption: (index, field, value) => set((state) => {
-    const newAssumptions = [...state.assumptions];
-    newAssumptions[index][field] = value;
+    // Create a new array using .map for a guaranteed immutable update
+    const newAssumptions = state.assumptions.map((assumption, i) => {
+      if (i === index) {
+        // If this is the item we want to update, return a *new* object
+        return { ...assumption, [field]: value };
+      }
+      // Otherwise, return the original, unchanged item
+      return assumption;
+    });
 
-    // Recalculate and update the EV
     const newExpectedValue = calculateEV(newAssumptions);
 
-    return { 
+    return {
       assumptions: newAssumptions,
-      expectedValue: newExpectedValue 
+      expectedValue: newExpectedValue,
     };
   }),
 }));
