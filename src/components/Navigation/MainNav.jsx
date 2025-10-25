@@ -1,7 +1,7 @@
 
 // src/components/Navigation/MainNav.jsx
 import { NavLink as RouterNavLink } from 'react-router-dom';
-import { NavLink, Stack, Title, Divider } from '@mantine/core';
+import { NavLink, Stack, Divider } from '@mantine/core';
 import { 
   IconHome, IconArrowsExchange, IconActivity, IconWorld, 
   IconChartCandle, IconBrain 
@@ -16,7 +16,6 @@ export function MainNav() {
       {/* --- Private Links (for logged-in users) --- */}
       {isAuthenticated && (
         <>
-          <Title order={4} c="dimmed">Private</Title>
           <NavLink
             component={RouterNavLink}
             to="/portfolio"
@@ -40,7 +39,6 @@ export function MainNav() {
       )}
 
       {/* --- Public Links (for everyone) --- */}
-      <Title order={4} c="dimmed">Public</Title>
       <NavLink
         component={RouterNavLink}
         to="/"
