@@ -21,7 +21,8 @@ import useAuthStore from '../../store/authStore';
 function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setToken, fetchUser, isAuthenticated } = useAuthStore();
+  // [MODIFIED] We now get the loginSuccess action from the store.
+  const { loginSuccess, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -39,22 +40,24 @@ function LoginPage() {
 
   const handleLogin = async (values) => {
     setLoading(true);
-    const formBody = new URLSearchParams();
-    formBody.append('username', values.email);
-    formBody.append('password', values.password);
-
     try {
-      const response = await apiClient.post('/auth/login', formBody, {
+      // Step 1: Get the token
+      const formBody = new URLSearchParams();
+      formBody.append('username', values.email);
+      formBody.append('password', values.password);
+      const loginResponse = await apiClient.post('/auth/login', formBody, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
+      const { access_token } = loginResponse.data;
 
-      const { access_token } = response.data;
-      
-      // 1. Set the token in our store. This also sets it in localStorage.
-      setToken(access_token);
-      
-      // 2. [MODIFIED] Call fetchUser and pass the new token directly.
-      await fetchUser(access_token);
+      // Step 2: Use the new token immediately to fetch the user profile
+      const userResponse = await apiClient.get('/users/me', {
+        headers: { Authorization: `Bearer ${access_token}` },
+      });
+      const user = userResponse.data;
+
+      // Step 3: Commit the entire successful transaction to the state store
+      loginSuccess({ token: access_token, user });
       
       notifications.show({
         title: 'Login Successful',
@@ -65,10 +68,7 @@ function LoginPage() {
       navigate('/portfolio');
 
     } catch (error) {
-      let errorMessage = 'An unexpected error occurred.';
-      if (error.response?.data?.detail) {
-        errorMessage = error.response.data.detail;
-      }
+      const errorMessage = error.response?.data?.detail || 'An unexpected error occurred.';
       notifications.show({
         title: 'Login Failed',
         message: errorMessage,
