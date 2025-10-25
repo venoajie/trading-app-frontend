@@ -33,13 +33,13 @@ function LoginPage() {
       });
       const { access_token } = loginResponse.data;
 
-      // Step 2: Use the new token immediately to fetch the user profile. This bypasses the interceptor.
+      // Step 2: Use the new token immediately to fetch the user profile.
       const userResponse = await apiClient.get('/users/me', {
         headers: { Authorization: `Bearer ${access_token}` },
       });
       const user = userResponse.data;
 
-      // Step 3: Commit the entire successful transaction to the state store in one atomic action.
+      // Step 3: Commit the entire successful transaction to the state store.
       hydrateSession({ token: access_token, user });
       
       notifications.show({
@@ -47,9 +47,7 @@ function LoginPage() {
         message: 'Redirecting to your portfolio...',
         color: 'green',
       });
-
       navigate('/portfolio');
-
     } catch (error) {
       const errorMessage = error.response?.data?.detail || 'An unexpected error occurred.';
       notifications.show({

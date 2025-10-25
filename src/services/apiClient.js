@@ -6,6 +6,9 @@ const apiClient = axios.create({
   baseURL: '/api/v1',
 });
 
+// This interceptor's only job is to attach the token from localStorage
+// for validating an existing session on page loads and refreshes.
+// The login flow will handle its own token management explicitly.
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('accessToken');

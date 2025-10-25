@@ -10,6 +10,7 @@ const useAuthStore = create((set, get) => ({
   isLoadingUser: true,
   portfolioId: null,
 
+  // This is the single, atomic action to create a fully authenticated state.
   hydrateSession: ({ token, user }) => {
     localStorage.setItem('accessToken', token);
     let primaryPortfolioId = null;
@@ -20,20 +21,16 @@ const useAuthStore = create((set, get) => ({
   },
 
   logout: () => {
-    const oldToken = localStorage.getItem('accessToken');
     localStorage.removeItem('accessToken');
     set({ token: null, isAuthenticated: false, user: null, portfolioId: null });
-    // This helps the storage event listener fire reliably
-    if (oldToken) {
-      window.dispatchEvent(new StorageEvent('storage', { key: 'accessToken', oldValue: oldToken, newValue: null }));
-    }
   },
 
+  // This is ONLY for validating a session on app startup.
   fetchUserOnLoad: async () => {
     try {
       const response = await apiClient.get('/users/me');
       const user = response.data;
-      const token = get().token;
+      const token = get().token; // Get the token that was used for the successful request
       get().hydrateSession({ token, user });
     } catch (error) {
       console.error("Session validation failed:", error);
