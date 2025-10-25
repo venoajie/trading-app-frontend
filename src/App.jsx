@@ -1,10 +1,11 @@
 
 // src/App.jsx
+import { useEffect } from 'react'; // [ADD] Import useEffect
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // --- Layout and Page Imports ---
 import { AppLayout } from './layouts/AppLayout';
-import { DashboardPage } from './pages/DashboardPage'; // This is now the public landing page
+import { DashboardPage } from './pages/DashboardPage';
 import { TermsOfServicePage } from './pages/legal/TermsOfServicePage';
 import { PrivacyPolicyPage } from './pages/legal/PrivacyPolicyPage';
 import { TransactionsPage } from './pages/TransactionsPage/TransactionsPage';
@@ -27,6 +28,20 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
+  // [ADD] This entire useEffect block is new
+  useEffect(() => {
+    const initializeAuth = () => {
+      const token = useAuthStore.getState().token;
+      if (token) {
+        useAuthStore.getState().fetchUser();
+      } else {
+        // If there's no token, we're done loading.
+        useAuthStore.getState().setLoadingComplete();
+      }
+    };
+    initializeAuth();
+  }, []); // The empty array ensures this runs only once on app startup
+
   return (
     <Routes>
       {/* --- Standalone Public Routes (No Layout) --- */}
@@ -52,10 +67,10 @@ function App() {
           path="transactions" 
           element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} 
         />
-      <Route 
-        path="decision-workspace" 
-        element={<ProtectedRoute><DecisionWorkspacePage /></ProtectedRoute>}
-      />
+        <Route 
+          path="decision-workspace" 
+          element={<ProtectedRoute><DecisionWorkspacePage /></ProtectedRoute>}
+        />
       </Route>
     </Routes>
   );
