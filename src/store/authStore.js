@@ -8,23 +8,31 @@ const useAuthStore = create((set, get) => ({
   token: localStorage.getItem('accessToken') || null,
   isAuthenticated: !!localStorage.getItem('accessToken'),
   user: null,
-  isLoadingUser: true, // Start with true
+  isLoadingUser: true,
   portfolioId: null,
 
   setToken: (token) => {
     localStorage.setItem('accessToken', token);
+    // Also update the default header for all future requests from the interceptor
+    apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     set({ token, isAuthenticated: true });
   },
 
   logout: () => {
     localStorage.removeItem('accessToken');
+    // Clear the default header on logout
+    delete apiClient.defaults.headers.common['Authorization'];
     set({ token: null, isAuthenticated: false, user: null, portfolioId: null });
   },
 
-  fetchUser: async () => {
-    // [MODIFICATION] We no longer set isLoadingUser to true here, it's set on init.
+  // [MODIFIED] fetchUser now accepts the token directly
+  fetchUser: async (token) => {
     try {
-      const response = await apiClient.get('/users/me');
+      // [MODIFIED] We pass the token directly in the headers for this specific request.
+      // This is the most reliable method and bypasses any interceptor race conditions.
+      const response = await apiClient.get('/users/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const userData = response.data;
       
       let primaryPortfolioId = null;
@@ -36,27 +44,16 @@ const useAuthStore = create((set, get) => ({
 
     } catch (error) {
       console.error("Failed to fetch user:", error);
-      
       notifications.show({
         title: 'Session Expired',
         message: 'Your session has expired. Please log in again.',
         color: 'yellow',
       });
-
       get().logout();
       set({ isLoadingUser: false });
     }
   },
-  // [NEW] Add a simple action to handle the no-token case
   setLoadingComplete: () => set({ isLoadingUser: false }),
 }));
-
-// [REMOVED] The entire block that was here is being moved to App.jsx
-// const initialToken = useAuthStore.getState().token;
-// if (initialToken) {
-//   useAuthStore.getState().fetchUser();
-// } else {
-//   useAuthStore.setState({ isLoadingUser: false });
-// }
 
 export default useAuthStore;
