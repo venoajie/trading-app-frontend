@@ -13,22 +13,20 @@ const useAuthStore = create((set, get) => ({
 
   setToken: (token) => {
     localStorage.setItem('accessToken', token);
-    // Also update the default header for all future requests from the interceptor
-    apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    // [REVERTED] We no longer manipulate the apiClient instance here.
     set({ token, isAuthenticated: true });
   },
 
   logout: () => {
     localStorage.removeItem('accessToken');
-    // Clear the default header on logout
-    delete apiClient.defaults.headers.common['Authorization'];
+    // [REVERTED] We no longer manipulate the apiClient instance here.
     set({ token: null, isAuthenticated: false, user: null, portfolioId: null });
   },
 
-  // [MODIFIED] fetchUser now accepts the token directly
+  // fetchUser still accepts the token directly, which is the robust part of the fix.
   fetchUser: async (token) => {
     try {
-      // [MODIFIED] We pass the token directly in the headers for this specific request.
+      // We pass the token directly in the headers for this specific request.
       // This is the most reliable method and bypasses any interceptor race conditions.
       const response = await apiClient.get('/users/me', {
         headers: { Authorization: `Bearer ${token}` },
