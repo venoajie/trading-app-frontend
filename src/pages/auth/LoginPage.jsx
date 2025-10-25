@@ -15,12 +15,13 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Link, useNavigate } from 'react-router-dom';
+import apiClient from '../../services/apiClient';
 import useAuthStore from '../../store/authStore';
 
 function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuthStore();
+  const { setToken, fetchUser, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -38,16 +39,35 @@ function LoginPage() {
 
   const handleLogin = async (values) => {
     setLoading(true);
-    const success = await login(values.email, values.password);
-    if (success) {
+    try {
+      const formBody = new URLSearchParams();
+      formBody.append('username', values.email);
+      formBody.append('password', values.password);
+      const loginResponse = await apiClient.post('/auth/login', formBody, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+      const { access_token } = loginResponse.data;
+
+      // Now this simple flow will work because the interceptor is correctly configured.
+      setToken(access_token);
+      await fetchUser();
+      
       notifications.show({
         title: 'Login Successful',
         message: 'Redirecting to your portfolio...',
         color: 'green',
       });
       navigate('/portfolio');
+    } catch (error) {
+      const errorMessage = error.response?.data?.detail || 'An unexpected error occurred.';
+      notifications.show({
+        title: 'Login Failed',
+        message: errorMessage,
+        color: 'red',
+      });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -67,7 +87,7 @@ function LoginPage() {
         </form>
       </Paper>
       <Text color="dimmed" size="sm" align="center" mt={15}>
-        Don't have an an account yet?{' '}
+        Don't have an account yet?{' '}
         <Anchor component={Link} to="/register" size="sm">
           Create account
         </Anchor>
