@@ -36,7 +36,7 @@ export function AppLayout() {
       aside={{
         width: 350,
         breakpoint: 'md',
-        collapsed: { desktop: false, mobile: true }, // Example: AI sidebar always open on desktop
+        collapsed: { desktop: !isAuthenticated, mobile: true }, // Example: AI sidebar always open on desktop
       }}
       padding="md"
     >
