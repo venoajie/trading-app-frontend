@@ -4,6 +4,7 @@ import { AppShell, Burger, Group, Title, Menu, ActionIcon, LoadingOverlay } from
 import { useDisclosure } from '@mantine/hooks';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { IconUserCircle, IconLogin, IconUserPlus, IconLogout } from '@tabler/icons-react';
+import { useEffect } from 'react'; // Import useEffect
 
 import { useUiStore } from '../store/uiStore';
 import useAuthStore from '../store/authStore';
@@ -12,9 +13,17 @@ import { AssistantSidebar } from '../components/AssistantSidebar/AssistantSideba
 
 export function AppLayout() {
   const [mobileNavOpened, { toggle: toggleMobileNav }] = useDisclosure();
-  const { isSidebarOpen, toggleSidebar } = useUiStore();
+  const { isSidebarOpen, toggleSidebar, openSidebar } = useUiStore(); // Get openSidebar action
   const { isAuthenticated, logout, user, isLoadingUser } = useAuthStore();
   const navigate = useNavigate();
+
+  // FIX: This effect ensures the sidebar opens automatically on successful login.
+  // It watches the isAuthenticated flag and triggers the UI state change.
+  useEffect(() => {
+    if (isAuthenticated) {
+      openSidebar();
+    }
+  }, [isAuthenticated, openSidebar]);
 
   const handleLogout = () => {
     logout();
@@ -36,7 +45,6 @@ export function AppLayout() {
       aside={{
         width: 350,
         breakpoint: 'md',
-        // The presence of the 'aside' is now controlled by isAuthenticated
         collapsed: { desktop: !isAuthenticated, mobile: true },
       }}
       padding="md"
@@ -85,7 +93,6 @@ export function AppLayout() {
         <MainNav />
       </AppShell.Navbar>
 
-      {/* --- Conditionally render the entire AI sidebar --- */}
       {isAuthenticated && (
         <AppShell.Aside p="md">
           <AssistantSidebar />
