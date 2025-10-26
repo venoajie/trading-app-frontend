@@ -9,7 +9,8 @@ import apiClient from '../../services/apiClient';
 import { TransactionsTable } from './components/TransactionsTable';
 import { TransactionModal } from './components/TransactionModal';
 
-export function TransactionsPage() {
+// CORRECTIVE ACTION: Removed 'export' from this line
+function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
@@ -50,12 +51,11 @@ export function TransactionsPage() {
         opened={modalOpened} 
         onClose={closeModal} 
         onSave={handleTransactionSave}
-        // [MODIFIED] The portfolioId prop is no longer passed.
       />
 
       <div style={{ position: 'relative' }}>
         <LoadingOverlay visible={loading} />
-        {/* [NEW] Handle the case where there are no transactions */}
+        {/* Handle the case where there are no transactions */}
         {!loading && transactions.length === 0 ? (
           <Center style={{ height: '200px' }}>
             <Alert icon={<IconInfoCircle size="1rem" />} title="No Transactions Found" color="blue">
@@ -69,3 +69,5 @@ export function TransactionsPage() {
     </Stack>
   );
 }
+
+export default TransactionsPage;
