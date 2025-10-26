@@ -29,8 +29,6 @@ function LoginPage() {
       formBody.append('username', values.email);
       formBody.append('password', values.password);
 
-      // CRITICAL FIX: Added a trailing slash to the endpoint to match the
-      // FastAPI backend's requirement and prevent a 307 redirect on POST.
       const loginResponse = await apiClient.post('/auth/login/', formBody, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
