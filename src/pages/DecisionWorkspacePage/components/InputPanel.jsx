@@ -1,10 +1,20 @@
 
 // src/pages/DecisionWorkspacePage/components/InputPanel.jsx
-import { Stack, Title, TextInput, Text, NumberInput, Grid, Card, Group } from '@mantine/core';
+import { Stack, Title, TextInput, Text, NumberInput, Grid, Card, Group, Button } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { useDecisionStore } from '../../../store/decisionStore';
 
 export function InputPanel() {
-  const { tradeIdea, setTradeIdea, assumptions, updateAssumption } = useDecisionStore();
+  const { tradeIdea, setTradeIdea, assumptions, updateAssumption, archiveDecision } = useDecisionStore();
+
+  const handleSave = () => {
+    const result = archiveDecision();
+    notifications.show({
+      title: result.saved ? 'Success' : 'Error',
+      message: result.message,
+      color: result.saved ? 'green' : 'red',
+    });
+  };
 
   return (
     <Stack>
@@ -18,7 +28,7 @@ export function InputPanel() {
       
       <Title order={3} mt="lg">2. Define Outcomes</Title>
       <Text c="dimmed" size="sm">
-        Define the possible outcomes and your estimated probability for each. Probabilities must sum to 1.0.
+        Define the possible outcomes and your estimated probability for each.
       </Text>
 
       {assumptions.map((assumption, index) => (
@@ -49,7 +59,6 @@ export function InputPanel() {
         </Grid>
       ))}
 
-      {/* --- NEW: Context Section --- */}
       <Title order={3} mt="lg">3. Set Context</Title>
       <Text c="dimmed" size="sm">
         Review how this idea fits within your current portfolio.
@@ -64,12 +73,13 @@ export function InputPanel() {
             <Text size="sm">Available Cash:</Text>
             <Text size="sm" fw={500}>${(5000).toLocaleString()}</Text>
           </Group>
-           <Group justify="space-between">
-            <Text size="sm">Risk / Reward Ratio:</Text>
-            <Text size="sm" fw={500}>2.5 : 1</Text>
-          </Group>
         </Stack>
       </Card>
+
+      {/* --- NEW: Save Button --- */}
+      <Button mt="xl" onClick={handleSave}>
+        Save to Journal
+      </Button>
     </Stack>
   );
 }
