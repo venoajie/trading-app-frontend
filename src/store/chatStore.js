@@ -4,40 +4,49 @@ import { create } from 'zustand';
 import apiClient from '../services/apiClient';
 import { notifications } from '@mantine/notifications';
 
+const initialMessage = { 
+  role: 'assistant', 
+  content: 'I am your AI Coach. As you define your trade idea and outcomes, ask me questions to challenge your assumptions.' 
+};
+
 export const useChatStore = create((set, get) => ({
-  messages: [
-    { 
-      role: 'assistant', 
-      content: 'Hello! How can I help you with your portfolio today?' 
-    }
-  ],
+  messages: [initialMessage],
   isLoading: false,
   conversationId: null,
 
-  sendMessage: async (prompt) => {
+  // --- MODIFIED: sendMessage is now context-aware ---
+  sendMessage: async (prompt, context) => {
     if (get().isLoading) return;
 
-    // 1. Add user's message to the state immediately
     const userMessage = { role: 'user', content: prompt };
     set((state) => ({ 
       messages: [...state.messages, userMessage],
       isLoading: true,
     }));
 
+    // --- NEW: Format the context for the AI ---
+    const formattedContext = `
+      Current Trade Idea: "${context.tradeIdea}"
+
+      Assumptions:
+      ${context.assumptions.map(a => `- ${a.scenario}: Probability ${a.probability*100}%, Outcome $${a.outcome}`).join('\n')}
+
+      User's Question:
+    `;
+    const fullPrompt = formattedContext + prompt;
+
     try {
-      // 2. Send the request to the backend
       const response = await apiClient.post('/ai/chat', {
-        prompt: prompt,
+        prompt: fullPrompt, // Send the full, context-aware prompt
         conversation_id: get().conversationId,
       });
 
       const assistantMessage = {
         role: 'assistant',
         content: response.data.answer,
-        sources: response.data.sources, // Optional: store sources if available
+        sources: response.data.sources,
       };
       
-      // 3. Add the assistant's response and update conversation ID
       set((state) => ({
         messages: [...state.messages, assistantMessage],
         conversationId: response.data.conversation_id,
@@ -52,7 +61,6 @@ export const useChatStore = create((set, get) => ({
         color: 'red',
       });
       
-      // 4. Handle errors
       const errorResponseMessage = {
         role: 'assistant',
         content: `Sorry, I encountered an error: ${errorMessage}`
@@ -63,4 +71,7 @@ export const useChatStore = create((set, get) => ({
       }));
     }
   },
+
+  // --- NEW: Action to clear the chat history ---
+  clearChat: () => set({ messages: [initialMessage], conversationId: null }),
 }));
