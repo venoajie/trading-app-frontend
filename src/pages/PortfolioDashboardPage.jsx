@@ -1,38 +1,15 @@
 
 // src/pages/PortfolioDashboardPage.jsx
-import { Grid, Card, Title, Text, Group, RingProgress, Table, Paper } from '@mantine/core';
-import { Treemap, ResponsiveContainer } from 'recharts';
+import { Grid, Card, Title, Text, Group, RingProgress, Table, Paper, Center } from '@mantine/core';
+// import { Treemap, ResponsiveContainer } from 'recharts'; // Temporarily commented out
 
 // --- Mock Data for Visualization ---
-const riskExposureData = [
-  { name: 'US Equities', size: 45000, fill: '#8884d8' },
-  { name: 'Intl Equities', size: 25000, fill: '#83a6ed' },
-  { name: 'Fixed Income', size: 15000, fill: '#8dd1e1' },
-  { name: 'Commodities', size: 10000, fill: '#82ca9d' },
-  { name: 'Cash', size: 5000, fill: '#a4de6c' },
-];
-
 const targetAlignmentData = [
   { goal: 'Retirement (2050)', progress: 75, strategy: 'Long-Term Growth', effectiveness: 'High' },
   { goal: 'Home Down Payment (2028)', progress: 40, strategy: 'Balanced Growth', effectiveness: 'Medium' },
   { goal: 'Education Fund (2035)', progress: 60, strategy: 'Growth & Income', effectiveness: 'High' },
 ];
 
-// A custom component for the Treemap tooltip for better styling
-const CustomTreemapTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length) {
-    const data = payload[0].payload;
-    return (
-      <Paper withBorder shadow="md" p="xs" radius="sm">
-        <Text fw={500}>{data.name}</Text>
-        <Text size="sm">${data.size.toLocaleString()}</Text>
-      </Paper>
-    );
-  }
-  return null;
-};
-
-// CORRECTIVE ACTION: Changed from a named export to a default export
 function PortfolioDashboardPage() {
   const rows = targetAlignmentData.map((row) => (
     <Table.Tr key={row.goal}>
@@ -78,15 +55,10 @@ function PortfolioDashboardPage() {
         <Card withBorder shadow="sm" radius="md" padding="lg" style={{ height: '100%' }}>
           <Title order={4}>Risk Exposure Map</Title>
            <Text c="dimmed" size="sm" mt="xs">Asset Class Concentration</Text>
-          <ResponsiveContainer width="100%" height={250}>
-            <Treemap
-              data={riskExposureData}
-              dataKey="size"
-              ratio={4 / 3}
-              stroke="#fff"
-              content={<CustomTreemapTooltip />}
-            />
-          </ResponsiveContainer>
+          {/* DIAGNOSTIC ACTION: Replaced Treemap with a placeholder */}
+          <Center style={{ height: 250 }}>
+            <Text c="dimmed">Chart component is temporarily disabled for testing.</Text>
+          </Center>
         </Card>
       </Grid.Col>
 
