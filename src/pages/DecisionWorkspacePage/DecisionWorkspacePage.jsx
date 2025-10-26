@@ -5,7 +5,8 @@ import { InputPanel } from './components/InputPanel';
 import { AnalysisPanel } from './components/AnalysisPanel';
 import { CoachingPanel } from './components/CoachingPanel';
 
-export function DecisionWorkspacePage() {
+// CORRECTIVE ACTION: Removed 'export' from this line
+function DecisionWorkspacePage() {
   return (
     <Grid>
       {/* Left Panel: User Inputs */}
@@ -31,3 +32,5 @@ export function DecisionWorkspacePage() {
     </Grid>
   );
 }
+
+export default DecisionWorkspacePage;
