@@ -2,7 +2,8 @@
 // src/pages/LearningJournalPage.jsx
 import { Title, Text, Container } from '@mantine/core';
 
-export function LearningJournalPage() {
+// CORRECTIVE ACTION: Changed from a named export to a default export
+function LearningJournalPage() {
   return (
     <Container>
       <Title order={1}>Learning Journal</Title>
@@ -13,3 +14,5 @@ export function LearningJournalPage() {
     </Container>
   );
 }
+
+export default LearningJournalPage;
