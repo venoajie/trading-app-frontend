@@ -11,8 +11,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './store/authStore';
 import { AppLayout } from './layouts/AppLayout';
 
-// --- CORRECTIVE ACTION: Changed all page imports from named to default ---
-// This aligns with the 'export default ComponentName' syntax used in the page files.
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
 import DecisionWorkspacePage from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
@@ -42,17 +40,19 @@ export default function App() {
     <MantineProvider defaultColorScheme="dark">
       <Notifications />
       <Routes>
-        <Route element={<AppLayout />}>
+        {/* CORRECTIVE ACTION: Added path="/" to the layout route to fix the router context */}
+        <Route path="/" element={<AppLayout />}>
           {/* Public Routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="register" element={<RegisterPage />} />
           
           {/* Protected Routes */}
-          <Route path="/" element={<ProtectedRoute><PortfolioDashboardPage /></ProtectedRoute>} />
-          <Route path="/portfolio" element={<ProtectedRoute><PortfolioDashboardPage /></ProtectedRoute>} />
-          <Route path="/transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
-          <Route path="/decision-workspace" element={<ProtectedRoute><DecisionWorkspacePage /></ProtectedRoute>} />
-          <Route path="/learning-journal" element={<ProtectedRoute><LearningJournalPage /></ProtectedRoute>} />
+          {/* Changed the root protected route to be an 'index' route */}
+          <Route index element={<ProtectedRoute><PortfolioDashboardPage /></ProtectedRoute>} />
+          <Route path="portfolio" element={<ProtectedRoute><PortfolioDashboardPage /></ProtectedRoute>} />
+          <Route path="transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
+          <Route path="decision-workspace" element={<ProtectedRoute><DecisionWorkspacePage /></ProtectedRoute>} />
+          <Route path="learning-journal" element={<ProtectedRoute><LearningJournalPage /></ProtectedRoute>} />
         </Route>
       </Routes>
     </MantineProvider>
