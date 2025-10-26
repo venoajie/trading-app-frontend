@@ -1,11 +1,73 @@
-
 // src/pages/DecisionWorkspacePage/components/AnalysisPanel.jsx
-import { Stack, Title, Text, Paper, Center } from '@mantine/core';
-// import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts'; // Temporarily commented out
+import { Stack, Title, Text, Paper } from '@mantine/core';
 import { useDecisionStore } from '../../../store/decisionStore';
+import { Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title as ChartTitle,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// Register the necessary components for Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ChartTitle,
+  Tooltip,
+  Legend
+);
 
 export function AnalysisPanel() {
-  const { expectedValue } = useDecisionStore();
+  const { expectedValue, assumptions } = useDecisionStore();
+
+  const chartData = {
+    labels: assumptions.map(a => a.scenario),
+    datasets: [
+      {
+        label: 'Outcome ($)',
+        data: assumptions.map(a => a.outcome),
+        backgroundColor: assumptions.map(a => 
+          a.scenario === 'Best Case' ? 'rgba(75, 192, 192, 0.6)' :
+          a.scenario === 'Worst Case' ? 'rgba(255, 99, 132, 0.6)' :
+          'rgba(54, 162, 235, 0.6)'
+        ),
+        borderColor: assumptions.map(a => 
+          a.scenario === 'Best Case' ? 'rgb(75, 192, 192)' :
+          a.scenario === 'Worst Case' ? 'rgb(255, 99, 132)' :
+          'rgb(54, 162, 235)'
+        ),
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false, // The colors are self-explanatory
+      },
+      title: {
+        display: true,
+        text: 'Scenario Outcomes',
+      },
+    },
+    scales: {
+        y: {
+            ticks: {
+                callback: function(value) {
+                    return '$' + value;
+                }
+            }
+        }
+    }
+  };
 
   return (
     <Stack>
@@ -19,10 +81,7 @@ export function AnalysisPanel() {
       
       <Title order={4} mt="md">Risk / Reward Profile</Title>
       <Paper withBorder style={{ height: 300 }} p="md">
-        {/* DIAGNOSTIC ACTION: Replaced BarChart with a placeholder */}
-        <Center style={{ height: '100%' }}>
-            <Text c="dimmed">Chart component is temporarily disabled for testing.</Text>
-        </Center>
+        <Bar options={chartOptions} data={chartData} />
       </Paper>
     </Stack>
   );

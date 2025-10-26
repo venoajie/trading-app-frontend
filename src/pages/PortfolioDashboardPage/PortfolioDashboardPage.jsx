@@ -1,8 +1,54 @@
 
 // src/pages/PortfolioDashboardPage/PortfolioDashboardPage.jsx
-import { Grid, Card, Title, Text, Group, Paper, Center, Stack } from '@mantine/core';
+import { Grid, Card, Title, Text, Group, Stack } from '@mantine/core';
 import { GoalManager } from './components/GoalManager';
-import { LiquidityProfile } from './components/LiquidityProfile'; // Import the new component
+import { LiquidityProfile } from './components/LiquidityProfile';
+import { Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+// Register the necessary components for Chart.js
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+// Mock Data for the Risk Exposure Map
+const riskExposureData = {
+  labels: ['US Equities', 'Intl Equities', 'Fixed Income', 'Commodities', 'Cash'],
+  datasets: [
+    {
+      label: 'Portfolio Allocation',
+      data: [45000, 25000, 15000, 10000, 5000],
+      backgroundColor: [
+        'rgba(54, 162, 235, 0.8)',
+        'rgba(75, 192, 192, 0.8)',
+        'rgba(255, 206, 86, 0.8)',
+        'rgba(153, 102, 255, 0.8)',
+        'rgba(255, 159, 64, 0.8)',
+      ],
+      borderColor: [
+        'rgba(54, 162, 235, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+      ],
+      borderWidth: 1,
+    },
+  ],
+};
+
+const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: 'right',
+        },
+    },
+};
 
 function PortfolioDashboardPage() {
   return (
@@ -29,7 +75,7 @@ function PortfolioDashboardPage() {
         </Card>
       </Grid.Col>
 
-      {/* --- NEW: Liquidity Profile --- */}
+      {/* --- Liquidity Profile --- */}
       <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
         <LiquidityProfile />
       </Grid.Col>
@@ -39,9 +85,9 @@ function PortfolioDashboardPage() {
         <Card withBorder shadow="sm" radius="md" padding="lg" style={{ height: '100%' }}>
           <Title order={4}>Risk Exposure Map</Title>
           <Text c="dimmed" size="sm" mt="xs">Asset Class Concentration</Text>
-          <Center style={{ height: 180 }}>
-            <Text c="dimmed">Chart component is temporarily disabled.</Text>
-          </Center>
+          <div style={{ height: 180, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Doughnut data={riskExposureData} options={chartOptions} />
+          </div>
         </Card>
       </Grid.Col>
 
