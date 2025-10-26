@@ -29,7 +29,9 @@ function LoginPage() {
       formBody.append('username', values.email);
       formBody.append('password', values.password);
 
-      const loginResponse = await apiClient.post('/auth/login/', formBody, {
+      // CORRECTIVE ACTION: Removed the trailing slash from '/auth/login/'.
+      // The backend route is '/api/v1/auth/login', and the extra slash caused a 404 Not Found error.
+      const loginResponse = await apiClient.post('/auth/login', formBody, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
       const { access_token } = loginResponse.data;
