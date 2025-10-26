@@ -1,3 +1,4 @@
+
 // src/pages/DecisionWorkspacePage/components/AnalysisPanel.jsx
 import { Stack, Title, Text, Paper } from '@mantine/core';
 import { useDecisionStore } from '../../../store/decisionStore';
@@ -12,7 +13,6 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register the necessary components for Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -22,7 +22,8 @@ ChartJS.register(
   Legend
 );
 
-export function AnalysisPanel() {
+// CORRECTIVE ACTION: Removed 'export' from this line
+function AnalysisPanel() {
   const { expectedValue, assumptions } = useDecisionStore();
 
   const chartData = {
@@ -51,7 +52,7 @@ export function AnalysisPanel() {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: false, // The colors are self-explanatory
+        display: false,
       },
       title: {
         display: true,
@@ -86,3 +87,5 @@ export function AnalysisPanel() {
     </Stack>
   );
 }
+
+export default AnalysisPanel;

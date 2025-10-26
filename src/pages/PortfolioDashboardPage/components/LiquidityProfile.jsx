@@ -1,6 +1,6 @@
 
 // src/pages/PortfolioDashboardPage/components/LiquidityProfile.jsx
-import { Card, Title, Text, Group, Divider } from '@mantine/core';
+import { Card, Title, Text, Group, Divider, Stack } from '@mantine/core'; // CORRECTIVE ACTION: Added 'Stack' to the import list
 
 export function LiquidityProfile() {
   // Using static data as per current implementation strategy

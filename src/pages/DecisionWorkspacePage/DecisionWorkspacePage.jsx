@@ -2,10 +2,9 @@
 // src/pages/DecisionWorkspacePage/DecisionWorkspacePage.jsx
 import { Grid, Paper } from '@mantine/core';
 import { InputPanel } from './components/InputPanel';
-import { AnalysisPanel } from './components/AnalysisPanel';
+import AnalysisPanel from './components/AnalysisPanel'; // CORRECTIVE ACTION: Changed to a default import
 import { CoachingPanel } from './components/CoachingPanel';
 
-// CORRECTIVE ACTION: Removed 'export' from this line
 function DecisionWorkspacePage() {
   return (
     <Grid>
