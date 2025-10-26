@@ -9,12 +9,16 @@ import {
 import useAuthStore from '../../store/authStore';
 
 export function MainNav() {
-  const { isAuthenticated } = useAuthStore();
+  // CRITICAL FIX: Subscribe to the 'user' object instead of 'isAuthenticated'.
+  // The presence of the 'user' object is the true indicator that the session
+  // is fully hydrated and private routes can be displayed.
+  const { user } = useAuthStore();
 
   return (
     <Stack>
       {/* --- Private Links (for logged-in users) --- */}
-      {isAuthenticated && (
+      {/* CRITICAL FIX: The condition is now based on 'user' */}
+      {user && (
         <>
           <NavLink
             component={RouterNavLink}
