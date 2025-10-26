@@ -1,31 +1,38 @@
 
 // src/components/Navigation/MainNav.jsx
 import { NavLink as RouterNavLink } from 'react-router-dom';
-import { NavLink, Stack, Divider } from '@mantine/core';
+import { NavLink, Stack, Divider, Text } from '@mantine/core';
 import { 
   IconHome, IconArrowsExchange, IconActivity, IconWorld, 
-  IconChartCandle, IconBrain 
+  IconChartCandle, IconBrain, IconBook 
 } from '@tabler/icons-react';
 import useAuthStore from '../../store/authStore';
 
 export function MainNav() {
-  // CRITICAL FIX: Subscribe to the 'user' object instead of 'isAuthenticated'.
-  // The presence of the 'user' object is the true indicator that the session
-  // is fully hydrated and private routes can be displayed.
   const { user } = useAuthStore();
 
   return (
     <Stack>
       {/* --- Private Links (for logged-in users) --- */}
-      {/* CRITICAL FIX: The condition is now based on 'user' */}
       {user && (
         <>
+          <Text size="xs" fw={500} c="dimmed" tt="uppercase">Portfolio Management</Text>
           <NavLink
             component={RouterNavLink}
             to="/portfolio"
-            label="Dashboard"
+            label="Portfolio Dashboard"
             leftSection={<IconHome size="1rem" stroke={1.5} />}
           />
+          <NavLink
+            component={RouterNavLink}
+            to="/transactions"
+            label="Transactions"
+            leftSection={<IconArrowsExchange size="1rem" stroke={1.5} />}
+          />
+
+          <Divider my="sm" />
+          
+          <Text size="xs" fw={500} c="dimmed" tt="uppercase">Process Review & Learning</Text>
           <NavLink
             component={RouterNavLink}
             to="/decision-workspace"
@@ -34,15 +41,16 @@ export function MainNav() {
           />
           <NavLink
             component={RouterNavLink}
-            to="/transactions"
-            label="Transactions"
-            leftSection={<IconArrowsExchange size="1rem" stroke={1.5} />}
+            to="/learning-journal"
+            label="Learning Journal"
+            leftSection={<IconBook size="1rem" stroke={1.5} />}
           />
           <Divider my="sm" />
         </>
       )}
 
       {/* --- Public Links (for everyone) --- */}
+      <Text size="xs" fw={500} c="dimmed" tt="uppercase">Market Analysis</Text>
       <NavLink
         component={RouterNavLink}
         to="/"
