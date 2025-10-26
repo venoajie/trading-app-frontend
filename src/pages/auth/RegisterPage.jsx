@@ -1,4 +1,5 @@
 
+// src/pages/auth/RegisterPage.jsx
 import React, { useState } from 'react';
 import { useForm } from '@mantine/form';
 import {
@@ -17,14 +18,12 @@ import { notifications } from '@mantine/notifications';
 import { Link, useNavigate } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 
-// --- [REFACTOR] Moved the component outside for better structure ---
 const ConsentCheckbox = ({ formProps }) => (
   <Checkbox
     {...formProps}
     label={
       <>
         I accept the{' '}
-        {/* --- [FIX] Corrected the link paths --- */}
         <Anchor component={Link} to="/terms-of-service" target="_blank">
           Terms of Service
         </Anchor>{' '}
@@ -32,7 +31,6 @@ const ConsentCheckbox = ({ formProps }) => (
         <Anchor component={Link} to="/privacy-policy" target="_blank">
           Privacy Policy
         </Anchor>
-        {/* --- [END FIX] --- */}
       </>
     }
   />
@@ -68,7 +66,8 @@ function RegisterPage() {
     };
 
     try {
-      await apiClient.post('/auth/register', payload);
+      // CRITICAL FIX: Add trailing slash to align with backend API contract.
+      await apiClient.post('/auth/register/', payload);
 
       notifications.show({
         title: 'Registration Successful',
