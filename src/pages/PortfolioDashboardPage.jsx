@@ -32,7 +32,8 @@ const CustomTreemapTooltip = ({ active, payload }) => {
   return null;
 };
 
-export function PortfolioDashboardPage() {
+// CORRECTIVE ACTION: Changed from a named export to a default export
+function PortfolioDashboardPage() {
   const rows = targetAlignmentData.map((row) => (
     <Table.Tr key={row.goal}>
       <Table.Td>{row.goal}</Table.Td>
@@ -110,3 +111,5 @@ export function PortfolioDashboardPage() {
     </Grid>
   );
 }
+
+export default PortfolioDashboardPage;
