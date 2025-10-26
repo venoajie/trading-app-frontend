@@ -11,15 +11,14 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './store/authStore';
 import { AppLayout } from './layouts/AppLayout';
 
-// --- Page Imports ---
-import { LoginPage } from './pages/auth/LoginPage';
-import { RegisterPage } from './pages/auth/RegisterPage';
-import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
-import { TransactionsPage } from './pages/TransactionsPage/TransactionsPage';
-
-// --- NEW PAGE IMPORTS ---
-import { PortfolioDashboardPage } from './pages/PortfolioDashboardPage';
-import { LearningJournalPage } from './pages/LearningJournalPage';
+// --- CORRECTIVE ACTION: Changed all page imports from named to default ---
+// This aligns with the 'export default ComponentName' syntax used in the page files.
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+import DecisionWorkspacePage from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
+import TransactionsPage from './pages/TransactionsPage/TransactionsPage';
+import PortfolioDashboardPage from './pages/PortfolioDashboardPage';
+import LearningJournalPage from './pages/LearningJournalPage';
 
 // A simple wrapper to protect routes that require authentication
 function ProtectedRoute({ children }) {
