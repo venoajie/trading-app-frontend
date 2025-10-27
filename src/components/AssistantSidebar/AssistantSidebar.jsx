@@ -3,13 +3,13 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Stack, ScrollArea, Box, Title, Alert, Group, Chip, Text } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle, IconMoodSad } from '@tabler/icons-react';
 import { useChatStore } from '../../store/chatStore';
 import { useDecisionStore } from '../../store/decisionStore';
+import { useUiStore } from '../../store/uiStore'; // Import uiStore
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 
-// Prompts specific to the Decision Workspace
 const decisionWorkspacePrompts = [
   'Critique my assumptions.',
   'What key risks am I missing?',
@@ -21,38 +21,50 @@ export function AssistantSidebar() {
   const location = useLocation();
   const { messages, isLoading, sendMessage, clearChat } = useChatStore();
   const { tradeIdea, assumptions } = useDecisionStore();
+  const { isAiAssistantAvailable } = useUiStore(); // Get the availability state
   const viewport = useRef(null);
 
   const isOnDecisionWorkspace = location.pathname.includes('/decision-workspace');
 
-  // Effect to clear chat only when entering the decision workspace with a new idea
   useEffect(() => {
     if (isOnDecisionWorkspace && tradeIdea) {
       clearChat();
     }
   }, [isOnDecisionWorkspace, tradeIdea, clearChat]);
 
-
-  // Auto-scroll to the bottom when new messages are added
   useEffect(() => {
     if (viewport.current) {
       viewport.current.scrollTo({ top: viewport.current.scrollHeight, behavior: 'smooth' });
     }
   }, [messages]);
 
-  // Context-aware message sending function
   const handleSendMessage = (prompt) => {
     if (!prompt || !prompt.trim()) return;
-
     let context = null;
-    // Only add the specific decision context if on the correct page
     if (isOnDecisionWorkspace) {
       context = { tradeIdea, assumptions };
     }
-    
     sendMessage(prompt, context);
   };
 
+  // Render an unavailability message if the AI is disabled via config.
+  if (!isAiAssistantAvailable) {
+    return (
+      <Stack h="100%" gap="md">
+        <Title order={4}>AI Coach</Title>
+        <Alert
+          variant="light"
+          color="gray"
+          title="Assistant Unavailable"
+          icon={<IconMoodSad />}
+        >
+          The AI Assistant is currently disabled. Core application features remain active.
+        </Alert>
+      </Stack>
+    );
+  }
+
+  // Render the full AI Coach interface if it is available.
   return (
     <Stack h="100%" gap="md">
       <Title order={4}>AI Coach</Title>
@@ -70,7 +82,6 @@ export function AssistantSidebar() {
       </ScrollArea>
       
       <Stack gap="xs">
-        {/* Conditionally render suggested prompts for the Decision Workspace */}
         {isOnDecisionWorkspace && (
           <>
             <Text size="sm" c="dimmed">Suggested Prompts:</Text>
