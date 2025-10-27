@@ -11,10 +11,8 @@ import {
   Legend,
 } from 'chart.js';
 
-// Register the necessary components for Chart.js
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Mock Data for the Risk Exposure Map
 const riskExposureData = {
   labels: ['US Equities', 'Intl Equities', 'Fixed Income', 'Commodities', 'Cash'],
   datasets: [
