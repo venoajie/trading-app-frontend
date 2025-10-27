@@ -4,7 +4,8 @@ import { Stack, Title, TextInput, Text, NumberInput, Grid, Card, Group, Button }
 import { notifications } from '@mantine/notifications';
 import { useDecisionStore } from '../../../store/decisionStore';
 
-export default function InputPanel() {
+// CORRECTIVE ACTION: Enforce consistent named export.
+export function InputPanel() {
   const { tradeIdea, setTradeIdea, assumptions, updateAssumption, archiveDecision } = useDecisionStore();
 
   const handleSave = () => {

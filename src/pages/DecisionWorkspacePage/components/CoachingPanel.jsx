@@ -7,7 +7,8 @@ import { useDecisionStore } from '../../../store/decisionStore';
 import { ChatMessage } from '../../../components/AssistantSidebar/ChatMessage';
 import { ChatInput } from '../../../components/AssistantSidebar/ChatInput';
 
-export default function CoachingPanel() {
+// CORRECTIVE ACTION: Enforce consistent named export.
+export function CoachingPanel() {
   const { messages, isLoading, sendMessage, clearChat } = useChatStore();
   const { tradeIdea, assumptions } = useDecisionStore();
   const viewport = useRef(null);

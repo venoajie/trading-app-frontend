@@ -1,16 +1,10 @@
+
 // src/pages/PortfolioDashboardPage/PortfolioDashboardPage.jsx
 import { Grid, Card, Title, Text, Group, Stack } from '@mantine/core';
-import GoalManager from './components/GoalManager';
-import LiquidityProfile from './components/LiquidityProfile';
+// CORRECTIVE ACTION: Use named imports for all child components.
+import { GoalManager } from './components/GoalManager';
+import { LiquidityProfile } from './components/LiquidityProfile';
 import { Doughnut } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-
-ChartJS.register(ArcElement, Tooltip, Legend);
 
 const riskExposureData = {
   labels: ['US Equities', 'Intl Equities', 'Fixed Income', 'Commodities', 'Cash'],

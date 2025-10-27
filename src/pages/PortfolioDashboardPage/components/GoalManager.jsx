@@ -6,7 +6,8 @@ import { IconPencil, IconTrash } from '@tabler/icons-react';
 import { useGoalsStore } from '../../../store/goalsStore';
 import { GoalModal } from './GoalModal';
 
-export default function GoalManager() {
+// CORRECTIVE ACTION: Enforce consistent named export.
+export function GoalManager() {
   const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
   const { goals, setEditingGoal, deleteGoal } = useGoalsStore();
 
