@@ -1,4 +1,5 @@
 
+// src/App.jsx
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
@@ -8,8 +9,9 @@ import { Notifications } from '@mantine/notifications';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import useAuthStore from './store/authStore';
-import { useUiStore } from './store/uiStore'; // Import uiStore
+import { useUiStore } from './store/uiStore';
 import { AppLayout } from './layouts/AppLayout';
+import { theme } from './theme'; // Import the central theme object
 
 // Use named imports for all pages
 import { LoginPage } from './pages/auth/LoginPage';
@@ -29,15 +31,11 @@ export default function App() {
   const { token, fetchUserOnLoad, setLoadingComplete } = useAuthStore();
   const { setAiAssistantAvailability } = useUiStore();
 
-  // Effect to configure app-level features on startup
   useEffect(() => {
-    // Check the Vite environment variable for AI Assistant availability.
-    // The variable is a string, so we compare it to 'true'.
     const isAiEnabled = import.meta.env.VITE_AI_ASSISTANT_ENABLED === 'true';
     setAiAssistantAvailability(isAiEnabled);
   }, [setAiAssistantAvailability]);
 
-  // Effect for user session loading
   useEffect(() => {
     if (token) {
       fetchUserOnLoad();
@@ -47,7 +45,8 @@ export default function App() {
   }, [token, fetchUserOnLoad, setLoadingComplete]);
 
   return (
-    <MantineProvider defaultColorScheme="dark">
+    // The MantineProvider now uses the custom theme object and defaults to dark mode.
+    <MantineProvider theme={theme} defaultColorScheme="dark">
       <Notifications />
       <Routes>
         <Route path="/" element={<AppLayout />}>

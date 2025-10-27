@@ -6,7 +6,7 @@ import { Stack, ScrollArea, Box, Title, Alert, Group, Chip, Text } from '@mantin
 import { IconInfoCircle, IconMoodSad } from '@tabler/icons-react';
 import { useChatStore } from '../../store/chatStore';
 import { useDecisionStore } from '../../store/decisionStore';
-import { useUiStore } from '../../store/uiStore'; // Import uiStore
+import { useUiStore } from '../../store/uiStore';
 import { ChatMessage } from './ChatMessage';
 import { ChatInput } from './ChatInput';
 
@@ -21,7 +21,7 @@ export function AssistantSidebar() {
   const location = useLocation();
   const { messages, isLoading, sendMessage, clearChat } = useChatStore();
   const { tradeIdea, assumptions } = useDecisionStore();
-  const { isAiAssistantAvailable } = useUiStore(); // Get the availability state
+  const { isAiAssistantAvailable } = useUiStore();
   const viewport = useRef(null);
 
   const isOnDecisionWorkspace = location.pathname.includes('/decision-workspace');
@@ -47,7 +47,6 @@ export function AssistantSidebar() {
     sendMessage(prompt, context);
   };
 
-  // Render an unavailability message if the AI is disabled via config.
   if (!isAiAssistantAvailable) {
     return (
       <Stack h="100%" gap="md">
@@ -64,12 +63,12 @@ export function AssistantSidebar() {
     );
   }
 
-  // Render the full AI Coach interface if it is available.
   return (
     <Stack h="100%" gap="md">
       <Title order={4}>AI Coach</Title>
 
-      <Alert variant="light" color="blue" radius="md" title="Analysis, Not Advice" icon={<IconInfoCircle />}>
+      {/* CORRECTIVE ACTION: Using 'yellow' (amber) for the accent color as per the design spec. */}
+      <Alert variant="light" color="yellow" radius="md" title="Analysis, Not Advice" icon={<IconInfoCircle />}>
         This AI provides analysis to improve your decision-making process. It is not financial advice.
       </Alert>
 

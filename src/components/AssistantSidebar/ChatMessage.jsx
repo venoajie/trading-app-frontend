@@ -1,11 +1,9 @@
 
 // src/components/AssistantSidebar/ChatMessage.jsx
-import { Avatar, Group, Paper, Stack, Text, ThemeIcon, List } from '@mantine/core';
-import { IconUser, IconRobot, IconAnalyze } from '@tabler/icons-react';
+import { Avatar, Group, Paper, Stack, Text, ThemeIcon, List, Alert } from '@mantine/core';
+import { IconUser, IconRobot, IconAnalyze, IconAlertTriangle } from '@tabler/icons-react';
 import Markdown from 'react-markdown';
 
-// This new sub-component renders structured AI messages for enhanced clarity.
-// It will activate automatically when your API sends a message with type: 'structured_insight'.
 function StructuredInsight({ payload }) {
   return (
     <Stack gap="xs">
@@ -26,8 +24,22 @@ function StructuredInsight({ payload }) {
 }
 
 export function ChatMessage({ message }) {
+  // CORRECTIVE ACTION: Check for the `isError` flag from the chatStore.
+  if (message.isError) {
+    return (
+      <Alert
+        variant="light"
+        color="red"
+        title="Assistant Error"
+        icon={<IconAlertTriangle />}
+        radius="lg"
+      >
+        {message.content}
+      </Alert>
+    );
+  }
+  
   const isAssistant = message.role === 'assistant';
-  // Check for the new structured message type.
   const isStructured = message.type === 'structured_insight' && message.payload;
 
   const avatar = isAssistant ? (
@@ -59,7 +71,6 @@ export function ChatMessage({ message }) {
           <StructuredInsight payload={message.payload} />
         ) : (
           <Text component="div" size="sm" style={{ lineHeight: 1.6 }}>
-            {/* Using react-markdown allows for rich text formatting from the AI */}
             <Markdown>{message.content}</Markdown>
           </Text>
         )}
