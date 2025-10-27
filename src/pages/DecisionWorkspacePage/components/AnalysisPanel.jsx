@@ -22,7 +22,6 @@ ChartJS.register(
   Legend
 );
 
-// CORRECTIVE ACTION: Removed 'export' from this line
 function AnalysisPanel() {
   const { expectedValue, assumptions } = useDecisionStore();
 
