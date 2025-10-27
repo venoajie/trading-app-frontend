@@ -1,6 +1,7 @@
 
 // src/layouts/AppLayout.jsx
-import { AppShell, Burger, Group, Title, Menu, ActionIcon, LoadingOverlay, Footer, Anchor, Text } from '@mantine/core';
+// CORRECTIVE ACTION: Removed 'Footer' from this import as it's not a direct export.
+import { AppShell, Burger, Group, Title, Menu, ActionIcon, LoadingOverlay, Anchor, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { IconUserCircle, IconLogin, IconUserPlus, IconLogout } from '@tabler/icons-react';
@@ -51,7 +52,6 @@ export function AppLayout() {
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
           <Group>
-            {/* CORRECTIVE ACTION: Connected Burger to mobile-specific state for correct behavior on small screens. */}
             <Burger opened={mobileNavOpened} onClick={toggleMobileNav} hiddenFrom="sm" size="sm" />
             <Title order={3} component={Link} to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
               Portopilot
@@ -103,7 +103,6 @@ export function AppLayout() {
         <Outlet />
       </AppShell.Main>
 
-      {/* NEW: Global Footer */}
       <AppShell.Footer p="md">
         <Group justify="center" gap="xl">
           <Text size="sm" c="dimmed">&copy; {new Date().getFullYear()} Portopilot</Text>
