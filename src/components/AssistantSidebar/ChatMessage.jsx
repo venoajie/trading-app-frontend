@@ -1,26 +1,68 @@
 
 // src/components/AssistantSidebar/ChatMessage.jsx
-import { Group, Avatar, Text, Paper } from '@mantine/core';
-import { IconUser, IconCpu } from '@tabler/icons-react'; // npm install @tabler/icons-react
+import { Avatar, Group, Paper, Stack, Text, ThemeIcon, List } from '@mantine/core';
+import { IconUser, IconRobot, IconAnalyze } from '@tabler/icons-react';
+import Markdown from 'react-markdown';
+
+// This new sub-component renders structured AI messages for enhanced clarity.
+// It will activate automatically when your API sends a message with type: 'structured_insight'.
+function StructuredInsight({ payload }) {
+  return (
+    <Stack gap="xs">
+      <Group>
+        <ThemeIcon variant="light" size="lg">
+          <IconAnalyze size={20} />
+        </ThemeIcon>
+        <Text fw={700} size="sm">{payload.title}</Text>
+      </Group>
+      <List spacing="xs" size="sm" withPadding>
+        {payload.points.map((point, index) => (
+          <List.Item key={index}>{point}</List.Item>
+        ))}
+      </List>
+      {payload.conclusion && <Text c="dimmed" size="sm">{payload.conclusion}</Text>}
+    </Stack>
+  );
+}
 
 export function ChatMessage({ message }) {
-  const isUser = message.role === 'user';
-  
+  const isAssistant = message.role === 'assistant';
+  // Check for the new structured message type.
+  const isStructured = message.type === 'structured_insight' && message.payload;
+
+  const avatar = isAssistant ? (
+    <Avatar color="blue" radius="xl">
+      <IconRobot size="1.5rem" />
+    </Avatar>
+  ) : (
+    <Avatar color="gray" radius="xl">
+      <IconUser size="1.5rem" />
+    </Avatar>
+  );
+
   return (
-    <Group gap="sm" align="flex-start" wrap="nowrap">
-      <Avatar color={isUser ? 'blue' : 'teal'} radius="xl">
-        {isUser ? <IconUser size="1.2rem" /> : <IconCpu size="1.2rem" />}
-      </Avatar>
-      <Paper 
-        p="sm" 
-        radius="lg" 
-        withBorder 
-        style={{ 
-          backgroundColor: isUser ? 'var(--mantine-color-blue-light)' : 'var(--mantine-color-body)',
-          maxWidth: '90%'
+    <Group align="flex-start" wrap="nowrap" gap="md">
+      {avatar}
+      <Paper
+        p="md"
+        radius="lg"
+        withBorder
+        style={{
+          flex: 1,
+          backgroundColor: isAssistant
+            ? 'var(--mantine-color-dark-6)'
+            : 'var(--mantine-color-dark-7)',
+          maxWidth: '90%',
         }}
       >
-        <Text size="sm" style={{ whiteSpace: 'pre-wrap' }}>{message.content}</Text>
+        {isStructured ? (
+          <StructuredInsight payload={message.payload} />
+        ) : (
+          <Text component="div" size="sm" style={{ lineHeight: 1.6 }}>
+            {/* Using react-markdown allows for rich text formatting from the AI */}
+            <Markdown>{message.content}</Markdown>
+          </Text>
+        )}
       </Paper>
     </Group>
   );
