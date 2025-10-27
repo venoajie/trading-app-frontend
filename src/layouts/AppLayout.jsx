@@ -1,10 +1,10 @@
 
 // src/layouts/AppLayout.jsx
-import { AppShell, Burger, Group, Title, Menu, ActionIcon, LoadingOverlay } from '@mantine/core';
+import { AppShell, Burger, Group, Title, Menu, ActionIcon, LoadingOverlay, Footer, Anchor, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import { IconUserCircle, IconLogin, IconUserPlus, IconLogout } from '@tabler/icons-react';
-import { useEffect } from 'react'; // Import useEffect
+import { useEffect } from 'react';
 
 import { useUiStore } from '../store/uiStore';
 import useAuthStore from '../store/authStore';
@@ -13,12 +13,10 @@ import { AssistantSidebar } from '../components/AssistantSidebar/AssistantSideba
 
 export function AppLayout() {
   const [mobileNavOpened, { toggle: toggleMobileNav }] = useDisclosure();
-  const { isSidebarOpen, toggleSidebar, openSidebar } = useUiStore(); // Get openSidebar action
+  const { isSidebarOpen, openSidebar } = useUiStore();
   const { isAuthenticated, logout, user, isLoadingUser } = useAuthStore();
   const navigate = useNavigate();
 
-  // FIX: This effect ensures the sidebar opens automatically on successful login.
-  // It watches the isAuthenticated flag and triggers the UI state change.
   useEffect(() => {
     if (isAuthenticated) {
       openSidebar();
@@ -47,12 +45,14 @@ export function AppLayout() {
         breakpoint: 'md',
         collapsed: { desktop: !isAuthenticated, mobile: true },
       }}
+      footer={{ height: 60 }}
       padding="md"
     >
       <AppShell.Header>
         <Group h="100%" px="md" justify="space-between">
           <Group>
-            <Burger opened={isSidebarOpen} onClick={toggleSidebar} hiddenFrom="sm" size="sm" />
+            {/* CORRECTIVE ACTION: Connected Burger to mobile-specific state for correct behavior on small screens. */}
+            <Burger opened={mobileNavOpened} onClick={toggleMobileNav} hiddenFrom="sm" size="sm" />
             <Title order={3} component={Link} to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
               Portopilot
             </Title>
@@ -102,6 +102,17 @@ export function AppLayout() {
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>
+
+      {/* NEW: Global Footer */}
+      <AppShell.Footer p="md">
+        <Group justify="center" gap="xl">
+          <Text size="sm" c="dimmed">&copy; {new Date().getFullYear()} Portopilot</Text>
+          <Anchor component="span" c="dimmed" size="sm">About</Anchor>
+          <Anchor component="span" c="dimmed" size="sm">Terms of Service</Anchor>
+          <Anchor component="span" c="dimmed" size="sm">Privacy Policy</Anchor>
+          <Anchor component="span" c="dimmed" size="sm">Disclaimer</Anchor>
+        </Group>
+      </AppShell.Footer>
     </AppShell>
   );
 }

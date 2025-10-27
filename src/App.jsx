@@ -11,9 +11,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './store/authStore';
 import { useUiStore } from './store/uiStore';
 import { AppLayout } from './layouts/AppLayout';
-import { theme } from './theme'; // Import the central theme object
+import { theme } from './theme';
 
-// Use named imports for all pages
+// Import the new LandingPage
+import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { PortfolioDashboardPage } from './pages/PortfolioDashboardPage/PortfolioDashboardPage';
@@ -25,6 +26,20 @@ function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
   if (isLoadingUser) return null;
   return isAuthenticated ? children : <Navigate to="/login" replace />;
+}
+
+// NEW: Component to handle root URL logic
+function Root() {
+  const { isAuthenticated, isLoadingUser } = useAuthStore();
+
+  // Show nothing while we determine auth state to prevent flash of content
+  if (isLoadingUser) {
+    return null;
+  }
+
+  // If logged in, redirect to the main dashboard.
+  // If not, show the public-facing landing page.
+  return isAuthenticated ? <Navigate to="/portfolio" replace /> : <LandingPage />;
 }
 
 export default function App() {
@@ -45,17 +60,17 @@ export default function App() {
   }, [token, fetchUserOnLoad, setLoadingComplete]);
 
   return (
-    // The MantineProvider now uses the custom theme object and defaults to dark mode.
     <MantineProvider theme={theme} defaultColorScheme="dark">
       <Notifications />
       <Routes>
         <Route path="/" element={<AppLayout />}>
           {/* Public Routes */}
+          {/* CORRECTIVE ACTION: The index route now uses the Root component to show LandingPage or redirect. */}
+          <Route index element={<Root />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           
           {/* Protected Routes */}
-          <Route index element={<ProtectedRoute><PortfolioDashboardPage /></ProtectedRoute>} />
           <Route path="portfolio" element={<ProtectedRoute><PortfolioDashboardPage /></ProtectedRoute>} />
           <Route path="transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
           <Route path="decision-workspace" element={<ProtectedRoute><DecisionWorkspacePage /></ProtectedRoute>} />
