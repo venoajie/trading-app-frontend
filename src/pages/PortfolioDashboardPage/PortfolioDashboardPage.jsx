@@ -1,7 +1,7 @@
 // src/pages/PortfolioDashboardPage/PortfolioDashboardPage.jsx
 import { Grid, Card, Title, Text, Group, Stack } from '@mantine/core';
-import { GoalManager } from './components/GoalManager';
-import { LiquidityProfile } from './components/LiquidityProfile';
+import GoalManager from './components/GoalManager';
+import LiquidityProfile from './components/LiquidityProfile';
 import { Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -99,6 +99,3 @@ export function PortfolioDashboardPage() {
     </Grid>
   );
 }
-
-// Remove the default export to avoid conflicts
-// export default PortfolioDashboardPage;

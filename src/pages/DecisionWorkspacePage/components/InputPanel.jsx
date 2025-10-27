@@ -4,7 +4,7 @@ import { Stack, Title, TextInput, Text, NumberInput, Grid, Card, Group, Button }
 import { notifications } from '@mantine/notifications';
 import { useDecisionStore } from '../../../store/decisionStore';
 
-export function InputPanel() {
+export default function InputPanel() {
   const { tradeIdea, setTradeIdea, assumptions, updateAssumption, archiveDecision } = useDecisionStore();
 
   const handleSave = () => {
@@ -76,7 +76,6 @@ export function InputPanel() {
         </Stack>
       </Card>
 
-      {/* --- NEW: Save Button --- */}
       <Button mt="xl" onClick={handleSave}>
         Save to Journal
       </Button>

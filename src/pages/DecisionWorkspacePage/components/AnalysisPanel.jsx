@@ -22,8 +22,7 @@ ChartJS.register(
   Legend
 );
 
-// CORRECTIVE ACTION: Reverted to a named export for consistency
-export function AnalysisPanel() {
+export default function AnalysisPanel() {
   const { expectedValue, assumptions } = useDecisionStore();
 
   const chartData = {

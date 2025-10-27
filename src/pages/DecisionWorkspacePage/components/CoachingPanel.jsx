@@ -7,7 +7,7 @@ import { useDecisionStore } from '../../../store/decisionStore';
 import { ChatMessage } from '../../../components/AssistantSidebar/ChatMessage';
 import { ChatInput } from '../../../components/AssistantSidebar/ChatInput';
 
-export function CoachingPanel() {
+export default function CoachingPanel() {
   const { messages, isLoading, sendMessage, clearChat } = useChatStore();
   const { tradeIdea, assumptions } = useDecisionStore();
   const viewport = useRef(null);

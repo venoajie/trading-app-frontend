@@ -1,9 +1,8 @@
 
 // src/pages/PortfolioDashboardPage/components/LiquidityProfile.jsx
-import { Card, Title, Text, Group, Divider, Stack } from '@mantine/core'; // Added 'Stack'
+import { Card, Title, Text, Group, Divider, Stack } from '@mantine/core';
 
-// CORRECTIVE ACTION: Enforce consistent named export
-export function LiquidityProfile() {
+export default function LiquidityProfile() {
   const liquidityData = {
     availableCash: 5000,
     marketableSecurities: 22000,

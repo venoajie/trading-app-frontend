@@ -1,8 +1,9 @@
+
 // src/pages/DecisionWorkspacePage/DecisionWorkspacePage.jsx
 import { Grid, Paper } from '@mantine/core';
-import { InputPanel } from './components/InputPanel';
-import { AnalysisPanel } from './components/AnalysisPanel';
-import { CoachingPanel } from './components/CoachingPanel';
+import InputPanel from './components/InputPanel';
+import AnalysisPanel from './components/AnalysisPanel';
+import CoachingPanel from './components/CoachingPanel';
 
 export function DecisionWorkspacePage() {
   return (
@@ -30,6 +31,3 @@ export function DecisionWorkspacePage() {
     </Grid>
   );
 }
-
-// Remove default export
-// export default DecisionWorkspacePage;
