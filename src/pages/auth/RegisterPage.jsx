@@ -35,7 +35,7 @@ const ConsentCheckbox = ({ formProps }) => (
   />
 );
 
-// CORRECTIVE ACTION: Convert to named export
+
 export function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();

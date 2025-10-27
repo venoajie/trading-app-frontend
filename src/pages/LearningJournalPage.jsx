@@ -45,7 +45,6 @@ function JournalEntry({ entry }) {
   );
 }
 
-// CORRECTIVE ACTION: Convert to named export
 export function LearningJournalPage() {
   const { journal } = useDecisionStore();
 
