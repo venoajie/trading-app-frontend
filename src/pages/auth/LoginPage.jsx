@@ -1,4 +1,3 @@
-
 // src/pages/auth/LoginPage.jsx
 import React, { useState } from 'react';
 import { useForm } from '@mantine/form';
@@ -8,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import apiClient from '../../services/apiClient';
 import useAuthStore from '../../store/authStore';
 
-function LoginPage() {
+export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { hydrateSession } = useAuthStore();
@@ -29,20 +28,18 @@ function LoginPage() {
       formBody.append('username', values.email);
       formBody.append('password', values.password);
 
-      // CORRECTIVE ACTION: Removed the trailing slash from '/auth/login/'.
-      // The backend route is '/api/v1/auth/login', and the extra slash caused a 404 Not Found error.
       const loginResponse = await apiClient.post('/auth/login', formBody, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       });
       const { access_token } = loginResponse.data;
 
-      // Step 2: Use the new token immediately to fetch the user profile. This bypasses the interceptor.
+      // Step 2: Use the new token immediately to fetch the user profile
       const userResponse = await apiClient.get('/users/me', {
         headers: { Authorization: `Bearer ${access_token}` },
       });
       const user = userResponse.data;
 
-      // Step 3: Commit the entire successful transaction to the state store in one atomic action.
+      // Step 3: Commit the entire successful transaction to the state store
       hydrateSession({ token: access_token, user });
       
       notifications.show({
@@ -91,4 +88,5 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+// Remove default export
+// export default LoginPage;

@@ -1,4 +1,3 @@
-
 // src/pages/LearningJournalPage.jsx
 import { Title, Text, Container, Accordion, Group, Table, Alert, Center } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -46,7 +45,8 @@ function JournalEntry({ entry }) {
   );
 }
 
-function LearningJournalPage() {
+// CORRECTIVE ACTION: Convert to named export
+export function LearningJournalPage() {
   const { journal } = useDecisionStore();
 
   if (journal.length === 0) {
@@ -77,4 +77,5 @@ function LearningJournalPage() {
   );
 }
 
-export default LearningJournalPage;
+// Remove default export
+// export default LearningJournalPage;

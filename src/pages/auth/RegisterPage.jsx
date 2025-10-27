@@ -1,4 +1,3 @@
-
 // src/pages/auth/RegisterPage.jsx
 import React, { useState } from 'react';
 import { useForm } from '@mantine/form';
@@ -36,7 +35,8 @@ const ConsentCheckbox = ({ formProps }) => (
   />
 );
 
-function RegisterPage() {
+// CORRECTIVE ACTION: Convert to named export
+export function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -66,7 +66,6 @@ function RegisterPage() {
     };
 
     try {
-      // CRITICAL FIX: Add trailing slash to align with backend API contract.
       await apiClient.post('/auth/register/', payload);
 
       notifications.show({
@@ -148,4 +147,5 @@ function RegisterPage() {
   );
 }
 
-export default RegisterPage;
+// Remove default export
+// export default RegisterPage;

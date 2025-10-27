@@ -1,4 +1,3 @@
-
 // src/pages/PortfolioDashboardPage/PortfolioDashboardPage.jsx
 import { Grid, Card, Title, Text, Group, Stack } from '@mantine/core';
 import { GoalManager } from './components/GoalManager';
@@ -48,7 +47,7 @@ const chartOptions = {
     },
 };
 
-function PortfolioDashboardPage() {
+export function PortfolioDashboardPage() {
   return (
     <Grid>
       {/* --- Portfolio Summary --- */}
@@ -101,4 +100,5 @@ function PortfolioDashboardPage() {
   );
 }
 
-export default PortfolioDashboardPage;
+// Remove the default export to avoid conflicts
+// export default PortfolioDashboardPage;

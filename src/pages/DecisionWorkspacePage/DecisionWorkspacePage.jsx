@@ -1,12 +1,10 @@
-
 // src/pages/DecisionWorkspacePage/DecisionWorkspacePage.jsx
 import { Grid, Paper } from '@mantine/core';
-// CORRECTIVE ACTION: Use consistent named imports for all child components
 import { InputPanel } from './components/InputPanel';
 import { AnalysisPanel } from './components/AnalysisPanel';
 import { CoachingPanel } from './components/CoachingPanel';
 
-function DecisionWorkspacePage() {
+export function DecisionWorkspacePage() {
   return (
     <Grid>
       {/* Left Panel: User Inputs */}
@@ -33,4 +31,5 @@ function DecisionWorkspacePage() {
   );
 }
 
-export default DecisionWorkspacePage;
+// Remove default export
+// export default DecisionWorkspacePage;

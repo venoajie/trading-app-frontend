@@ -1,4 +1,3 @@
-
 // src/pages/TransactionsPage/TransactionsPage.jsx
 import { useState, useEffect } from 'react';
 import { Title, Button, Stack, LoadingOverlay, Alert, Center } from '@mantine/core';
@@ -9,8 +8,7 @@ import apiClient from '../../services/apiClient';
 import { TransactionsTable } from './components/TransactionsTable';
 import { TransactionModal } from './components/TransactionModal';
 
-// CORRECTIVE ACTION: Removed 'export' from this line
-function TransactionsPage() {
+export function TransactionsPage() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
@@ -70,4 +68,5 @@ function TransactionsPage() {
   );
 }
 
-export default TransactionsPage;
+// Remove default export
+// export default TransactionsPage;
