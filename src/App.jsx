@@ -10,13 +10,13 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import useAuthStore from './store/authStore';
 import { AppLayout } from './layouts/AppLayout';
 
-// TEMPORARY: Use default imports to isolate the issue
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
-import PortfolioDashboardPage from './pages/PortfolioDashboardPage/PortfolioDashboardPage';
-import DecisionWorkspacePage from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
-import TransactionsPage from './pages/TransactionsPage/TransactionsPage';
-import LearningJournalPage from './pages/LearningJournalPage';
+// Use named imports for all pages
+import { LoginPage } from './pages/auth/LoginPage';
+import { RegisterPage } from './pages/auth/RegisterPage';
+import { PortfolioDashboardPage } from './pages/PortfolioDashboardPage/PortfolioDashboardPage';
+import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
+import { TransactionsPage } from './pages/TransactionsPage/TransactionsPage';
+import { LearningJournalPage } from './pages/LearningJournalPage';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
