@@ -43,14 +43,24 @@ Global state is managed via Zustand stores, located in `/src/store`. These store
 *   **State Schema:**
     *   `isSidebarOpen: boolean`: Controls the visibility of the main navigation/AI assistant sidebar.
 
+### 2.4. `decisionStore.js`
+*   **purpose**: Managing the state of the Decision Workspace and the Learning Journal,
+*   **State Schema:**
+    *   (`tradeIdea`, `assumptions`, `expectedValue`, `journal`), and its core actions (`archiveDecision`).
+
+### 2.5. `goalsStore.js`
+*   **purpose**: Managing user-defined financial goals
+*   **State Schema:**
+    *   (`goals`, `editingGoal`), and its core actions (`addGoal`, `updateGoal`, `deleteGoal`)
+
 ## 3. Routing & Access Control Architecture (`App.jsx`)
 
 Routing is managed by `react-router-dom`. The architecture enforces a strict separation between public and private sections of the application.
 
 *   **Public Routes:** Paths such as `/login`, `/register`, and `/` (the landing page) are accessible to all users. They do not use the `ProtectedRoute` component.
-*   **Protected Routes:** Paths such as `/transactions` are wrapped in the `<ProtectedRoute>` component.
+*   **Protected Routes:** Paths such as `/portfolio`, `/decision-workspace`, and `/learning-journal` are wrapped in the `<ProtectedRoute>` component.
     *   **Mechanism:** `ProtectedRoute` reads `isAuthenticated` from the `authStore`. If `false`, it redirects the user to `/login`.
-*   **Layout Route:** The `<AppLayout>` component is used as a layout route (`<Route path="/" element={<AppLayout />}>`). All child routes (e.g., `/`, `/transactions`) are rendered inside the `AppLayout`'s `<Outlet />`, providing a consistent application shell.
+*   **Layout Route:** The `<AppLayout>` component is used as a layout route (`<Route path="/" element={<AppLayout />}>`). All child routes (e.g., `/`, `/transactions`) are rendered inside the `AppLayout`'s `<Outlet />`, providing a consistent application shell. `/portfolio` is now the default view for authenticated users.
 
 ## 4. API Client & Data Contract (`services/apiClient.js`)
 
@@ -62,7 +72,7 @@ All communication with the backend **MUST** go through the singleton Axios insta
 ## 5. Core Component Architecture
 
 *   **Public View (Visitors):** Unauthenticated users see a public-facing landing page and can navigate to other public pages like "Market Update." The login and registration pages are standalone.
-*   **Private View (Authenticated Users):** After logging in, the layout transforms into a three-column dashboard.
+*   **Private View (Authenticated Users):** After logging in, the layout transforms into a three-column dashboard. "The private view is centered around the `PortfolioDashboardPage`, which acts as a 'Command Center'. From there, users can navigate to specialized workflows like the `DecisionWorkspacePage` for trade analysis and the `LearningJournalPage` for process review."
 
 *   **`/layouts/AppLayout.jsx`**: The primary application shell, managed by Mantine's `AppShell`.
     *   **Responsibility:** Renders the main header, navigation sidebar, AI assistant sidebar, and the `<Outlet />` where the active page component is rendered.
