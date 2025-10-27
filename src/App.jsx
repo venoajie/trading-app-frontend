@@ -1,3 +1,4 @@
+
 // src/App.jsx
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
@@ -6,6 +7,29 @@ import { useEffect } from 'react';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Routes, Route, Navigate } from 'react-router-dom';
+
+// CORRECTIVE ACTION: Centralize Chart.js registration to ensure it runs only once.
+import {
+  Chart as ChartJS,
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title as ChartTitle,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  ChartTitle,
+  Tooltip,
+  Legend
+);
+// END CORRECTIVE ACTION
 
 import useAuthStore from './store/authStore';
 import { AppLayout } from './layouts/AppLayout';

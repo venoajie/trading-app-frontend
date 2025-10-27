@@ -3,26 +3,10 @@
 import { Stack, Title, Text, Paper } from '@mantine/core';
 import { useDecisionStore } from '../../../store/decisionStore';
 import { Bar } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title as ChartTitle,
-  Tooltip,
-  Legend,
-} from 'chart.js';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ChartTitle,
-  Tooltip,
-  Legend
-);
-
-export default function AnalysisPanel() {
+// CORRECTIVE ACTION: Remove local Chart.js registration. It is now handled globally in App.jsx.
+// CORRECTIVE ACTION: Reverted to a named export for consistency.
+export function AnalysisPanel() {
   const { expectedValue, assumptions } = useDecisionStore();
 
   const chartData = {
