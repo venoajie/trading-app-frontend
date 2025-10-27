@@ -22,7 +22,9 @@ const useAuthStore = create((set, get) => ({
 
   logout: () => {
     localStorage.removeItem('accessToken');
-    set({ token: null, isAuthenticated: false, user: null, portfolioId: null });
+    // CORRECTIVE ACTION: This action is now the single source of truth for the logged-out state.
+    // It atomically sets all relevant state properties, including isLoadingUser, to prevent race conditions.
+    set({ token: null, isAuthenticated: false, user: null, portfolioId: null, isLoadingUser: false });
   },
 
   // This is ONLY for validating a session on app startup.
@@ -34,8 +36,9 @@ const useAuthStore = create((set, get) => ({
       get().hydrateSession({ token, user });
     } catch (error) {
       console.error("Session validation failed:", error);
+      // CORRECTIVE ACTION: On failure, delegate entirely to the atomic logout action.
+      // This eliminates the separate `set({ isLoadingUser: false })` call.
       get().logout();
-      set({ isLoadingUser: false });
     }
   },
   setLoadingComplete: () => set({ isLoadingUser: false }),
