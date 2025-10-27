@@ -8,28 +8,8 @@ import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-// CORRECTIVE ACTION: Centralize Chart.js registration to ensure it runs only once.
-import {
-  Chart as ChartJS,
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title as ChartTitle,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-
-ChartJS.register(
-  ArcElement,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  ChartTitle,
-  Tooltip,
-  Legend
-);
-// END CORRECTIVE ACTION
+// CORRECTIVE ACTION: Removed all Chart.js registration to isolate the error source.
+// The library will be re-evaluated after core functionality is restored.
 
 import useAuthStore from './store/authStore';
 import { AppLayout } from './layouts/AppLayout';

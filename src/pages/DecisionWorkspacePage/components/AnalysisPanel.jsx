@@ -2,56 +2,11 @@
 // src/pages/DecisionWorkspacePage/components/AnalysisPanel.jsx
 import { Stack, Title, Text, Paper } from '@mantine/core';
 import { useDecisionStore } from '../../../store/decisionStore';
-import { Bar } from 'react-chartjs-2';
 
-// CORRECTIVE ACTION: Remove local Chart.js registration. It is now handled globally in App.jsx.
-// CORRECTIVE ACTION: Reverted to a named export for consistency.
+// CORRECTIVE ACTION: Removed Bar chart component and related imports to isolate error.
+
 export function AnalysisPanel() {
-  const { expectedValue, assumptions } = useDecisionStore();
-
-  const chartData = {
-    labels: assumptions.map(a => a.scenario),
-    datasets: [
-      {
-        label: 'Outcome ($)',
-        data: assumptions.map(a => a.outcome),
-        backgroundColor: assumptions.map(a => 
-          a.scenario === 'Best Case' ? 'rgba(75, 192, 192, 0.6)' :
-          a.scenario === 'Worst Case' ? 'rgba(255, 99, 132, 0.6)' :
-          'rgba(54, 162, 235, 0.6)'
-        ),
-        borderColor: assumptions.map(a => 
-          a.scenario === 'Best Case' ? 'rgb(75, 192, 192)' :
-          a.scenario === 'Worst Case' ? 'rgb(255, 99, 132)' :
-          'rgb(54, 162, 235)'
-        ),
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      title: {
-        display: true,
-        text: 'Scenario Outcomes',
-      },
-    },
-    scales: {
-        y: {
-            ticks: {
-                callback: function(value) {
-                    return '$' + value;
-                }
-            }
-        }
-    }
-  };
+  const { expectedValue } = useDecisionStore();
 
   return (
     <Stack>
@@ -64,8 +19,9 @@ export function AnalysisPanel() {
       </Paper>
       
       <Title order={4} mt="md">Risk / Reward Profile</Title>
-      <Paper withBorder style={{ height: 300 }} p="md">
-        <Bar options={chartOptions} data={chartData} />
+      <Paper withBorder style={{ height: 300, display: 'flex', justifyContent: 'center', alignItems: 'center' }} p="md">
+         {/* Placeholder for removed chart */}
+        <Text c="dimmed">[Chart temporarily disabled]</Text>
       </Paper>
     </Stack>
   );

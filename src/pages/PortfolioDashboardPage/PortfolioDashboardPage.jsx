@@ -1,45 +1,10 @@
 
 // src/pages/PortfolioDashboardPage/PortfolioDashboardPage.jsx
 import { Grid, Card, Title, Text, Group, Stack } from '@mantine/core';
-// CORRECTIVE ACTION: Use named imports for all child components.
 import { GoalManager } from './components/GoalManager';
 import { LiquidityProfile } from './components/LiquidityProfile';
-import { Doughnut } from 'react-chartjs-2';
 
-const riskExposureData = {
-  labels: ['US Equities', 'Intl Equities', 'Fixed Income', 'Commodities', 'Cash'],
-  datasets: [
-    {
-      label: 'Portfolio Allocation',
-      data: [45000, 25000, 15000, 10000, 5000],
-      backgroundColor: [
-        'rgba(54, 162, 235, 0.8)',
-        'rgba(75, 192, 192, 0.8)',
-        'rgba(255, 206, 86, 0.8)',
-        'rgba(153, 102, 255, 0.8)',
-        'rgba(255, 159, 64, 0.8)',
-      ],
-      borderColor: [
-        'rgba(54, 162, 235, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)',
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
-
-const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        legend: {
-            position: 'right',
-        },
-    },
-};
+// CORRECTIVE ACTION: Removed Doughnut chart component and related imports to isolate error.
 
 export function PortfolioDashboardPage() {
   return (
@@ -76,8 +41,9 @@ export function PortfolioDashboardPage() {
         <Card withBorder shadow="sm" radius="md" padding="lg" style={{ height: '100%' }}>
           <Title order={4}>Risk Exposure Map</Title>
           <Text c="dimmed" size="sm" mt="xs">Asset Class Concentration</Text>
+          {/* Placeholder for removed chart */}
           <div style={{ height: 180, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Doughnut data={riskExposureData} options={chartOptions} />
+            <Text c="dimmed">[Chart temporarily disabled]</Text>
           </div>
         </Card>
       </Grid.Col>
