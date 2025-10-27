@@ -13,7 +13,6 @@ import { useUiStore } from './store/uiStore';
 import { AppLayout } from './layouts/AppLayout';
 import { theme } from './theme';
 
-// Import the new LandingPage
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
@@ -28,19 +27,7 @@ function ProtectedRoute({ children }) {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
-// NEW: Component to handle root URL logic
-function Root() {
-  const { isAuthenticated, isLoadingUser } = useAuthStore();
-
-  // Show nothing while we determine auth state to prevent flash of content
-  if (isLoadingUser) {
-    return null;
-  }
-
-  // If logged in, redirect to the main dashboard.
-  // If not, show the public-facing landing page.
-  return isAuthenticated ? <Navigate to="/portfolio" replace /> : <LandingPage />;
-}
+// The complex Root component has been removed for a simpler, more direct routing architecture.
 
 export default function App() {
   const { token, fetchUserOnLoad, setLoadingComplete } = useAuthStore();
@@ -49,7 +36,7 @@ export default function App() {
   useEffect(() => {
     const isAiEnabled = import.meta.env.VITE_AI_ASSISTANT_ENABLED === 'true';
     setAiAssistantAvailability(isAiEnabled);
-  }, [setAiAssistantAvailability]);
+}, [setAiAssistantAvailability]);
 
   useEffect(() => {
     if (token) {
@@ -65,8 +52,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           {/* Public Routes */}
-          {/* CORRECTIVE ACTION: The index route now uses the Root component to show LandingPage or redirect. */}
-          <Route index element={<Root />} />
+          {/* The index route now always serves the LandingPage for all users. */}
+          <Route index element={<LandingPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           
