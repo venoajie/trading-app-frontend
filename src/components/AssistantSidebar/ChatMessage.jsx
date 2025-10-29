@@ -1,6 +1,6 @@
 
 // src/components/AssistantSidebar/ChatMessage.jsx
-import { Avatar, Group, Paper, Stack, Text, ThemeIcon, List, Alert } from '@mantine/core';
+import { Avatar, Group, Paper, Stack, Text, ThemeIcon, List, Alert, Box } from '@mantine/core';
 import { IconUser, IconRobot, IconAnalyze, IconAlertTriangle } from '@tabler/icons-react';
 import Markdown from 'react-markdown';
 
@@ -23,8 +23,10 @@ function StructuredInsight({ payload }) {
   );
 }
 
+// Disclaimer text to be identified and separated
+const DISCLAIMER_TEXT = "Disclaimer: This is not financial advice.";
+
 export function ChatMessage({ message }) {
-  // CORRECTIVE ACTION: Check for the `isError` flag from the chatStore.
   if (message.isError) {
     return (
       <Alert
@@ -42,6 +44,14 @@ export function ChatMessage({ message }) {
   const isAssistant = message.role === 'assistant';
   const isStructured = message.type === 'structured_insight' && message.payload;
 
+  // Logic to separate the disclaimer from the main content
+  let mainContent = message.content;
+  let disclaimer = null;
+  if (isAssistant && mainContent.includes(DISCLAIMER_TEXT)) {
+    mainContent = mainContent.replace(DISCLAIMER_TEXT, '').trim();
+    disclaimer = DISCLAIMER_TEXT;
+  }
+
   const avatar = isAssistant ? (
     <Avatar color="blue" radius="xl">
       <IconRobot size="1.5rem" />
@@ -55,26 +65,31 @@ export function ChatMessage({ message }) {
   return (
     <Group align="flex-start" wrap="nowrap" gap="md">
       {avatar}
-      <Paper
-        p="md"
-        radius="lg"
-        withBorder
-        style={{
-          flex: 1,
-          backgroundColor: isAssistant
-            ? 'var(--mantine-color-dark-6)'
-            : 'var(--mantine-color-dark-7)',
-          maxWidth: '90%',
-        }}
-      >
-        {isStructured ? (
-          <StructuredInsight payload={message.payload} />
-        ) : (
-          <Text component="div" size="sm" style={{ lineHeight: 1.6 }}>
-            <Markdown>{message.content}</Markdown>
+      <Box style={{ flex: 1, maxWidth: '90%' }}>
+        <Paper
+          p="md"
+          radius="lg"
+          withBorder
+          style={{
+            backgroundColor: isAssistant
+              ? 'var(--mantine-color-dark-6)'
+              : 'var(--mantine-color-dark-7)',
+          }}
+        >
+          {isStructured ? (
+            <StructuredInsight payload={message.payload} />
+          ) : (
+            <Text component="div" size="sm" style={{ lineHeight: 1.6 }}>
+              <Markdown>{mainContent}</Markdown>
+            </Text>
+          )}
+        </Paper>
+        {disclaimer && (
+          <Text c="dimmed" fz="xs" mt="xs" pl="md">
+            {disclaimer}
           </Text>
         )}
-      </Paper>
+      </Box>
     </Group>
   );
 }
