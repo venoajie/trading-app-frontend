@@ -23,28 +23,47 @@ import { LearningJournalPage } from './pages/LearningJournalPage';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
-  if (isLoadingUser) return null;
+  if (isLoadingUser) return null; // Render nothing while auth status is being determined
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
-// The complex Root component has been removed for a simpler, more direct routing architecture.
+/**
+ * NEW: RootRedirect Component
+ * This component acts as a gatekeeper for the root URL ('/').
+ * It checks the user's authentication status and directs them to the
+ * appropriate page, ensuring a seamless user experience.
+ */
+function RootRedirect() {
+  const { isAuthenticated, isLoadingUser } = useAuthStore();
+
+  // While the initial user fetch is in progress, we don't know the auth state.
+  // Rendering null prevents a flash of the LandingPage for authenticated users.
+  if (isLoadingUser) {
+    return null;
+  }
+
+  // If the user is authenticated, redirect them to their dashboard.
+  // Otherwise, show them the public landing page.
+  return isAuthenticated ? <Navigate to="/portfolio" replace /> : <LandingPage />;
+}
+
 
 export default function App() {
-  const { token, fetchUserOnLoad, setLoadingComplete } = useAuthStore();
+  const { token, fetchUserOnLoad } = useAuthStore();
   const { setAiAssistantAvailability } = useUiStore();
 
   useEffect(() => {
     const isAiEnabled = import.meta.env.VITE_AI_ASSISTANT_ENABLED === 'true';
     setAiAssistantAvailability(isAiEnabled);
-}, [setAiAssistantAvailability]);
+  }, [setAiAssistantAvailability]);
 
   useEffect(() => {
+    // This effect now only needs to trigger the user fetch if a token exists.
+    // The isLoadingUser state will be handled by the redirect components.
     if (token) {
       fetchUserOnLoad();
-    } else {
-      setLoadingComplete();
     }
-  }, [token, fetchUserOnLoad, setLoadingComplete]);
+  }, [token, fetchUserOnLoad]);
 
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
@@ -52,8 +71,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           {/* Public Routes */}
-          {/* The index route now always serves the LandingPage for all users. */}
-          <Route index element={<LandingPage />} />
+          {/* The index route now uses RootRedirect for a conditional experience. */}
+          <Route index element={<RootRedirect />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           
