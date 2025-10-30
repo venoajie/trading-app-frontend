@@ -6,7 +6,7 @@ import '@mantine/notifications/styles.css';
 import { useEffect } from 'react';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import useAuthStore from './store/authStore';
 import { useUiStore } from './store/uiStore';
@@ -16,24 +16,20 @@ import { theme } from './theme';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
-// CORRECTED: Removed obsolete page imports (PortfolioDashboardPage, TransactionsPage)
 import { DashboardPage } from './pages/DashboardPage/DashboardPage'; 
 import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
 import { LearningJournalPage } from './pages/LearningJournalPage';
 
-function ProtectedRoute({ children }) {
-  const { isAuthenticated, isLoadingUser } = useAuthStore();
-  if (isLoadingUser) return null;
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
-}
-
-function RootRedirect() {
+/**
+ * ProtectedRoute now serves a more structural role. It ensures the user is
+ * authenticated before allowing access to the main application layout and its children.
+ */
+function ProtectedRoute() {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
   if (isLoadingUser) {
-    return null;
+    return null; // Render nothing while auth status is being determined
   }
-  // CORRECTED: Redirect now points to the new '/dashboard' hub.
-  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />;
+  return isAuthenticated ? <AppLayout /> : <Navigate to="/login" replace />;
 }
 
 export default function App() {
@@ -55,16 +51,20 @@ export default function App() {
     <MantineProvider theme={theme} defaultColorScheme="dark">
       <Notifications />
       <Routes>
-        <Route path="/" element={<AppLayout />}>
-          {/* Public Routes */}
-          <Route index element={<RootRedirect />} />
-          <Route path="login" element={<LoginPage />} />
-          <Route path="register" element={<RegisterPage />} />
-          
-          {/* Protected Routes */}
-          <Route path="dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-          <Route path="decision-workspace" element={<ProtectedRoute><DecisionWorkspacePage /></ProtectedRoute>} />
-          <Route path="learning-journal" element={<ProtectedRoute><LearningJournalPage /></ProtectedRoute>} />
+        {/* --- Public Routes --- */}
+        {/* These routes render outside the main AppLayout */}
+        <Route path="/landing" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {/* --- Protected Routes --- */}
+        {/* The AppLayout itself is now protected. All children are implicitly protected. */}
+        <Route path="/" element={<ProtectedRoute />}>
+          {/* If authenticated users land at '/', redirect them to their dashboard */}
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="decision-workspace" element={<DecisionWorkspacePage />} />
+          <Route path="learning-journal" element={<LearningJournalPage />} />
         </Route>
       </Routes>
     </MantineProvider>
