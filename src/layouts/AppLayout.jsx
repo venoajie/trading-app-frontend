@@ -1,4 +1,3 @@
-
 // src/layouts/AppLayout.jsx
 import {
   AppShell,
@@ -107,9 +106,47 @@ export function AppLayout() {
           </Group>
         </AppShell.Header>
 
-        {/* ... rest of AppShell ... */}
+        {isAuthenticated && isAiAssistantAvailable && (
+          <AppShell.Aside p="md">
+            <AssistantSidebar />
+          </AppShell.Aside>
+        )}
+
+        <AppShell.Main>
+          <Outlet />
+        </AppShell.Main>
+
+        <AppShell.Footer p="md">
+          <Group justify="center" gap="xl">
+            <Text size="sm" c="dimmed">&copy; {new Date().getFullYear()} Portopilot</Text>
+            <Anchor component="span" c="dimmed" size="sm">About</Anchor>
+          </Group>
+        </AppShell.Footer>
       </AppShell>
-      {/* ... drawers and affix ... */}
+      
+      <Drawer
+        opened={mobileNavOpened}
+        onClose={closeMobileNav}
+        title="Navigation"
+        hiddenFrom="sm"
+        zIndex={1000}
+        size="md"
+      >
+        <MainNav orientation="vertical" />
+      </Drawer>
+
+      {isMobile && isAuthenticated && isAiAssistantAvailable && (
+        <>
+          <Affix position={{ bottom: 80, right: 20 }}>
+            <Button leftSection={<IconMessageCircle size={16} />} onClick={openAiDrawer} radius="xl">
+              AI Coach
+            </Button>
+          </Affix>
+          <Drawer opened={mobileAiDrawerOpened} onClose={closeAiDrawer} title="AI Coach" position="right" size="100%">
+            <AssistantSidebar />
+          </Drawer>
+        </>
+      )}
     </>
   );
 }
