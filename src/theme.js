@@ -19,6 +19,15 @@ export const theme = createTheme({
       h3: { letterSpacing: '-0.03rem' },
     },
   },
+  
+  // THIS IS THE CORRECT MANTINE PATTERN
+  globalStyles: (theme) => ({
+    body: {
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.white,
+      color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.black,
+    },
+  }),
+
   colors: {
     dark: professionalDark,
   },

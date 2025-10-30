@@ -4,8 +4,8 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
 import { useEffect } from 'react';
-// IMPORT 'Global' and 'useMantineTheme'
-import { MantineProvider, Global, useMantineTheme } from '@mantine/core';
+// Import 'useMantineTheme' to access theme values
+import { MantineProvider, useMantineTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
@@ -22,20 +22,20 @@ import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWor
 import { LearningJournalPage } from './pages/LearningJournalPage';
 import { AccountSettingsPage } from './pages/AccountSettingsPage/AccountSettingsPage';
 
-// A dedicated component to apply global styles reliably
-function GlobalStyles() {
+/**
+ * A dedicated component to reliably manage the body's background color.
+ * It uses a useEffect hook to apply styles after every theme change,
+ * guaranteeing it overrides any default Mantine styles.
+ */
+function ThemeManager() {
   const theme = useMantineTheme();
-  return (
-    <Global
-      styles={{
-        body: {
-          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.white,
-          color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.black,
-        },
-      }}
-    />
-  );
+  useEffect(() => {
+    document.body.style.backgroundColor = theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.white;
+  }, [theme.colorScheme, theme.colors]); // Re-run effect when theme changes
+
+  return null; // This component renders nothing
 }
+
 
 function ProtectedRoute() {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
@@ -70,7 +70,7 @@ export default function App() {
 
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
-      <GlobalStyles /> {/* ADD THE GLOBAL STYLES COMPONENT HERE */}
+      <ThemeManager /> {/* ADD THE THEME MANAGER COMPONENT HERE */}
       <Notifications />
       <Routes>
         {/* --- Public-Only Routes --- */}
