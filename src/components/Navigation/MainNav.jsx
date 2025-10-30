@@ -3,9 +3,6 @@
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import { NavLink, Stack, Group, Menu, Button, useMantineTheme, Text, Divider } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { 
-  IconHome, IconArrowsExchange, IconBrain, IconBook, IconChevronDown
-} from '@tabler/icons-react';
 import { IconLayoutDashboard, IconBrain, IconBook, IconChevronDown } from '@tabler/icons-react';
 import useAuthStore from '../../store/authStore';
 import classes from './MainNav.module.css';
