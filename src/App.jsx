@@ -16,38 +16,25 @@ import { theme } from './theme';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
-import { PortfolioDashboardPage } from './pages/PortfolioDashboardPage/PortfolioDashboardPage';
-import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
+// CORRECTED: Removed obsolete page imports (PortfolioDashboardPage, TransactionsPage)
 import { DashboardPage } from './pages/DashboardPage/DashboardPage'; 
-import { TransactionsPage } from './pages/TransactionsPage/TransactionsPage';
+import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
 import { LearningJournalPage } from './pages/LearningJournalPage';
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
-  if (isLoadingUser) return null; // Render nothing while auth status is being determined
+  if (isLoadingUser) return null;
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 }
 
-/**
- * RootRedirect Component
- * This component acts as a gatekeeper for the root URL ('/').
- * It checks the user's authentication status and directs them to the
- * appropriate page, ensuring a seamless user experience.
- */
 function RootRedirect() {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
-
-  // While the initial user fetch is in progress, we don't know the auth state.
-  // Rendering null prevents a flash of the LandingPage for authenticated users.
   if (isLoadingUser) {
     return null;
   }
-
-  // If the user is authenticated, redirect them to their dashboard.
-  // Otherwise, show them the public landing page.
-  return isAuthenticated ? <Navigate to="/portfolio" replace /> : <LandingPage />;
+  // CORRECTED: Redirect now points to the new '/dashboard' hub.
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : <LandingPage />;
 }
-
 
 export default function App() {
   const { token, fetchUserOnLoad } = useAuthStore();
@@ -59,8 +46,6 @@ export default function App() {
   }, [setAiAssistantAvailability]);
 
   useEffect(() => {
-    // This effect now only needs to trigger the user fetch if a token exists.
-    // The isLoadingUser state will be handled by the redirect components.
     if (token) {
       fetchUserOnLoad();
     }
@@ -76,7 +61,7 @@ export default function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           
-          {/* Protected Routes (Updated) */}
+          {/* Protected Routes */}
           <Route path="dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="decision-workspace" element={<ProtectedRoute><DecisionWorkspacePage /></ProtectedRoute>} />
           <Route path="learning-journal" element={<ProtectedRoute><LearningJournalPage /></ProtectedRoute>} />
