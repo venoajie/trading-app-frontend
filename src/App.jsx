@@ -20,29 +20,21 @@ import { DashboardPage } from './pages/DashboardPage/DashboardPage';
 import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
 import { LearningJournalPage } from './pages/LearningJournalPage';
 
-/**
- * Guard for protected routes. If the user is not authenticated, it redirects
- * them to the login page. Otherwise, it renders the requested component.
- */
 function ProtectedRoute() {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
-  if (isLoadingUser) return null; // Wait for auth check
+  if (isLoadingUser) return null;
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 }
 
-/**
- * Guard for public-only routes. If the user is already authenticated, it
- * redirects them to their dashboard, preventing them from seeing pages
- * like login or the public landing page again.
- */
 function PublicRoute({ children }) {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
-  if (isLoadingUser) return null; // Wait for auth check
+  if (isLoadingUser) return null;
   return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
 }
 
 export default function App() {
-  const { token, fetchUserOnLoad } = useAuthStore();
+  // CORRECTED: Restored setLoadingComplete from the authStore.
+  const { token, fetchUserOnLoad, setLoadingComplete } = useAuthStore();
   const { setAiAssistantAvailability } = useUiStore();
 
   useEffect(() => {
@@ -53,23 +45,27 @@ export default function App() {
   useEffect(() => {
     if (token) {
       fetchUserOnLoad();
+    } else {
+      // THIS BLOCK IS THE FIX: It ensures that for users without a token,
+      // the loading state is set to false, allowing the PublicRoute
+      // to render the LandingPage instead of returning null.
+      if (setLoadingComplete) {
+        setLoadingComplete();
+      }
     }
-  }, [token, fetchUserOnLoad]);
+  }, [token, fetchUserOnLoad, setLoadingComplete]);
 
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
       <Notifications />
       <Routes>
         {/* --- Public-Only Routes --- */}
-        {/* These routes are for unauthenticated users. Authenticated users will be redirected. */}
         <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 
         {/* --- Protected Application Routes --- */}
-        {/* All routes within this group require authentication. */}
         <Route element={<ProtectedRoute />}>
-          {/* The AppLayout serves as the shell for all protected pages */}
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/decision-workspace" element={<DecisionWorkspacePage />} />
