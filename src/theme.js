@@ -1,9 +1,9 @@
 
 // src/theme.js
-import { createTheme, MantineColorsTuple } from '@mantine/core';
+import { createTheme } from '@mantine/core';
 
 // Generated with a tool to create a professional slate palette
-const slate: MantineColorsTuple = [
+const slate = [
   "#f0f2f5",
   "#e1e6eb",
   "#c4ccd8",
@@ -16,7 +16,7 @@ const slate: MantineColorsTuple = [
   "#43526a"
 ];
 
-const slateDark: MantineColorsTuple = [
+const slateDark = [
   "#f8f9fa", // Lightest shade for hovers on dark backgrounds
   "#e9ecef",
   "#dee2e6",
