@@ -37,6 +37,16 @@ Global state is managed via Zustand stores, located in `/src/store`. These store
     *   `isAiSidebarVisible: boolean`: Controls the visibility of the AI Assistant sidebar on desktop.
     *   `isAiAssistantAvailable: boolean`: A flag set on startup based on the `VITE_AI_ASSISTANT_ENABLED` environment variable.
 
+### 2.3. `dashboardStore.js` (NEW)
+*   **Purpose:** Manages all data for the central Dashboard Hub, including KPIs, charts, and loading states.
+*   **State Schema:**
+    *   `kpis: object`: Holds key performance indicators for the global header and dashboard cards (e.g., `totalValue`, `ytdReturn`).
+    *   `riskExposureData: array`: Data for the `recharts` Treemap on the Portfolio tab.
+    *   `performanceData: array`: Time-series data for the `recharts` AreaChart on the Performance tab.
+    *   `isLoading: boolean`: A flag to manage loading states (e.g., `<Skeleton />`) for all dashboard components.
+*   **Core Actions:**
+    *   `fetchDashboardData()`: Asynchronously fetches and populates all dashboard-related state. Currently uses mock data.
+
 ## 3. Routing & Access Control Architecture (`App.jsx`)
 
 The architecture uses `react-router-dom` to enforce a strict and unambiguous separation between public and private sections of the application, managed by a dual-guardrail system.
@@ -48,7 +58,7 @@ The architecture uses `react-router-dom` to enforce a strict and unambiguous sep
 
 ### 3.1. Route Structure
 *   **Public Routes:** Paths such as `/`, `/login`, and `/register` are standalone routes wrapped in `<PublicRoute>`. They do **not** render inside the main application shell (`AppLayout`).
-*   **Protected Routes:** A single parent route is guarded by `<ProtectedRoute>`. This route's child is the `<AppLayout>` component, which in turn renders all protected pages (like `/dashboard`) inside its `<Outlet />`. This ensures a consistent application shell for all authenticated views.
+*   **Protected Routes:** A single parent route is guarded by `<ProtectedRoute>`. This route's child is the `<AppLayout>` component, which in turn renders all protected pages (like `/dashboard` and `/account-settings`) inside its `<Outlet />`. This ensures a consistent application shell for all authenticated views.
 *   **Post-Login Redirect:** The redirect after a successful login is programmatically handled in `LoginPage.jsx` and now points to `/dashboard`.
 
 ## 4. API Client & Data Contract (`services/apiClient.js`)
@@ -61,8 +71,8 @@ All communication with the backend **MUST** go through the singleton Axios insta
 The primary application shell is managed by Mantine's `AppShell`. It is rendered **only** for authenticated users.
 *   **Header (`AppShell.Header`):** The header is now the primary navigation and context hub.
     *   **Horizontal Navigation:** On desktop, the main navigation (`MainNav.jsx`) is rendered as a series of horizontal dropdown menus. On mobile, a `Burger` icon opens a `Drawer` containing a vertical navigation list.
-    *   **Global KPI Bar:** A persistent status bar is integrated into the center of the header on desktop. It displays key portfolio metrics (e.g., Total Value, YTD Return) that are visible on every page.
-    *   **User Menu:** The authenticated user's email is always visible on the right side of the header, providing access to a logout action.
+    *   **Global KPI Bar:** A persistent status bar is integrated into the center of the header on desktop. It displays key portfolio metrics sourced from `dashboardStore`.
+    *   **User Menu & Theme Toggle:** The authenticated user's email is always visible on the right side of the header, providing access to a logout action and a new "Account Settings" page. A user-controlled theme toggle (light/dark) is also present in this area.
 *   **Main Content (`AppShell.Main`):** Renders the active page component via the router's `<Outlet />`.
 *   **AI Assistant (`AppShell.Aside`):** Contains the global `AssistantSidebar.jsx`. Its visibility is user-controllable on desktop and it is accessed via a FAB/Drawer pattern on mobile.
 
@@ -70,8 +80,8 @@ The primary application shell is managed by Mantine's `AppShell`. It is rendered
 This is the new primary landing page for all authenticated users, located at `/dashboard`. It replaces the previous, separate pages for portfolio and transactions.
 *   **Structure:** It uses a Mantine `<Tabs>` component to create a unified "Dashboard Hub."
 *   **Tabs:**
-    *   **Portfolio (Default):** Contains the high-level dashboard view, including the `RiskExposureMap` and other key metrics. The content is provided by the `PortfolioTab.jsx` component.
-    *   **Performance:** A placeholder for historical performance charts. The content is provided by the `PerformanceTab.jsx` component.
+    *   **Portfolio (Default):** Contains the high-level dashboard view, including the `RiskExposureMap` and other key metrics. The content is provided by the `PortfolioTab.jsx` component and is sourced from `dashboardStore`.
+    *   **Performance:** Displays historical portfolio performance using a responsive `recharts` AreaChart. Data is sourced from `dashboardStore`.
     *   **Transactions:** Contains the user's transaction log and the "Add Transaction" functionality. The content is provided by the `TransactionsTab.jsx` component.
 
 ### 5.3. Reusable Components
@@ -79,22 +89,28 @@ This is the new primary landing page for all authenticated users, located at `/d
 
 ## 6. Development Protocol: Adding a New Private Page
 
-1.  **Create Page Component:** Create the new page component file in `/src/pages/`.
+1.  **Create Page Component:** Create the new page component file in `/src/pages/`. (e.g., `AccountSettingsPage.jsx`).
 2.  **Update Routing:** In `src/App.jsx`, add a new `<Route>` for the page as a child of the main `<Route element={<AppLayout />}>`. This automatically protects it and places it within the application shell.
     ```jsx
     <Route element={<AppLayout />}>
       {/* ... existing routes ... */}
-      <Route path="new-feature" element={<NewFeaturePage />} />
+      <Route path="account-settings" element={<AccountSettingsPage />} />
     </Route>
     ```
-3.  **Update Navigation:** Add a link to the new page in `src/components/Navigation/MainNav.jsx`, ensuring it is added to both the `horizontal` (desktop) and `vertical` (mobile) layouts.
+3.  **Update Navigation:** Add a link to the new page in the relevant navigation component (e.g., the user menu in `AppLayout.jsx`).
 
 ## 7. Technical Notes & Architectural Decisions
 
 ### 7.1. Charting Library: `recharts` (RESOLVED)
 *   **Context:** A previous attempt to integrate `react-chartjs-2` caused critical runtime errors due to suspected dependency conflicts.
-*   **Resolution:** The application has been successfully migrated to the **`recharts`** library. This library was chosen for its React-idiomatic, component-based API, which aligns with the project's architecture and provides a more stable foundation. The `RiskExposureMap.jsx` component is the reference implementation.
+*   **Resolution:** The application has been successfully migrated to the **`recharts`** library. This library was chosen for its React-idiomatic, component-based API, which aligns with the project's architecture and provides a more stable foundation. The `RiskExposureMap.jsx` and `PerformanceTab.jsx` components are the reference implementations.
 
 ### 7.2. Typography System: `Roboto Flex`
 *   **Rationale:** The application has been standardized on the **Roboto Flex** font family. This modern, variable font was selected for its exceptional performance and readability in data-dense user interfaces, directly addressing the need for clarity in tight spaces.
 *   **Implementation:** The font is globally imported in `main.css` and configured in `theme.js` with a full typographic scale, including refined font weights and letter spacing for headings to ensure a professional aesthetic.
+
+### 7.3. Unresolved Technical Debt: Dark Theme Background (NEW)
+*   **Status:** PENDING RESOLUTION
+*   **Symptom:** When dark mode is enabled via the header toggle, the `<body>` element's background remains white/light, while all other components and text correctly switch to their dark theme variants. This results in an unreadable UI (light text on a light background).
+*   **Suspected Cause:** A CSS specificity or style injection order conflict. The default styles from `@mantine/core/styles.css` are overriding the theme-based `globalStyles` defined in `theme.js` for the `<body>` tag. Multiple attempts to resolve this via different style injection methods have failed, indicating a complex interaction.
+*   **Impact:** High. Renders dark mode unusable and must be resolved before any user-facing release.
