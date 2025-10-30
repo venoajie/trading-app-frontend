@@ -2,18 +2,19 @@
 // src/layouts/AppLayout.jsx
 import {
   AppShell, Burger, Group, Title, Menu, ActionIcon, LoadingOverlay, Anchor,
-  Text, Affix, Button, Drawer, Box, UnstyledButton, Divider, Skeleton,
+  Text, Affix, Button, Drawer, Box, UnstyledButton, Divider, Skeleton, useMantineColorScheme,
 } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import {
-  IconLogout, IconLayoutSidebarRightCollapse, IconMessageCircle, IconChevronDown
+  IconLogout, IconLayoutSidebarRightCollapse, IconMessageCircle, IconChevronDown,
+  IconSun, IconMoon, IconSettings, // IMPORT NEW ICONS
 } from '@tabler/icons-react';
 import { useEffect } from 'react';
 
 import { useUiStore } from '../store/uiStore';
 import useAuthStore from '../store/authStore';
-import useDashboardStore from '../store/dashboardStore'; // IMPORT THE NEW STORE
+import useDashboardStore from '../store/dashboardStore';
 import { MainNav } from '../components/Navigation/MainNav';
 import { AssistantSidebar } from '../components/AssistantSidebar/AssistantSidebar';
 import { StatCard } from '../pages/PortfolioDashboardPage/components/StatCard';
@@ -31,22 +32,21 @@ export function AppLayout() {
   const [mobileNavOpened, { toggle: toggleMobileNav, close: closeMobileNav }] = useDisclosure();
   const [mobileAiDrawerOpened, { open: openAiDrawer, close: closeAiDrawer }] = useDisclosure();
   
+  // THEME TOGGLE HOOK
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+
   const { isAiSidebarVisible, toggleAiSidebar, isAiAssistantAvailable } = useUiStore();
   const { isAuthenticated, logout, user, isLoadingUser } = useAuthStore();
-  
-  // CONNECT TO THE DASHBOARD STORE
   const { kpis, isLoading: isDashboardLoading, fetchDashboardData } = useDashboardStore();
 
   const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width: 768px)');
 
-  // Fetch data when the layout mounts
   useEffect(() => {
     if (isAuthenticated) {
       fetchDashboardData();
     }
   }, [isAuthenticated, fetchDashboardData]);
-
 
   const handleLogout = () => {
     logout();
@@ -57,7 +57,6 @@ export function AppLayout() {
     return <LoadingOverlay visible={true} overlayProps={{ radius: 'sm', blur: 2 }} />;
   }
 
-  // CORRECTED: The logic for this function has been fully restored.
   const renderUserArea = () => {
     if (!isAuthenticated) {
       return (
@@ -70,6 +69,16 @@ export function AppLayout() {
 
     return (
       <Group gap="md">
+        {/* --- THEME TOGGLE BUTTON --- */}
+        <ActionIcon
+          onClick={toggleColorScheme}
+          variant="default"
+          size="lg"
+          aria-label="Toggle color scheme"
+        >
+          {colorScheme === 'dark' ? <IconSun size={18} /> : <IconMoon size={18} />}
+        </ActionIcon>
+        
         {!isMobile && isAiAssistantAvailable && (
           <ActionIcon
             variant="default"
@@ -93,6 +102,14 @@ export function AppLayout() {
           </Menu.Target>
           <Menu.Dropdown>
             <Menu.Label>Account</Menu.Label>
+            {/* --- LINK TO ACCOUNT SETTINGS --- */}
+            <Menu.Item
+              leftSection={<IconSettings size={14} />}
+              component={Link}
+              to="/account-settings"
+            >
+              Settings
+            </Menu.Item>
             <Menu.Item color="red" leftSection={<IconLogout size={14} />} onClick={handleLogout}>
               Logout
             </Menu.Item>
@@ -105,7 +122,7 @@ export function AppLayout() {
   return (
     <>
       <AppShell
-        header={{ height: 70 }} // Note: Height can be adjusted later if needed
+        header={{ height: 70 }}
         aside={{
           width: 350,
           breakpoint: 'md',

@@ -19,6 +19,7 @@ import { RegisterPage } from './pages/auth/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage/DashboardPage';
 import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
 import { LearningJournalPage } from './pages/LearningJournalPage';
+import { AccountSettingsPage } from './pages/AccountSettingsPage/AccountSettingsPage'; // IMPORT NEW PAGE
 
 function ProtectedRoute() {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
@@ -33,7 +34,6 @@ function PublicRoute({ children }) {
 }
 
 export default function App() {
-  // THIS LINE IS THE FIX: Restoring the call to useAuthStore
   const { token, fetchUserOnLoad, setLoadingComplete } = useAuthStore();
   const { setAiAssistantAvailability } = useUiStore();
 
@@ -67,6 +67,8 @@ export default function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/decision-workspace" element={<DecisionWorkspacePage />} />
             <Route path="/learning-journal" element={<LearningJournalPage />} />
+            {/* ADD NEW ROUTE FOR ACCOUNT SETTINGS */}
+            <Route path="/account-settings" element={<AccountSettingsPage />} />
           </Route>
         </Route>
       </Routes>
