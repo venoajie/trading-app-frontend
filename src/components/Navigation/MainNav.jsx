@@ -1,7 +1,7 @@
 
 // src/components/Navigation/MainNav.jsx
 import { NavLink as RouterNavLink } from 'react-router-dom';
-import { NavLink, Stack, Group, Menu, Button, useMantineTheme, Text, Divider } from '@mantine/core';
+import { NavLink, Stack, Group, Menu, Button, useMantineTheme, Text } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconLayoutDashboard, IconBrain, IconBook, IconChevronDown } from '@tabler/icons-react';
 import useAuthStore from '../../store/authStore';
@@ -27,24 +27,34 @@ function NavMenu({ label, children }) {
 export function MainNav({ orientation = 'horizontal' }) {
   const { user } = useAuthStore();
   const theme = useMantineTheme();
-  // This hook determines which navigation variant to display
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   const finalOrientation = isMobile ? 'vertical' : orientation;
 
-  // Vertical layout for the mobile navigation drawer
+  // CORRECTED: Vertical layout for mobile now mirrors the new, simpler structure.
   if (finalOrientation === 'vertical') {
     return (
       <Stack p="md">
         {user && (
           <>
-            <Text size="xs" fw={500} c="dimmed" tt="uppercase">Portfolio</Text>
-            <NavLink component={RouterNavLink} to="/portfolio" label="Dashboard" leftSection={<IconHome size="1rem" />} />
-            <NavLink component={RouterNavLink} to="/transactions" label="Transactions" leftSection={<IconArrowsExchange size="1rem" />} />
-            <Divider my="sm" />
-            <Text size="xs" fw={500} c="dimmed" tt="uppercase">Process</Text>
-            <NavLink component={RouterNavLink} to="/decision-workspace" label="Decision Workspace" leftSection={<IconBrain size="1rem" />} />
-            <NavLink component={RouterNavLink} to="/learning-journal" label="Learning Journal" leftSection={<IconBook size="1rem" />} />
+            <NavLink
+              component={RouterNavLink}
+              to="/dashboard"
+              label="Dashboard"
+              leftSection={<IconLayoutDashboard size="1rem" />}
+            />
+            <NavLink
+              component={RouterNavLink}
+              to="/decision-workspace"
+              label="Decision Workspace"
+              leftSection={<IconBrain size="1rem" />}
+            />
+            <NavLink
+              component={RouterNavLink}
+              to="/learning-journal"
+              label="Learning Journal"
+              leftSection={<IconBook size="1rem" />}
+            />
           </>
         )}
       </Stack>
