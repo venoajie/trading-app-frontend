@@ -1,6 +1,34 @@
 
 // src/theme.js
-import { createTheme } from '@mantine/core';
+import { createTheme, MantineColorsTuple } from '@mantine/core';
+
+// Generated with a tool to create a professional slate palette
+const slate: MantineColorsTuple = [
+  "#f0f2f5",
+  "#e1e6eb",
+  "#c4ccd8",
+  "#a6b3c6",
+  "#8d9cb0",
+  "#7c8ba0",
+  "#728299",
+  "#627086",
+  "#536177",
+  "#43526a"
+];
+
+const slateDark: MantineColorsTuple = [
+  "#f8f9fa", // Lightest shade for hovers on dark backgrounds
+  "#e9ecef",
+  "#dee2e6",
+  "#ced4da",
+  "#adb5bd",
+  "#868e96",
+  "#495057", // Main Text Color
+  "#343a40", // Card Backgrounds
+  "#212529", // AppShell Main Background
+  "#141517"  // Body background (darkest)
+];
+
 
 export const theme = createTheme({
   /**
@@ -29,7 +57,13 @@ export const theme = createTheme({
 
   /**
    * 2. COLOR PALETTE
+   * Refined to a more sophisticated slate/charcoal palette for better aesthetics
+   * and reduced eye strain in dark mode.
    */
+  colors: {
+    dark: slateDark,
+    gray: slate,
+  },
   primaryColor: 'blue',
   primaryShade: 7,
 
@@ -43,6 +77,14 @@ export const theme = createTheme({
           backgroundColor:
             theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0],
         },
+        header: {
+          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.white,
+          borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[2],
+        },
+        footer: {
+          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.white,
+          borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[2],
+        }
       }),
     },
     Card: {
@@ -53,8 +95,8 @@ export const theme = createTheme({
       },
       styles: (theme) => ({
         root: {
-          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white,
-          borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2],
+          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+          borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[2],
         },
       }),
     },
