@@ -35,25 +35,27 @@ export const theme = createTheme({
       h3: { letterSpacing: '-0.03rem' },
     },
   },
+  
+  // CRITICAL FIX: Explicitly set the body background for both color schemes.
   globalStyles: (theme) => ({
     body: {
       fontWeight: 400,
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.white,
+      color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.black,
     },
   }),
 
   /**
    * 2. COLOR PALETTE
-   * This is the new, professionally tiered dark theme.
    */
   colors: {
     dark: professionalDark,
   },
   primaryColor: 'blue',
-  primaryShade: { light: 6, dark: 7 }, // Adjusted for better contrast on new dark theme
+  primaryShade: { light: 6, dark: 7 },
 
   /**
    * 3. DUAL-MODE COMPONENT STYLES
-   * This section maps the new color palette to the core components for dark mode.
    */
   components: {
     AppShell: {
