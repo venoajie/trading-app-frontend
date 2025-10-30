@@ -1,29 +1,13 @@
 
 // src/layouts/AppLayout.jsx
 import {
-  AppShell,
-  Burger,
-  Group,
-  Title,
-  Menu,
-  ActionIcon,
-  LoadingOverlay,
-  Anchor,
-  Text,
-  Affix,
-  Button,
-  Drawer,
-  Box,
-  UnstyledButton,
-  Divider,
+  AppShell, Burger, Group, Title, Menu, ActionIcon, LoadingOverlay, Anchor,
+  Text, Affix, Button, Drawer, Box, UnstyledButton, Divider,
 } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
 import {
-  IconLogout,
-  IconLayoutSidebarRightCollapse,
-  IconMessageCircle,
-  IconChevronDown
+  IconLogout, IconLayoutSidebarRightCollapse, IconMessageCircle, IconChevronDown
 } from '@tabler/icons-react';
 import { useEffect } from 'react';
 
@@ -100,7 +84,7 @@ export function AppLayout() {
   return (
     <>
       <AppShell
-        header={{ height: 70 }}
+        header={{ height: 70 }} // Note: Height can be adjusted later if needed
         aside={{
           width: 350,
           breakpoint: 'md',
@@ -111,7 +95,6 @@ export function AppLayout() {
       >
         <AppShell.Header className={classes.header}>
           <Group h="100%" px="md" justify="space-between">
-            {/* Left Side: Logo, Burger, Desktop Nav */}
             <Group>
               {isAuthenticated && (
                 <Burger opened={mobileNavOpened} onClick={toggleMobileNav} hiddenFrom="sm" size="sm" />
@@ -122,7 +105,6 @@ export function AppLayout() {
               {isAuthenticated && !isMobile && <MainNav orientation="horizontal" />}
             </Group>
             
-            {/* Center: Global Stats Bar (Visible on large screens) */}
             <Group visibleFrom="lg">
               {isAuthenticated && (
                 <>
@@ -130,13 +112,11 @@ export function AppLayout() {
                     variant="minimal"
                     title="Total Value"
                     value="$100,000"
-                    changeColor="green"
                   />
                   <Divider orientation="vertical" />
                   <StatCard
                     variant="minimal"
                     title="YTD Return"
-                    value="-$1,800"
                     change="-1.77%"
                     changeColor="red"
                   />
@@ -144,7 +124,6 @@ export function AppLayout() {
               )}
             </Group>
 
-            {/* Right Side: User Area */}
             {renderUserArea()}
           </Group>
         </AppShell.Header>
@@ -167,14 +146,7 @@ export function AppLayout() {
         </AppShell.Footer>
       </AppShell>
       
-      <Drawer
-        opened={mobileNavOpened}
-        onClose={closeMobileNav}
-        title="Navigation"
-        hiddenFrom="sm"
-        zIndex={1000}
-        size="md"
-      >
+      <Drawer opened={mobileNavOpened} onClose={closeMobileNav} title="Navigation" hiddenFrom="sm" zIndex={1000} size="md">
         <MainNav orientation="vertical" />
       </Drawer>
 
