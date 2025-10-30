@@ -1,13 +1,5 @@
 
 // src/pages/DashboardPage/components/PerformanceTab.jsx
-import { Text } from '@mantine/core';
-
-export function PerformanceTab() {
-  return (
-    <Text>Portfolio performance charts and historical data will be displayed here.</Text>
-  );
-}
-// src/pages/DashboardPage/components/PerformanceTab.jsx
 import { Card, Skeleton, Box, Text } from '@mantine/core';
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
