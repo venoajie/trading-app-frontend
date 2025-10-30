@@ -1,7 +1,7 @@
 
 // src/App.jsx
-import '@mantine/core/styles.css';
-import '@mantine/notifications/styles.css';
+// The duplicate Mantine CSS imports have been removed from this file.
+// All global styles are now handled by src/main.jsx.
 
 import { useEffect } from 'react';
 import { Notifications } from '@mantine/notifications';
@@ -20,7 +20,6 @@ import { LearningJournalPage } from './pages/LearningJournalPage';
 import { AccountSettingsPage } from './pages/AccountSettingsPage/AccountSettingsPage';
 
 // The ThemeManager component has been removed as it is no longer necessary.
-// The single MantineProvider in main.jsx now correctly handles global styles.
 
 function ProtectedRoute() {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
@@ -55,7 +54,6 @@ export default function App() {
 
   return (
     <>
-      {/* The redundant MantineProvider has been removed from this file. */}
       <Notifications />
       <Routes>
         {/* --- Public-Only Routes --- */}
