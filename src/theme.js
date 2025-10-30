@@ -20,10 +20,14 @@ export const theme = createTheme({
     },
   },
   
-  // THIS IS THE CORRECT MANTINE PATTERN
+  // NOTE: The body background color is handled imperatively by the 
+  // `ThemeManager` component in `App.jsx`. This is a workaround for a
+  // persistent CSS specificity issue that prevents this declarative
+  // approach from working reliably on theme changes.
   globalStyles: (theme) => ({
     body: {
-      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.white,
+      // This color rule will be overridden by ThemeManager, but is kept
+      // for completeness and as a fallback.
       color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.black,
     },
   }),
