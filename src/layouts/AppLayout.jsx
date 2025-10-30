@@ -136,7 +136,6 @@ export function AppLayout() {
                   <StatCard
                     variant="minimal"
                     title="YTD Return"
-                    value="-$1,800"
                     change="-1.77%"
                     changeColor="red"
                   />
