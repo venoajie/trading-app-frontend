@@ -33,8 +33,6 @@ function PublicRoute({ children }) {
 }
 
 export default function App() {
-  // CORRECTED: Restored setLoadingComplete from the authStore.
-  const { token, fetchUserOnLoad, setLoadingComplete } = useAuthStore();
   const { setAiAssistantAvailability } = useUiStore();
 
   useEffect(() => {
@@ -46,7 +44,7 @@ export default function App() {
     if (token) {
       fetchUserOnLoad();
     } else {
-      // THIS BLOCK IS THE FIX: It ensures that for users without a token,
+      // THIS BLOCK ensures that for users without a token,
       // the loading state is set to false, allowing the PublicRoute
       // to render the LandingPage instead of returning null.
       if (setLoadingComplete) {
