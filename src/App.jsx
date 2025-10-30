@@ -4,7 +4,8 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
 import { useEffect } from 'react';
-import { MantineProvider } from '@mantine/core';
+// IMPORT 'Global' and 'useMantineTheme'
+import { MantineProvider, Global, useMantineTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
@@ -19,7 +20,22 @@ import { RegisterPage } from './pages/auth/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage/DashboardPage';
 import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
 import { LearningJournalPage } from './pages/LearningJournalPage';
-import { AccountSettingsPage } from './pages/AccountSettingsPage/AccountSettingsPage'; // IMPORT NEW PAGE
+import { AccountSettingsPage } from './pages/AccountSettingsPage/AccountSettingsPage';
+
+// A dedicated component to apply global styles reliably
+function GlobalStyles() {
+  const theme = useMantineTheme();
+  return (
+    <Global
+      styles={{
+        body: {
+          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.white,
+          color: theme.colorScheme === 'dark' ? theme.colors.dark[1] : theme.black,
+        },
+      }}
+    />
+  );
+}
 
 function ProtectedRoute() {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
@@ -54,6 +70,7 @@ export default function App() {
 
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
+      <GlobalStyles /> {/* ADD THE GLOBAL STYLES COMPONENT HERE */}
       <Notifications />
       <Routes>
         {/* --- Public-Only Routes --- */}
@@ -67,7 +84,6 @@ export default function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/decision-workspace" element={<DecisionWorkspacePage />} />
             <Route path="/learning-journal" element={<LearningJournalPage />} />
-            {/* ADD NEW ROUTE FOR ACCOUNT SETTINGS */}
             <Route path="/account-settings" element={<AccountSettingsPage />} />
           </Route>
         </Route>
