@@ -1,35 +1,40 @@
 
 // src/theme.js
-import { createTheme, MantineProvider } from '@mantine/core';
+import { createTheme } from '@mantine/core';
 
-/**
- * This is the central theme configuration for the application, embodying the
- * "Focused Clarity" design direction. It is a dual-mode theme, providing a
- * professional, high-contrast experience in both light and dark schemes.
- */
 export const theme = createTheme({
   /**
    * 1. TYPOGRAPHY
-   * 'Inter' is used for its excellent screen readability in both modes.
+   * Upgraded to 'Roboto Flex' for its superior readability and performance in
+   * high-density UIs. A full typographic scale is now defined.
    */
-  fontFamily: 'Inter, sans-serif',
+  fontFamily: "'Roboto Flex', sans-serif",
+  lineHeight: 1.55,
   headings: {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: "'Roboto Flex', sans-serif",
     fontWeight: '600',
+    // Professional typography tightens letter spacing on large headings
+    styles: {
+      h1: { letterSpacing: '-0.05rem' },
+      h2: { letterSpacing: '-0.04rem' },
+      h3: { letterSpacing: '-0.03rem' },
+    },
   },
+  // Set a global default font weight for all body text
+  globalStyles: (theme) => ({
+    body: {
+      fontWeight: 400, // Use 'Regular' weight for body text to avoid the "fat" look
+    },
+  }),
 
   /**
    * 2. COLOR PALETTE
-   * The primary color is defined, and Mantine handles its shades.
    */
   primaryColor: 'blue',
   primaryShade: 7,
 
   /**
    * 3. DUAL-MODE COMPONENT STYLES
-   * Default styles for core components are defined here. We use a function
-   * to access the theme object and apply conditional styles based on the
-   * active `colorScheme`.
    */
   components: {
     AppShell: {

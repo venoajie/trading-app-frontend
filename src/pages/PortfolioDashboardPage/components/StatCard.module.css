@@ -7,13 +7,14 @@
   line-height: 1;
 }
 
-/* NEW: Minimal Header Variant */
+/* Minimal Header Variant (KPIs) */
 .minimalRoot {
   padding: 0 var(--mantine-spacing-md);
 }
 
 .minimalValue {
-  font-size: 1.25rem;
-  font-weight: 600;
+  /* UPDATED: Reduced font size and weight to be less dominant */
+  font-size: 1.1rem;
+  font-weight: 500; /* Medium weight, not semi-bold */
   line-height: 1;
 }

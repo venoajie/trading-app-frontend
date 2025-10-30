@@ -130,7 +130,6 @@ export function AppLayout() {
                     variant="minimal"
                     title="Total Value"
                     value="$100,000"
-                    change="+1.25%"
                     changeColor="green"
                   />
                   <Divider orientation="vertical" />
