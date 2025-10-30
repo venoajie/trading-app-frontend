@@ -2,7 +2,7 @@
 // src/layouts/AppLayout.jsx
 import {
   AppShell, Burger, Group, Title, Menu, ActionIcon, LoadingOverlay, Anchor,
-  Text, Affix, Button, Drawer, Box, UnstyledButton, Divider,
+  Text, Affix, Button, Drawer, Box, UnstyledButton, Divider, Skeleton,
 } from '@mantine/core';
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
@@ -13,10 +13,19 @@ import { useEffect } from 'react';
 
 import { useUiStore } from '../store/uiStore';
 import useAuthStore from '../store/authStore';
+import useDashboardStore from '../store/dashboardStore'; // IMPORT THE NEW STORE
 import { MainNav } from '../components/Navigation/MainNav';
 import { AssistantSidebar } from '../components/AssistantSidebar/AssistantSidebar';
 import { StatCard } from '../pages/PortfolioDashboardPage/components/StatCard';
 import classes from './AppLayout.module.css';
+
+// Helper to format currency
+const formatCurrency = (value) => new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0,
+}).format(value);
 
 export function AppLayout() {
   const [mobileNavOpened, { toggle: toggleMobileNav, close: closeMobileNav }] = useDisclosure();
@@ -24,8 +33,20 @@ export function AppLayout() {
   
   const { isAiSidebarVisible, toggleAiSidebar, isAiAssistantAvailable } = useUiStore();
   const { isAuthenticated, logout, user, isLoadingUser } = useAuthStore();
+  
+  // CONNECT TO THE DASHBOARD STORE
+  const { kpis, isLoading: isDashboardLoading, fetchDashboardData } = useDashboardStore();
+
   const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width: 768px)');
+
+  // Fetch data when the layout mounts
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchDashboardData();
+    }
+  }, [isAuthenticated, fetchDashboardData]);
+
 
   const handleLogout = () => {
     logout();
@@ -107,20 +128,28 @@ export function AppLayout() {
             
             <Group visibleFrom="lg">
               {isAuthenticated && (
-                <>
-                  <StatCard
-                    variant="minimal"
-                    title="Total Value"
-                    value="$100,000"
-                  />
-                  <Divider orientation="vertical" />
-                  <StatCard
-                    variant="minimal"
-                    title="YTD Return"
-                    change="-1.77%"
-                    changeColor="red"
-                  />
-                </>
+                isDashboardLoading ? (
+                  <>
+                    <Skeleton height={36} width={150} radius="sm" />
+                    <Divider orientation="vertical" />
+                    <Skeleton height={36} width={150} radius="sm" />
+                  </>
+                ) : (
+                  <>
+                    <StatCard
+                      variant="minimal"
+                      title="Total Value"
+                      value={formatCurrency(kpis.totalValue)}
+                    />
+                    <Divider orientation="vertical" />
+                    <StatCard
+                      variant="minimal"
+                      title="YTD Return"
+                      change={kpis.ytdReturnPct}
+                      changeColor={kpis.ytdReturn >= 0 ? 'teal' : 'red'}
+                    />
+                  </>
+                )
               )}
             </Group>
 
