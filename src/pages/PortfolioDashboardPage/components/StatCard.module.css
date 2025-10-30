@@ -1,7 +1,19 @@
 
 /* src/pages/PortfolioDashboardPage/components/StatCard.module.css */
+/* Default Card Variant */
 .value {
   font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* NEW: Minimal Header Variant */
+.minimalRoot {
+  padding: 0 var(--mantine-spacing-md);
+}
+
+.minimalValue {
+  font-size: 1.25rem;
   font-weight: 600;
   line-height: 1;
 }

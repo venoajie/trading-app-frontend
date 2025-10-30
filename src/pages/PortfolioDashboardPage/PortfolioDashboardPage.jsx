@@ -9,13 +9,7 @@ import { RiskExposureMap } from './components/RiskExposureMap';
 export function PortfolioDashboardPage() {
   return (
     <Grid>
-      {/* --- Top Row: Key Metrics (Reordered) --- */}
-      <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
-        <StatCard title="Total Value" value="$100,000" change="+1.25%" changeColor="green" />
-      </Grid.Col>
-      <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
-        <StatCard title="YTD Return" value="-$1,800" change="-1.77%" changeColor="red" />
-      </Grid.Col>
+      {/* --- Top Row: Key Metrics (Global stats have been moved to the header) --- */}
       <Grid.Col span={{ base: 12, sm: 6, lg: 3 }}>
         <StatCard title="Net Liquidity" value="$12,500" />
       </Grid.Col>
