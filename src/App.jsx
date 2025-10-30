@@ -4,15 +4,12 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 
 import { useEffect } from 'react';
-// Import 'useMantineTheme' to access theme values
-import { MantineProvider, useMantineTheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import useAuthStore from './store/authStore';
 import { useUiStore } from './store/uiStore';
 import { AppLayout } from './layouts/AppLayout';
-import { theme } from './theme';
 
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
@@ -22,20 +19,8 @@ import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWor
 import { LearningJournalPage } from './pages/LearningJournalPage';
 import { AccountSettingsPage } from './pages/AccountSettingsPage/AccountSettingsPage';
 
-/**
- * A dedicated component to reliably manage the body's background color.
- * It uses a useEffect hook to apply styles after every theme change,
- * guaranteeing it overrides any default Mantine styles.
- */
-function ThemeManager() {
-  const theme = useMantineTheme();
-  useEffect(() => {
-    document.body.style.backgroundColor = theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.white;
-  }, [theme.colorScheme, theme.colors]); // Re-run effect when theme changes
-
-  return null; // This component renders nothing
-}
-
+// The ThemeManager component has been removed as it is no longer necessary.
+// The single MantineProvider in main.jsx now correctly handles global styles.
 
 function ProtectedRoute() {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
@@ -69,8 +54,8 @@ export default function App() {
   }, [token, fetchUserOnLoad, setLoadingComplete]);
 
   return (
-    <MantineProvider theme={theme} defaultColorScheme="dark">
-      <ThemeManager /> {/* ADD THE THEME MANAGER COMPONENT HERE */}
+    <>
+      {/* The redundant MantineProvider has been removed from this file. */}
       <Notifications />
       <Routes>
         {/* --- Public-Only Routes --- */}
@@ -88,6 +73,6 @@ export default function App() {
           </Route>
         </Route>
       </Routes>
-    </MantineProvider>
+    </>
   );
 }
