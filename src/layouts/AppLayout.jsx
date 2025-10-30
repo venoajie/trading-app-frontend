@@ -1,3 +1,4 @@
+
 // src/layouts/AppLayout.jsx
 import {
   AppShell,
@@ -30,7 +31,7 @@ import { useUiStore } from '../store/uiStore';
 import useAuthStore from '../store/authStore';
 import { MainNav } from '../components/Navigation/MainNav';
 import { AssistantSidebar } from '../components/AssistantSidebar/AssistantSidebar';
-import { StatCard } from '../pages/PortfolioDashboardPage/components/StatCard'; // Import StatCard
+import { StatCard } from '../pages/PortfolioDashboardPage/components/StatCard';
 import classes from './AppLayout.module.css';
 
 export function AppLayout() {
@@ -51,7 +52,50 @@ export function AppLayout() {
     return <LoadingOverlay visible={true} overlayProps={{ radius: 'sm', blur: 2 }} />;
   }
 
-  const renderUserArea = () => { /* ... user area rendering logic remains the same ... */ };
+  // CORRECTED: The logic for this function has been fully restored.
+  const renderUserArea = () => {
+    if (!isAuthenticated) {
+      return (
+        <Group>
+          <Button variant="default" component={Link} to="/login" radius="xl">Log in</Button>
+          <Button component={Link} to="/register" radius="xl">Sign up</Button>
+        </Group>
+      );
+    }
+
+    return (
+      <Group gap="md">
+        {!isMobile && isAiAssistantAvailable && (
+          <ActionIcon
+            variant="default"
+            onClick={toggleAiSidebar}
+            title={isAiSidebarVisible ? 'Hide AI Assistant' : 'Show AI Assistant'}
+            size="lg"
+          >
+            <IconLayoutSidebarRightCollapse />
+          </ActionIcon>
+        )}
+        <Menu shadow="md" width={250}>
+          <Menu.Target>
+            <UnstyledButton className={classes.userMenuButton}>
+              <Group gap="xs">
+                <Box>
+                  <Text size="sm" fw={500}>{user?.email}</Text>
+                </Box>
+                <IconChevronDown size="1rem" />
+              </Group>
+            </UnstyledButton>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Label>Account</Menu.Label>
+            <Menu.Item color="red" leftSection={<IconLogout size={14} />} onClick={handleLogout}>
+              Logout
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      </Group>
+    );
+  };
 
   return (
     <>
