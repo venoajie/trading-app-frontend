@@ -6,6 +6,7 @@ import { useMediaQuery } from '@mantine/hooks';
 import { 
   IconHome, IconArrowsExchange, IconBrain, IconBook, IconChevronDown
 } from '@tabler/icons-react';
+import { IconLayoutDashboard, IconBrain, IconBook, IconChevronDown } from '@tabler/icons-react';
 import useAuthStore from '../../store/authStore';
 import classes from './MainNav.module.css';
 
@@ -56,14 +57,15 @@ export function MainNav({ orientation = 'horizontal' }) {
   // Horizontal layout for the desktop header
   return (
     <Group gap="sm">
-      <NavMenu label="Portfolio">
-        <Menu.Item component={RouterNavLink} to="/portfolio" leftSection={<IconHome size={14} />}>
-          Dashboard
-        </Menu.Item>
-        <Menu.Item component={RouterNavLink} to="/transactions" leftSection={<IconArrowsExchange size={14} />}>
-          Transactions
-        </Menu.Item>
-      </NavMenu>
+      <Button
+        component={RouterNavLink}
+        to="/dashboard"
+        variant="subtle"
+        className={classes.navButton}
+        leftSection={<IconLayoutDashboard size="1rem" />}
+      >
+        Dashboard
+      </Button>
       <NavMenu label="Process">
          <Menu.Item component={RouterNavLink} to="/decision-workspace" leftSection={<IconBrain size={14} />}>
           Decision Workspace

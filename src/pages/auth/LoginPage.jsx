@@ -44,11 +44,11 @@ export function LoginPage() {
       
       notifications.show({
         title: 'Login Successful',
-        message: 'Redirecting to your portfolio...',
+        message: 'Redirecting to your dashboard...',
         color: 'green',
       });
 
-      navigate('/portfolio');
+      navigate('/dashboard');
 
     } catch (error) {
       const errorMessage = error.response?.data?.detail || 'An unexpected error occurred.';

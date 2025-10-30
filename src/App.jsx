@@ -18,6 +18,7 @@ import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
 import { PortfolioDashboardPage } from './pages/PortfolioDashboardPage/PortfolioDashboardPage';
 import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
+import { DashboardPage } from './pages/DashboardPage/DashboardPage'; 
 import { TransactionsPage } from './pages/TransactionsPage/TransactionsPage';
 import { LearningJournalPage } from './pages/LearningJournalPage';
 
@@ -28,7 +29,7 @@ function ProtectedRoute({ children }) {
 }
 
 /**
- * NEW: RootRedirect Component
+ * RootRedirect Component
  * This component acts as a gatekeeper for the root URL ('/').
  * It checks the user's authentication status and directs them to the
  * appropriate page, ensuring a seamless user experience.
@@ -71,14 +72,12 @@ export default function App() {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           {/* Public Routes */}
-          {/* The index route now uses RootRedirect for a conditional experience. */}
           <Route index element={<RootRedirect />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           
-          {/* Protected Routes */}
-          <Route path="portfolio" element={<ProtectedRoute><PortfolioDashboardPage /></ProtectedRoute>} />
-          <Route path="transactions" element={<ProtectedRoute><TransactionsPage /></ProtectedRoute>} />
+          {/* Protected Routes (Updated) */}
+          <Route path="dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="decision-workspace" element={<ProtectedRoute><DecisionWorkspacePage /></ProtectedRoute>} />
           <Route path="learning-journal" element={<ProtectedRoute><LearningJournalPage /></ProtectedRoute>} />
         </Route>
