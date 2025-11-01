@@ -5,6 +5,7 @@ import { IconUser, IconRobot, IconAnalyze, IconAlertTriangle } from '@tabler/ico
 import Markdown from 'react-markdown';
 
 function StructuredInsight({ payload }) {
+  // ... (This sub-component remains unchanged)
   return (
     <Stack gap="xs">
       <Group>
@@ -23,11 +24,11 @@ function StructuredInsight({ payload }) {
   );
 }
 
-// Disclaimer text to be identified and separated
 const DISCLAIMER_TEXT = "Disclaimer: This is not financial advice.";
 
 export function ChatMessage({ message }) {
   if (message.isError) {
+    // ... (Error handling remains unchanged)
     return (
       <Alert
         variant="light"
@@ -44,7 +45,6 @@ export function ChatMessage({ message }) {
   const isAssistant = message.role === 'assistant';
   const isStructured = message.type === 'structured_insight' && message.payload;
 
-  // Logic to separate the disclaimer from the main content
   let mainContent = message.content;
   let disclaimer = null;
   if (isAssistant && mainContent.includes(DISCLAIMER_TEXT)) {
@@ -53,28 +53,35 @@ export function ChatMessage({ message }) {
   }
 
   const avatar = isAssistant ? (
-    <Avatar color="blue" radius="xl">
-      <IconRobot size="1.5rem" />
-    </Avatar>
+    <Avatar color="blue" radius="xl"><IconRobot size="1.5rem" /></Avatar>
   ) : (
-    <Avatar color="gray" radius="xl">
-      <IconUser size="1.5rem" />
-    </Avatar>
+    <Avatar color="gray" radius="xl"><IconUser size="1.5rem" /></Avatar>
   );
 
   return (
     <Group align="flex-start" wrap="nowrap" gap="md">
       {avatar}
       <Box style={{ flex: 1, maxWidth: '90%' }}>
+        {/*
+          --- THE REFACTOR ---
+          1. We replace the static `style` prop with the dynamic `styles` prop.
+          2. This gives us access to the `theme` object.
+          3. We use a ternary operator (`theme.colorScheme === 'dark' ? ... : ...`)
+             to select colors based on the current theme.
+          4. This implements ADR-016's `Visual_Hierarchy` by giving the AI a more
+             "subtle" background color than the user's message.
+        */}
         <Paper
           p="md"
           radius="lg"
           withBorder
-          style={{
-            backgroundColor: isAssistant
-              ? 'var(--mantine-color-dark-6)'
-              : 'var(--mantine-color-dark-7)',
-          }}
+          styles={(theme) => ({
+            root: {
+              backgroundColor: isAssistant
+                ? (theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0]) // AI: Subtle background
+                : (theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.white), // User: Standard background
+            },
+          })}
         >
           {isStructured ? (
             <StructuredInsight payload={message.payload} />
