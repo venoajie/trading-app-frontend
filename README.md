@@ -1,4 +1,80 @@
 
+---
+
+### **Generated Document 2: The Developer README**
+
+This is the concise, human-readable entry point for the project.
+
+--- START OF FILE frontend/README.md ---
+
+# Trading App Frontend
+
+This is the React frontend for the AI-powered financial analysis and trading platform. It is built with Vite, React, TypeScript, and the Mantine component library.
+
+## Architectural Blueprint
+
+For a deep understanding of the project's architecture, guiding principles, and foundational patterns, please refer to the canonical **[PROJECT_BLUEPRINT.md](./PROJECT_BLUEPRINT.md)**.
+
+## Getting Started
+
+### Prerequisites
+
+*   [Node.js](https://nodejs.org/) (v18 or newer)
+*   [pnpm](https://pnpm.io/) (recommended package manager)
+
+### Installation & Setup
+
+1.  **Clone the repository:**
+    ```bash
+    git clone <repository_url>
+    cd trading-app-frontend
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    pnpm install
+    ```
+
+3.  **Set up environment variables:**
+    Copy the example environment file and fill in the required values.
+    ```bash
+    cp .env.example .env.local
+    ```
+
+4.  **Run the development server:**
+    ```bash
+    pnpm dev
+    ```
+    The application will be available at `http://localhost:5173`.
+
+## Available Scripts
+
+| Script | Description |
+| :--- | :--- |
+| `pnpm dev` | Starts the development server with Hot Module Replacement (HMR). |
+| `pnpm build` | Compiles and bundles the application for production. |
+| `pnpm preview` | Serves the production build locally to preview it. |
+| `pnpm test` | Runs the unit and integration tests using Vitest. |
+| `pnpm lint` | Lints the codebase using ESLint to find and fix problems. |
+| `pnpm format` | Formats all files using Prettier. |
+
+## Project Structure
+
+A brief overview of the key directories in the `src/` folder:
+
+*   `components/`: Shared, reusable UI components (e.g., buttons, charts, tables).
+*   `layouts/`: Top-level page layouts (e.g., `AppLayout` for the main application shell).
+*   `pages/`: Top-level route components, representing individual pages.
+*   `services/`: API client and other external service integrations.
+*   `store/`: Global client state management with Zustand.
+*   `hooks/`: Custom React hooks.
+*   `lib/`: Third-party library configurations.
+*   `styles/`: Global styles and theme configuration.
+*   `tests/`: All test files, mirroring the `src` structure.
+
+--- END OF FILE frontend/README.md ---
+
+
 # Frontend Architectural Blueprint
 
 This document is the canonical, machine-readable source of truth for the Portopilot React frontend. It is designed to provide a complete architectural context for AI-assisted development and ensure alignment with the backend `PROJECT_BLUEPRINT.md`.
