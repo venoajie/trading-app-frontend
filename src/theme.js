@@ -1,4 +1,3 @@
-
 // src/theme.js
 import { createTheme } from '@mantine/core';
 
@@ -20,18 +19,27 @@ export const theme = createTheme({
     },
   },
 
-  // The globalStyles workaround has been removed as it's no longer necessary.
-  // MantineProvider now handles the body styles correctly.
-
+  // Explicitly define the background color for the entire application here.
+  // This ensures the <body> tag and the AppShell.main component have the
+  // exact same background color, creating a seamless experience.
   colors: {
     dark: professionalDark,
   },
+  
+  // This property tells Mantine's provider what color the <body> tag should be.
+  other: {
+    bodyBackgroundColor: (theme) => 
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
+  },
+  // --- END OF FIX ---
+
   primaryColor: 'blue',
   primaryShade: { light: 6, dark: 7 },
   components: {
     AppShell: {
       styles: (theme) => ({
         main: {
+          // We ensure the AppShell's background matches the body background perfectly.
           backgroundColor:
             theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[0],
         },
