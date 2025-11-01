@@ -7,7 +7,7 @@ import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import useAuthStore from './store/authStore';
 import { useUiStore } from './store/uiStore';
-import { theme } from './theme'; // Import your custom theme
+import { theme } from './theme';
 
 import { AppLayout } from './layouts/AppLayout';
 import { LandingPage } from './pages/LandingPage';
@@ -17,8 +17,6 @@ import { DashboardPage } from './pages/DashboardPage/DashboardPage';
 import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
 import { LearningJournalPage } from './pages/LearningJournalPage';
 import { AccountSettingsPage } from './pages/AccountSettingsPage/AccountSettingsPage';
-
-// The flawed ThemeManager component has been removed entirely.
 
 function ProtectedRoute() {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
@@ -34,7 +32,7 @@ function PublicRoute({ children }) {
 
 export default function App() {
   const { token, fetchUserOnLoad, setLoadingComplete } = useAuthStore();
-  const { setAiAssistantAvailability, colorScheme } = useUiStore(); // Get colorScheme from the store
+  const { setAiAssistantAvailability, colorScheme } = useUiStore();
 
   useEffect(() => {
     const isAiEnabled = import.meta.env.VITE_AI_ASSISTANT_ENABLED === 'true';
@@ -45,15 +43,11 @@ export default function App() {
     if (token) {
       fetchUserOnLoad();
     } else {
-      if (setLoadingComplete) {
-        setLoadingComplete();
-      }
+      setLoadingComplete?.();
     }
   }, [token, fetchUserOnLoad, setLoadingComplete]);
 
   return (
-    // MantineProvider now wraps the entire application here.
-    // Its colorScheme is dynamically controlled by the state in uiStore.
     <MantineProvider theme={theme} forceColorScheme={colorScheme}>
       <ColorSchemeScript defaultColorScheme="light" />
       <Notifications />
