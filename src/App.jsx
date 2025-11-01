@@ -1,14 +1,14 @@
 
 // src/App.jsx
 import { useEffect } from 'react';
-import { MantineProvider, ColorSchemeScript } from '@mantine/core';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { useMantineColorScheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 
 import useAuthStore from './store/authStore';
 import { useUiStore } from './store/uiStore';
-import { theme } from './theme';
 
+// Import Layouts and Pages
 import { AppLayout } from './layouts/AppLayout';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
@@ -17,6 +17,22 @@ import { DashboardPage } from './pages/DashboardPage/DashboardPage';
 import { DecisionWorkspacePage } from './pages/DecisionWorkspacePage/DecisionWorkspacePage';
 import { LearningJournalPage } from './pages/LearningJournalPage';
 import { AccountSettingsPage } from './pages/AccountSettingsPage/AccountSettingsPage';
+
+/**
+ * This component acts as a bridge.
+ * It listens to our Zustand store and tells Mantine's context when to change.
+ * This ensures the data-mantine-color-scheme attribute is correctly applied to the HTML tag.
+ */
+function ThemeBridge() {
+  const { colorScheme } = useUiStore();
+  const { setColorScheme } = useMantineColorScheme();
+
+  useEffect(() => {
+    setColorScheme(colorScheme);
+  }, [colorScheme, setColorScheme]);
+
+  return null; // This component renders nothing.
+}
 
 function ProtectedRoute() {
   const { isAuthenticated, isLoadingUser } = useAuthStore();
@@ -32,7 +48,7 @@ function PublicRoute({ children }) {
 
 export default function App() {
   const { token, fetchUserOnLoad, setLoadingComplete } = useAuthStore();
-  const { setAiAssistantAvailability, colorScheme } = useUiStore();
+  const { setAiAssistantAvailability } = useUiStore();
 
   useEffect(() => {
     const isAiEnabled = import.meta.env.VITE_AI_ASSISTANT_ENABLED === 'true';
@@ -48,16 +64,13 @@ export default function App() {
   }, [token, fetchUserOnLoad, setLoadingComplete]);
 
   return (
-    <MantineProvider theme={theme} forceColorScheme={colorScheme}>
-      <ColorSchemeScript defaultColorScheme="light" />
+    <BrowserRouter>
+      <ThemeBridge />
       <Notifications />
       <Routes>
-        {/* --- Public-Only Routes --- */}
         <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
         <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
-
-        {/* --- Protected Application Routes --- */}
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<DashboardPage />} />
@@ -67,6 +80,6 @@ export default function App() {
           </Route>
         </Route>
       </Routes>
-    </MantineProvider>
+    </BrowserRouter>
   );
 }
