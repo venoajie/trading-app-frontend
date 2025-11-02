@@ -4,14 +4,13 @@ import axios from 'axios';
 
 /**
  * The base Axios instance for all standard API communications.
- * It is configured to match the proven behavior of the legacy application,
- * sending requests to root-relative paths.
+ * It is configured to prefix all requests with the versioned API path,
+ * aligning it with the production Nginx routing architecture.
  */
 const apiClient = axios.create({
-  // The baseURL is set to an empty string to align with the
-  // legacy application's actual, functional implementation.
-  // This will cause requests to be sent to paths like '/auth/login'.
-  baseURL: '',
+  // CORRECTED: The baseURL is set to the versioned API path.
+  // This will cause requests to be sent to paths like '/api/v1/auth/login'.
+  baseURL: '/api/v1',
   headers: {
     'Content-Type': 'application/json',
   },
