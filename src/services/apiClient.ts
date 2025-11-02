@@ -4,11 +4,14 @@ import axios from 'axios';
 
 /**
  * The base Axios instance for all standard API communications.
- * It is a "dumb" client. Authentication headers are managed externally
- * by the authStore to enforce separation of concerns.
+ * It is configured to match the proven behavior of the legacy application,
+ * sending requests to root-relative paths.
  */
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  // The baseURL is set to an empty string to align with the
+  // legacy application's actual, functional implementation.
+  // This will cause requests to be sent to paths like '/auth/login'.
+  baseURL: '',
   headers: {
     'Content-Type': 'application/json',
   },
