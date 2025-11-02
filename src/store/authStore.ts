@@ -103,11 +103,44 @@ const useAuthStore = create<AuthState>()(
             return false;
           }
         },
+        // CORRECTED: The full implementation of the register function is restored.
         register: async (credentials) => {
-          // ... (register logic) ...
+          set({ isLoading: true });
+          try {
+            await apiClient.post('/auth/register', credentials);
+            notifications.show({
+              title: 'Registration Successful',
+              message: 'Your account has been created. Please log in.',
+              color: 'green',
+            });
+            set({ isLoading: false });
+            return true;
+          } catch (error: unknown) {
+            let errorMessage = 'An unexpected error occurred.';
+            if (isAxiosError(error) && error.response?.data?.detail) {
+              errorMessage = error.response.data.detail;
+            }
+            notifications.show({
+              title: 'Registration Failed',
+              message: errorMessage,
+              color: 'red',
+            });
+            set({ isLoading: false });
+            return false;
+          }
         },
         logout: () => {
-          // ... (logout logic) ...
+          set({
+            token: null,
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+          notifications.show({
+            title: 'Logged Out',
+            message: 'You have been successfully logged out.',
+            color: 'blue',
+          });
         },
       }),
       {
@@ -116,9 +149,8 @@ const useAuthStore = create<AuthState>()(
     )
   )
 );
+
 // --- ARCHITECTURAL ENFORCEMENT ---
-// This subscription is still valuable for all *other* API calls
-// that happen outside of the login transaction.
 
 const initialToken = useAuthStore.getState().token;
 if (initialToken) {
