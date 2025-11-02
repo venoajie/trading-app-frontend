@@ -19,7 +19,8 @@ interface AuthCredentials {
 export interface AuthState {
   token: string | null;
   user: User | null;
-  isLoading: boolean;
+  // --- FIX: Renamed 'isLoading' to 'isLoadingUser' to match component usage ---
+  isLoadingUser: boolean;
   isAuthenticated: boolean;
   hydrateSession: (session: { token: string; user: User }) => void;
   login: (credentials: AuthCredentials) => Promise<boolean>;
@@ -33,23 +34,25 @@ const useAuthStore = create<AuthState>()(
       (set) => ({
         token: null,
         user: null,
-        isLoading: false,
+        // --- FIX: Updated initial state property name ---
+        isLoadingUser: false,
         isAuthenticated: false,
         hydrateSession: (session) =>
           set({
             token: session.token,
             user: session.user,
             isAuthenticated: true,
-            isLoading: false,
+            // --- FIX: Updated state property name ---
+            isLoadingUser: false,
           }),
         login: async (credentials) => {
-          set({ isLoading: true });
+          // --- FIX: Updated state property name ---
+          set({ isLoadingUser: true });
           try {
             const formBody = new URLSearchParams();
             formBody.append('username', credentials.email);
             formBody.append('password', credentials.password);
 
-            // CORRECTED: Added the trailing slash to match the backend's canonical path.
             const loginResponse = await apiClient.post(
               '/auth/login/',
               formBody,
@@ -61,7 +64,6 @@ const useAuthStore = create<AuthState>()(
             );
             const { access_token } = loginResponse.data;
 
-            // CORRECTED: Added trailing slash to user path.
             const userResponse = await apiClient.get('/users/me/', {
               headers: { Authorization: `Bearer ${access_token}` },
             });
@@ -71,7 +73,8 @@ const useAuthStore = create<AuthState>()(
               token: access_token,
               user,
               isAuthenticated: true,
-              isLoading: false,
+              // --- FIX: Updated state property name ---
+              isLoadingUser: false,
             });
 
             notifications.show({
@@ -81,7 +84,8 @@ const useAuthStore = create<AuthState>()(
             });
             return true;
           } catch (error: unknown) {
-            set({ isLoading: false, token: null });
+            // --- FIX: Updated state property name ---
+            set({ isLoadingUser: false, token: null });
             let errorMessage = 'An unexpected error occurred.';
             if (isAxiosError(error) && error.response?.data?.detail) {
               errorMessage = error.response.data.detail;
@@ -95,16 +99,17 @@ const useAuthStore = create<AuthState>()(
           }
         },
         register: async (credentials) => {
-          set({ isLoading: true });
+          // --- FIX: Updated state property name ---
+          set({ isLoadingUser: true });
           try {
-            // CORRECTED: Added the trailing slash to match the backend's canonical path.
             await apiClient.post('/auth/register/', credentials);
             notifications.show({
               title: 'Registration Successful',
               message: 'Your account has been created. Please log in.',
               color: 'green',
             });
-            set({ isLoading: false });
+            // --- FIX: Updated state property name ---
+            set({ isLoadingUser: false });
             return true;
           } catch (error: unknown) {
             let errorMessage = 'An unexpected error occurred.';
@@ -116,7 +121,8 @@ const useAuthStore = create<AuthState>()(
               message: errorMessage,
               color: 'red',
             });
-            set({ isLoading: false });
+            // --- FIX: Updated state property name ---
+            set({ isLoadingUser: false });
             return false;
           }
         },
@@ -125,7 +131,8 @@ const useAuthStore = create<AuthState>()(
             token: null,
             user: null,
             isAuthenticated: false,
-            isLoading: false,
+            // --- FIX: Updated state property name ---
+            isLoadingUser: false,
           });
           notifications.show({
             title: 'Logged Out',
