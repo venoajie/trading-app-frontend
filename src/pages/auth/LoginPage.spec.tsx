@@ -5,12 +5,11 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LoginPage } from './LoginPage';
-import useAuthStore from '../../store/authStore';
+// CORRECTED: Changed from default to named import.
+import { useAuthStore } from '../../store/authStore';
 
-// Mock the canonical auth store to isolate the component for testing.
 vi.mock('../../store/authStore');
 
-// Define a reusable initial state for the mock store.
 const mockInitialState = {
   login: vi.fn(),
   isLoading: false,
@@ -18,7 +17,6 @@ const mockInitialState = {
 
 describe('LoginPage', () => {
   beforeEach(() => {
-    // Reset mocks before each test to ensure test isolation.
     vi.clearAllMocks();
     (useAuthStore as any).mockReturnValue(mockInitialState);
   });
@@ -68,7 +66,6 @@ describe('LoginPage', () => {
 
   it('calls the login action from auth store on successful submission', async () => {
     const user = userEvent.setup();
-    // Simulate a successful login action to test the complete flow.
     mockInitialState.login.mockResolvedValue(true);
     renderComponent();
 

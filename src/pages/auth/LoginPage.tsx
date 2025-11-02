@@ -15,27 +15,24 @@ import {
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-import useAuthStore from '../../store/authStore';
+// CORRECTED: Import AuthState type for type safety.
+import { useAuthStore, AuthState } from '../../store/authStore';
 
-// Pillar 5: All validation logic is defined in a Zod schema.
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
   password: z.string().min(1, { message: 'Password cannot be empty' }),
 });
 
-// Infer the TypeScript type from the Zod schema for type safety.
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
   const navigate = useNavigate();
-  // Pillar 3: Consume actions and state from the canonical client state store (Zustand).
-  // The component is unaware of the API implementation details.
-  const { login, isLoading } = useAuthStore((state) => ({
+  // CORRECTED: The state parameter is now explicitly typed, resolving the implicit 'any' error.
+  const { login, isLoading } = useAuthStore((state: AuthState) => ({
     login: state.login,
     isLoading: state.isLoading,
   }));
 
-  // Pillar 5: All form state is managed by the `useForm` hook from React Hook Form.
   const {
     register,
     handleSubmit,
@@ -48,10 +45,7 @@ export function LoginPage() {
     },
   });
 
-  // The submit handler is a clean orchestrator, delegating logic to the store
-  // and handling the UI-specific side effect (navigation) upon success.
   const onSubmit = async (data: LoginFormValues) => {
-    // We assume the `login` action in the store returns a boolean for success.
     const success = await login(data);
     if (success) {
       navigate('/dashboard');
@@ -61,7 +55,7 @@ export function LoginPage() {
   return (
     <Container size={420} my={40}>
       <Title
-        ta="center" // H-004: Mantine v7 API change: align -> ta
+        ta="center"
         style={(theme) => ({
           fontFamily: `Greycliff CF, ${theme.fontFamily}`,
           fontWeight: 900,
@@ -104,5 +98,5 @@ export function LoginPage() {
   );
 }
 
-// Export as default to align with the dominant lazy-loading pattern in App.tsx
+// Ensure default export is present for lazy loading consistency
 export default LoginPage;
