@@ -1,7 +1,8 @@
 /** src/pages/HomePage.tsx */
-import { Button, Group, Paper, Text, Title } from '@mantine/core';
+import { Button, Group, Paper, Text } from '@mantine/core';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
+import { WelcomeMessage } from '@/components/utility/WelcomeMessage';
 
 function HomePage() {
   const navigate = useNavigate();
@@ -22,10 +23,10 @@ function HomePage() {
 
   return (
     <Paper withBorder p="lg" radius="md" shadow="md" style={{ maxWidth: 500 }}>
-      <Title order={2} align="center" mt="md" mb="xl">
-        Welcome to the Trading App
-      </Title>
-      <Text align="center" mb="xl">
+      {/* The hardcoded title has been replaced with the i18n-powered component */}
+      <WelcomeMessage />
+
+      <Text align="center" mt="xl" mb="xl">
         This is the public home/login page. Since you are not authenticated, you
         can see this page.
       </Text>
