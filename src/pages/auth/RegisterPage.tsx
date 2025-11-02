@@ -18,7 +18,6 @@ import { z } from 'zod';
 import { useAuthStore, AuthState } from '../../store/authStore';
 import { ConsentCheckbox } from './components/ConsentCheckbox';
 
-// CORRECTED: The `z.literal` call now uses the correct `message` property for its custom error.
 const registerSchema = z
   .object({
     email: z.string().email({ message: 'Invalid email address' }),
@@ -32,17 +31,18 @@ const registerSchema = z
   })
   .refine((data) => data.password === data.passwordConfirmation, {
     message: 'Passwords do not match',
-    path: ['passwordConfirmation'], // Apply error to the confirmation field
+    path: ['passwordConfirmation'],
   });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  // --- FIX: Updated selector to use 'isLoadingUser' and aliased it to 'isLoading' ---
   const { register: registerAction, isLoading } = useAuthStore(
     (state: AuthState) => ({
       register: state.register,
-      isLoading: state.isLoading,
+      isLoading: state.isLoadingUser, // Correct property name
     })
   );
 

@@ -15,7 +15,6 @@ import {
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { z } from 'zod';
-// CORRECTED: Import AuthState type for type safety.
 import { useAuthStore, AuthState } from '../../store/authStore';
 
 const loginSchema = z.object({
@@ -27,10 +26,10 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginPage() {
   const navigate = useNavigate();
-  // CORRECTED: The state parameter is now explicitly typed, resolving the implicit 'any' error.
+  // --- FIX: Updated selector to use 'isLoadingUser' and aliased it to 'isLoading' ---
   const { login, isLoading } = useAuthStore((state: AuthState) => ({
     login: state.login,
-    isLoading: state.isLoading,
+    isLoading: state.isLoadingUser, // Correct property name
   }));
 
   const {
@@ -98,5 +97,4 @@ export function LoginPage() {
   );
 }
 
-// Ensure default export is present for lazy loading consistency
 export default LoginPage;

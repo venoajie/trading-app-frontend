@@ -1,18 +1,13 @@
-/** src/store/authStore.spec.ts */
+// src/store/authStore.spec.ts
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { useAuthStore } from './authStore';
 
-const mockUser = { id: '1', name: 'Test User', email: 'test@example.com' };
-const mockToken = 'mock-jwt-token';
-
-// Get the initial state from the store definition for resetting
-const initialState = useAuthStore.getState();
-
 describe('useAuthStore', () => {
-  beforeEach(() => {
-    // Reset the store to its initial state before each test
-    useAuthStore.setState(initialState);
+  // Reset the store to its initial state after each test
+  afterEach(() => {
+    useAuthStore.getState().logout(); // A simple way to reset state
+    useAuthStore.persist.clearStorage(); // Clear persisted state
   });
 
   it('should have a correct initial state', () => {
@@ -20,38 +15,46 @@ describe('useAuthStore', () => {
     expect(state.token).toBeNull();
     expect(state.user).toBeNull();
     expect(state.isAuthenticated).toBe(false);
-    expect(state.isLoading).toBe(false);
+    // --- FIX: Assert against the correct 'isLoadingUser' property ---
+    expect(state.isLoadingUser).toBe(false);
   });
 
-  it('should correctly hydrate the session on successful login simulation', () => {
-    // CORRECTED: Call `hydrateSession` with a single session object.
-    // This is the correct way to test the state transition.
-    useAuthStore
-      .getState()
-      .hydrateSession({ user: mockUser, token: mockToken });
+  it('should handle logout correctly', () => {
+    // Set a logged-in state first
+    useAuthStore.setState({
+      token: 'fake-token',
+      user: { id: '1', email: 'test@test.com', name: 'Test User' },
+      isAuthenticated: true,
+      isLoadingUser: false,
+    });
+
+    // Perform logout
+    useAuthStore.getState().logout();
 
     const state = useAuthStore.getState();
-    expect(state.token).toBe(mockToken);
-    expect(state.user).toEqual(mockUser);
-    expect(state.isAuthenticated).toBe(true);
-    expect(state.isLoading).toBe(false); // hydrateSession should also reset loading state
-  });
-
-  it('should clear user and token data on logout', () => {
-    // First, set an authenticated state
-    useAuthStore
-      .getState()
-      .hydrateSession({ user: mockUser, token: mockToken });
-    let state = useAuthStore.getState();
-    expect(state.token).toBe(mockToken); // Verify initial setup
-
-    // Now, call logout
-    useAuthStore.getState().logout();
-    state = useAuthStore.getState();
-
-    // Verify the state has been cleared
     expect(state.token).toBeNull();
     expect(state.user).toBeNull();
     expect(state.isAuthenticated).toBe(false);
+    // --- FIX: Assert against the correct 'isLoadingUser' property ---
+    expect(state.isLoadingUser).toBe(false);
+  });
+
+  it('should hydrate the session correctly', () => {
+    const sessionData = {
+      token: 'hydrated-token',
+      user: { id: '2', email: 'hydrate@test.com', name: 'Hydrated User' },
+    };
+
+    // Set a loading state before hydrating to test if it gets reset
+    useAuthStore.setState({ isLoadingUser: true });
+
+    useAuthStore.getState().hydrateSession(sessionData);
+
+    const state = useAuthStore.getState();
+    expect(state.token).toBe(sessionData.token);
+    expect(state.user).toEqual(sessionData.user);
+    expect(state.isAuthenticated).toBe(true);
+    // --- FIX: Assert that hydrateSession resets the loading state ---
+    expect(state.isLoadingUser).toBe(false);
   });
 });

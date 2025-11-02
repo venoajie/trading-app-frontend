@@ -5,14 +5,14 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LoginPage } from './LoginPage';
-// CORRECTED: Changed from default to named import.
 import { useAuthStore } from '../../store/authStore';
 
 vi.mock('../../store/authStore');
 
+// --- FIX: Updated mock state to use 'isLoadingUser' ---
 const mockInitialState = {
   login: vi.fn(),
-  isLoading: false,
+  isLoadingUser: false,
 };
 
 describe('LoginPage', () => {
