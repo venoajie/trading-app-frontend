@@ -1,18 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-// Import Mantine core styles – must be imported before your own styles.
+import { MantineProvider } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import '@mantine/core/styles.css';
-// Import Mantine notifications styles
 import '@mantine/notifications/styles.css';
 
 import App from './App';
-import './index.css'; // Your global vanilla CSS
-import { ThemeBridge } from './components/ThemeBridge';
+import './index.css';
+import { theme } from './styles/theme';
+import { colorSchemeManager } from './styles/colorSchemeManager';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ThemeBridge>
+    <MantineProvider
+      theme={theme}
+      withCssVariables
+      withGlobalStyles
+      colorSchemeManager={colorSchemeManager}
+      defaultColorScheme="auto"
+    >
+      <Notifications />
       <App />
-    </ThemeBridge>
+    </MantineProvider>
   </React.StrictMode>
 );
