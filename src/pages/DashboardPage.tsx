@@ -8,21 +8,8 @@ import {
 import { PortfolioTab } from './DashboardPage/components/PortfolioTab';
 import { PerformanceTab } from './DashboardPage/components/PerformanceTab';
 import { TransactionsTab } from './DashboardPage/components/TransactionsTab';
-import { useEffect } from 'react';
-import useDashboardStore from '../store/dashboardStore';
 
 export function DashboardPage() {
-  // Fetch data when the component mounts
-  const { fetchDashboardData, isLoading } = useDashboardStore();
-
-  useEffect(() => {
-    // Only fetch if data isn't already loading to prevent duplicate calls
-    if (!isLoading) {
-      fetchDashboardData();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Run once on mount
-
   return (
     <Stack>
       <Title order={1}>Dashboard</Title>
