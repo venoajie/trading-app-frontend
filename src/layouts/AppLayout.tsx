@@ -31,7 +31,9 @@ import {
 import { useEffect } from 'react';
 
 import { useUiStore } from '../store/uiStore';
-import useAuthStore from '../store/authStore';
+// --- FIX: Use named import for Zustand store ---
+import { useAuthStore } from '../store/authStore';
+// NOTE: Assuming placeholder files from previous step exist for these
 import useDashboardStore from '../store/dashboardStore';
 import { MainNav } from '../components/Navigation/MainNav';
 import { AssistantSidebar } from '../components/AssistantSidebar/AssistantSidebar';
@@ -47,13 +49,14 @@ const formatCurrency = (value: number): string =>
     maximumFractionDigits: 0,
   }).format(value);
 
-export function AppLayout() {
+// --- FIX: Use 'export default' to comply with React.lazy ---
+export default function AppLayout() {
   const [mobileNavOpened, { toggle: toggleMobileNav, close: closeMobileNav }] =
     useDisclosure();
   const [mobileAiDrawerOpened, { open: openAiDrawer, close: closeAiDrawer }] =
     useDisclosure();
 
-  // --- STATE MIGRATION: Consume canonical UI state from Zustand ---
+  // --- FIX: All properties now correctly exist on the updated UiState ---
   const {
     colorScheme,
     toggleColorScheme,
@@ -61,7 +64,6 @@ export function AppLayout() {
     toggleAiSidebar,
     isAiAssistantAvailable,
   } = useUiStore();
-  // --- END MIGRATION ---
 
   const { isAuthenticated, logout, user, isLoadingUser } = useAuthStore();
   const {
@@ -106,7 +108,6 @@ export function AppLayout() {
 
     return (
       <Group gap="md">
-        {/* Theme toggle button now correctly wired to the uiStore */}
         <ActionIcon
           onClick={() => toggleColorScheme()}
           variant="default"
@@ -190,14 +191,10 @@ export function AppLayout() {
                   size="sm"
                 />
               )}
-              <Title
-                order={3}
-                component={Link}
-                to="/"
-                style={{ textDecoration: 'none', color: 'inherit' }}
-              >
-                Portopilot
-              </Title>
+              {/* --- FIX: Use standard component composition for type safety with react-router --- */}
+              <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Title order={3}>Portopilot</Title>
+              </Link>
               {isAuthenticated && !isMobile && (
                 <MainNav orientation="horizontal" />
               )}
