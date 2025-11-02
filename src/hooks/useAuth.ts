@@ -9,7 +9,7 @@ export const useAuth = () => {
   // --- TOGGLE THIS VALUE TO TEST ROUTE GUARDS ---
   // `true`:  You will be redirected from the home page ('/') to '/dashboard'.
   // `false`: You will be redirected from '/dashboard' to the home page ('/').
-  const isAuthenticated = false;
+  const isAuthenticated = true;
 
   return { isAuthenticated };
 };
