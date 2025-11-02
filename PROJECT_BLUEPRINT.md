@@ -3,8 +3,8 @@
 
 # PROJECT BLUEPRINT: Trading App Frontend
 
-<!-- Version: 1.3.1 -->
-<!-- Status: Phase 3 Complete. Routing & Global Structure in place. -->
+<!-- Version: 1.4.0 -->
+<!-- Status: Phase 4 Complete. State & API Layer in place. -->
 
 ## 1. System Overview and Guiding Principles
 
@@ -120,12 +120,44 @@ This section defines the logical, step-by-step order for constructing the applic
     *   **Origin:** Successful implementation of route guards using a placeholder `useAuth.ts` hook.
 
 ### Phase 4: State & API Layer (Pillar 3)
-*   **Status:** `PENDING`
-1.  Set up Zustand for client state (`uiStore.ts`, `authStore.ts`).
-2.  Configure Axios for the base `apiClient.ts`.
-3.  Integrate TanStack Query and its `<QueryClientProvider>`.
-4.  Create the placeholder for the `aiApiClient.ts` with the "fake streamer" contract.
-5.  **Milestone:** The application can manage a simulated login/logout flow, storing auth state in Zustand and using a TanStack Query `useQuery` hook to fetch mock user data.
+*   **Status:** `[COMPLETED]`
+*   **Milestone_Achieved:** `true`
+*   **Milestone_Description:** "The application can manage a simulated login/logout flow, storing auth state in Zustand and using a TanStack Query `useQuery` hook to fetch mock user data."
+
+#### **STATE DELTA**
+
+**1. Dependencies Added:**
+```json
+{
+  "dependencies": {
+    "@tanstack/react-query": "^5.x",
+    "axios": "^1.x",
+    "zustand": "^4.x"
+  }
+}
+```
+
+**2. Artifacts Created (File Manifest):**
+```
+/src/store/authStore.ts
+/src/store/authStore.spec.ts
+/src/services/apiClient.ts
+/src/services/aiApiClient.ts
+/src/hooks/useUser.ts
+/src/hooks/useUser.spec.tsx
+```
+
+**3. Artifacts Modified (Refactored):**
+```
+/src/main.tsx
+/src/pages/HomePage.tsx
+/src/pages/DashboardPage.tsx
+/src/hooks/useAuth.ts
+
+*   **HEURISTIC_ID: `H-003`**
+    *   **Name:** `CANONICAL_STATE_MIGRATION`
+    *   **Rule:** When replacing a placeholder state implementation (per `H-002`) with its canonical counterpart, all dependent systems (e.g., UI components, route guards, hooks) MUST be refactored to consume the new canonical source. Failure to do so creates a state schism, which is a critical architectural defect.
+    *   **Origin:** Derived from the Phase 4 bug where logout failed because route guards were not updated to use `useAuthStore` after it replaced the `useAuth.ts` placeholder. This is a direct codification of **Lesson 3**.
 
 ### Phase 5: The Remaining Pillars (Configuration & Placeholders)
 *   **Status:** `PENDING`
