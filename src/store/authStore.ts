@@ -50,19 +50,17 @@ const useAuthStore = create<AuthState>()(
             formBody.append('username', credentials.email);
             formBody.append('password', credentials.password);
 
-            const loginResponse = await apiClient.post(
-              '/auth/login',
-              formBody,
-              {
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded',
-                },
-              }
-            );
+            // CORRECTED: Call the exact endpoint from the API contract: POST /login
+            const loginResponse = await apiClient.post('/login', formBody, {
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            });
             const { access_token } = loginResponse.data;
 
             set({ token: access_token });
 
+            // NOTE: The /users/me endpoint is not in the contract you provided.
+            // Assuming it exists at /api/v1/users/me or similar and is handled correctly by the default apiClient baseURL.
+            // If this call fails, its path also needs to be corrected.
             const userResponse = await apiClient.get('/users/me');
             const user = userResponse.data;
 
@@ -92,19 +90,17 @@ const useAuthStore = create<AuthState>()(
             return false;
           }
         },
-        // Full implementation of the register function, resolving both build errors.
         register: async (credentials) => {
           set({ isLoading: true });
           try {
-            // Use the 'credentials' parameter in the API call.
-            await apiClient.post('/auth/register/', credentials);
+            // CORRECTED: Call the exact endpoint from the API contract: POST /register
+            await apiClient.post('/register', credentials);
             notifications.show({
               title: 'Registration Successful',
               message: 'Your account has been created. Please log in.',
               color: 'green',
             });
             set({ isLoading: false });
-            // Return 'true' on success to match the Promise<boolean> type.
             return true;
           } catch (error: unknown) {
             let errorMessage = 'An unexpected error occurred.';
@@ -117,7 +113,6 @@ const useAuthStore = create<AuthState>()(
               color: 'red',
             });
             set({ isLoading: false });
-            // Return 'false' on failure to match the Promise<boolean> type.
             return false;
           }
         },
