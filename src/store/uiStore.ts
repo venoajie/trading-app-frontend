@@ -5,30 +5,23 @@ import { MantineColorScheme } from '@mantine/core';
 interface UiState {
   colorScheme: MantineColorScheme;
   setColorScheme: (scheme: MantineColorScheme) => void;
-  toggleColorScheme: () => void;
+  // The toggle function now accepts the currently resolved scheme.
+  toggleColorScheme: (currentScheme: 'light' | 'dark') => void;
 }
 
-/**
- * Zustand store for managing global UI state.
- * The theme preference is persisted to localStorage.
- */
 export const useUiStore = create<UiState>()(
   persist(
     (set) => ({
-      // 'auto' will sync with the user's OS preference.
       colorScheme: 'auto',
       setColorScheme: (scheme) => set({ colorScheme: scheme }),
-      toggleColorScheme: () =>
-        set((state) => ({
-          // When toggling, we explicitly set light/dark, bypassing 'auto'.
-          colorScheme:
-            state.colorScheme === 'light' || state.colorScheme === 'auto'
-              ? 'dark'
-              : 'light',
-        })),
+      // The logic is now a simple, unambiguous flip.
+      toggleColorScheme: (currentScheme) =>
+        set({
+          colorScheme: currentScheme === 'dark' ? 'light' : 'dark',
+        }),
     }),
     {
-      name: 'ui-storage', // Unique name for the localStorage key.
+      name: 'ui-storage',
     }
   )
 );
