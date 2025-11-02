@@ -3,7 +3,7 @@
 
 # PROJECT BLUEPRINT: Trading App Frontend
 
-<!-- Version: 1.3 -->
+<!-- Version: 1.3.1 -->
 <!-- Status: Phase 3 Complete. Routing & Global Structure in place. -->
 
 ## 1. System Overview and Guiding Principles
@@ -57,40 +57,68 @@ This section defines the logical, step-by-step order for constructing the applic
 
 ### Phase 3: Routing & Global Structure (Pillar 4 & 6)
 *   **Status:** `[COMPLETED]`
-*   **Milestone Achieved:** "A multi-page app with distinct layouts for logged-in vs. logged-out states, where navigation is functional and protected routes correctly redirect unauthenticated users."
+*   **Milestone_Achieved:** `true`
+*   **Milestone_Description:** "A multi-page app with distinct layouts for logged-in vs. logged-out states, where navigation is functional and protected routes correctly redirect unauthenticated users."
 
-### 1. Technical Progress & Implementation Details
-*   **Routing Foundation:** `react-router-dom` has been successfully integrated as the core routing library. The main router is configured in `App.tsx` using `createBrowserRouter`, which serves as the single source of truth for all application routes.
-*   **Code Splitting:** In adherence with Pillar 5 (Performance), all page and layout components are loaded using `React.lazy` and wrapped in a global `<Suspense>` component. This enables route-based code splitting, ensuring that users only download the JavaScript necessary for the view they are currently accessing. A `Loading.tsx` component provides the necessary fallback UI.
-*   **Layout Architecture:** Two distinct, lazy-loaded layouts have been established to enforce a clean separation of concerns between application states:
-    *   `AppLayout.tsx`: Provides the primary application shell, including the header and main content area, for authenticated users.
-    *   `AuthLayout.tsx`: Provides a consistent shell for public-facing pages (e.g., home, login), ensuring global elements like the header and theme toggle are always present.
-*   **Access Control:** Declarative route guards have been implemented to manage application access:
-    *   `ProtectedRoute.tsx`: Restricts access to authenticated users, redirecting to a public route if the authentication check fails.
-    *   `PublicRoute.tsx`: Prevents authenticated users from accessing public-only pages (like a login form), redirecting them to the main application dashboard.
-    *   A placeholder `useAuth.ts` hook was created to facilitate development and testing of these guards in isolation, prior to the implementation of the actual authentication state.
-*   **Global Error Handling:** An `ErrorBoundary.tsx` class component has been created and integrated at the root of each route tree, fulfilling the requirements of Pillar 6. This component catches JavaScript errors during rendering, prevents a full application crash, and displays a user-friendly fallback UI.
+#### **STATE DELTA**
 
-### 2. Component Inventory (New Artifacts)
-*   **Layouts:**
-    *   `src/layouts/AppLayout.tsx`
-    *   `src/layouts/AuthLayout.tsx`
-*   **Components:**
-    *   `src/components/auth/ProtectedRoute.tsx` (+ `spec.tsx`)
-    *   `src/components/auth/PublicRoute.tsx` (+ `spec.tsx`)
-    *   `src/components/utility/ErrorBoundary.tsx`
-    *   `src/components/utility/Loading.tsx`
-*   **Pages (Placeholders):**
-    *   `src/pages/HomePage.tsx`
-    *   `src/pages/DashboardPage.tsx`
-*   **Hooks (Placeholder):**
-    *   `src/hooks/useAuth.ts`
+**1. Dependencies Added:**
+```json
+{
+  "dependencies": {
+    "react-router-dom": "^6.x"
+  }
+}
+```
 
-### 3. Critical Observations & Lessons Learned
-*   **Layout Consistency is Paramount:** The initial implementation of `AuthLayout` omitted the shared `AppShell` header, leading to a regression where the theme toggle was unavailable on the home page. This was promptly corrected. **Conclusion:** Global UI elements must be consistently applied across all top-level layouts to maintain a predictable user experience. This reinforces the "Layouts per App Section" strategy outlined in Pillar 4.
-*   **Validation of QA Tooling:** The `lint-staged` pre-commit hook proved its value by successfully catching multiple type-safety violations (`no-explicit-any`) in test files. This confirms the robustness of the static analysis setup in enforcing code quality and preventing technical debt before it enters the codebase.
-*   **Decoupled Development Works:** The use of a placeholder `useAuth` hook was highly effective. It allowed for the complete, testable implementation of the routing and access control logic without any dependency on the authentication state management system. This validates the project's phased, decoupled approach, reducing complexity at each stage.
-*   
+**2. Artifacts Created (File Manifest):**
+```
+/src/layouts/AppLayout.tsx
+/src/layouts/AuthLayout.tsx
+/src/pages/HomePage.tsx
+/src/pages/DashboardPage.tsx
+/src/components/auth/ProtectedRoute.tsx
+/src/components/auth/ProtectedRoute.spec.tsx
+/src/components/auth/PublicRoute.tsx
+/src/components/auth/PublicRoute.spec.tsx
+/src/components/utility/ErrorBoundary.tsx
+/src/components/utility/Loading.tsx
+/src/hooks/useAuth.ts
+```
+
+**3. Artifacts Modified (Refactored):**
+```
+/src/App.tsx
+```
+
+---
+
+#### **IMPLEMENTATION & HEURISTICS**
+
+**1. Blueprint Compliance Log:**
+
+*   **Pillar 4 (Routing & Layout Architecture):** `IMPLEMENTED`.
+    *   **Mechanism:** `react-router-dom` with `createBrowserRouter`.
+    *   **Strategy:** Distinct layouts (`AppLayout`, `AuthLayout`) and declarative guards (`ProtectedRoute`, `PublicRoute`).
+*   **Pillar 5 (Performance & Optimization):** `IMPLEMENTED`.
+    *   **Mechanism:** `React.lazy` and `<Suspense>` for all route components.
+    *   **Strategy:** Route-based code splitting is now active.
+*   **Pillar 6 (Global Error Handling):** `IMPLEMENTED`.
+    *   **Mechanism:** Class-based `ErrorBoundary` component.
+    *   **Strategy:** Wrapped around route elements in `createBrowserRouter` configuration.
+
+**2. New Heuristics Derived (For Future Operations):**
+
+*   **HEURISTIC_ID: `H-001`**
+    *   **Name:** `LAYOUT_CONSISTENCY`
+    *   **Rule:** All top-level layouts (e.g., `AuthLayout`, `AppLayout`) MUST incorporate shared global UI components (e.g., `AppShell` header, theme toggle) to ensure a consistent user experience and prevent feature regression across different application states.
+    *   **Origin:** Initial implementation of `AuthLayout` lacked the theme toggle, causing a regression. The rule was derived from the correction.
+
+*   **HEURISTIC_ID: `H-002`**
+    *   **Name:** `DECOUPLED_STATE_DEPENDENCY`
+    *   **Rule:** When implementing a feature (e.g., routing) that depends on a future state system (e.g., authentication), create a placeholder hook or service (`useAuth.ts`) with a manual toggle. This allows for complete, isolated, and testable implementation of the feature, validating the architecture before the dependency is built.
+    *   **Origin:** Successful implementation of route guards using a placeholder `useAuth.ts` hook.
+
 ### Phase 4: State & API Layer (Pillar 3)
 *   **Status:** `PENDING`
 1.  Set up Zustand for client state (`uiStore.ts`, `authStore.ts`).
