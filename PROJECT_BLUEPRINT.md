@@ -3,8 +3,8 @@
 
 # PROJECT BLUEPRINT: Trading App Frontend
 
-<!-- Version: 1.5.0 -->
-<!-- Status: Phase 5 Complete. Configuration & Placeholders in place. -->
+<!-- Version: 1.6.0 -->
+<!-- Status: Phase 6 Complete. Feature Implementation (Authentication Module). -->
 
 ## 1. System Overview and Guiding Principles
 
@@ -254,6 +254,81 @@ This section defines the logical, step-by-step order for constructing the applic
 **3. Technical Debt / Workarounds:**
 *   **Status:** `NONE`.
 *   **Analysis:** All identified issues during Phase 5 were architectural defects, not candidates for workarounds. These defects, including API drift and tooling instability, were resolved at their root cause through systematic refactoring. The final state of the codebase is architecturally sound and carries no known technical debt from this phase.
+
+
+### Phase 6: Feature Implementation (Authentication Module)
+*   **Status:** `[COMPLETED]`
+*   **Milestone_Achieved:** `true`
+*   **Milestone_Description:** "The legacy JavaScript authentication module, including Login and Register pages, has been successfully refactored into a blueprint-compliant TypeScript implementation. All related infrastructure and configuration regressions have been resolved, and the feature is fully operational in the production environment."
+
+#### **STATE DELTA**
+
+**1. Dependencies Added:**
+```json
+{
+  "dependencies": {
+    "react-hook-form": "^7.x",
+    "@hookform/resolvers": "^3.x",
+    "zod": "^3.x"
+  },
+  "devDependencies": {
+     "@vitejs/plugin-react-swc": "^3.x"
+  }
+}
+```
+
+**2. Artifacts Created (File Manifest):**
+```
+/src/pages/auth/LoginPage.tsx
+/src/pages/auth/LoginPage.spec.tsx
+/src/pages/auth/RegisterPage.tsx
+/src/pages/auth/components/ConsentCheckbox.tsx
+```
+
+**3. Artifacts Modified (Refactored):**
+```
+/src/App.tsx
+/src/store/authStore.ts
+/src/services/apiClient.ts
+/vite.config.ts
+/src/hooks/useUser.ts
+/src/hooks/useUser.spec.ts
+/src/pages/HomePage.tsx
+/src/store/authStore.spec.ts
+```
+
+**4. Artifacts Deleted (Architectural Migration):**
+```
+/src/pages/auth/LoginPage.jsx
+/src/pages/auth/RegisterPage.jsx
+/src/pages/auth/components/ConsentCheckbox.jsx
+```
+
+---
+
+#### **IMPLEMENTATION & HEURISTICS**
+
+**1. Blueprint Compliance Log:**
+
+*   **Pillar 5 (Forms Management):** `IMPLEMENTED`. The authentication module is now fully compliant, using React Hook Form and Zod for all form management, replacing the legacy Mantine Forms implementation.
+*   **Pillar 3 (API & State Management):** `IMPLEMENTED`. All API logic and state transitions are correctly encapsulated within the `authStore`, providing a single source of truth.
+*   **Pillar 9 (Developer Experience):** `IMPLEMENTED`. The authentication module is now 100% TypeScript, and the local development environment has been hardened against workflow errors (Git index corruption, line ending mismatches).
+
+**2. New Lessons Learned:**
+
+*   **Lesson 4: The Deployed Environment is the Ultimate Source of Truth.**
+    *   **Observation:** The initial refactor failed due to a "documentation-reality gap." Multiple project documents contained conflicting information regarding the canonical API path, and the legacy codebase itself was the only reliable source of truth.
+    *   **Governing Mandate:** In cases of conflicting documentation, the functional behavior of the previously deployed legacy system must be treated as the canonical source of truth. All new implementations must first replicate this proven behavior before attempting further optimization.
+
+*   **Lesson 5: Application Correctness is Contingent on Infrastructure Alignment.**
+    *   **Observation:** Even after aligning the new frontend with the legacy code's API contract, the application failed with a `405 Method Not Allowed` error. This error did not originate from the frontend or backend but from the Nginx reverse proxy.
+    *   **Root Cause:** The correctness of a frontend application is not absolute; it is contingent upon the configuration of the infrastructure it is deployed into. A perfectly coded frontend is rendered non-functional by a misaligned reverse proxy.
+    *   **Governing Mandate:** Full-stack feature implementation must include verification of the entire request chain, from the client through all infrastructure layers (e.g., reverse proxy) to the backend. A feature is not "done" until this end-to-end integration is proven to be functional. Diagnostic protocols must be capable of isolating failures at each layer of the stack.
+
+**3. Final Status:**
+
+*   **Blocker:** `NONE`.
+*   **Technical Debt:** `NONE`. The final state of the authentication module is architecturally sound and carries no known technical debt.
 ---
 
 ## 3. Detailed Pillar Architecture
