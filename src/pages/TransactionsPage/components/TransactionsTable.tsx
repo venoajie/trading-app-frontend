@@ -1,6 +1,7 @@
-// src/components/transactions/TransactionsTable.tsx
+// src/pages/TransactionsPage/components/TransactionsTable.tsx
 import { Table, Text, Badge } from '@mantine/core';
-import { Transaction } from '../../hooks/useTransactions';
+// --- FIX: Corrected import path for the co-located hook's types ---
+import { Transaction } from '../hooks/useTransactions';
 
 // l10n formatting helpers (Pillar 2)
 const formatDate = (isoDate: string) => {

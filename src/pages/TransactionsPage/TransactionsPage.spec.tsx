@@ -3,10 +3,11 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { TransactionsPage } from './TransactionsPage';
-import { useTransactions, Transaction } from '../../hooks/useTransactions';
+// --- FIX: Corrected import path for the co-located hook ---
+import { useTransactions, Transaction } from './hooks/useTransactions';
 
 // Mock the custom hook
-vi.mock('../../hooks/useTransactions');
+vi.mock('./hooks/useTransactions');
 
 const mockTransactions: Transaction[] = [
   {
@@ -45,8 +46,6 @@ describe('TransactionsPage', () => {
       </MemoryRouter>
     );
 
-    // Skeleton does not have a role, so we test for its presence indirectly
-    // by checking that the table content is NOT there.
     expect(screen.queryByText('AAPL')).not.toBeInTheDocument();
     expect(screen.queryByText('GOOGL')).not.toBeInTheDocument();
   });
@@ -84,11 +83,10 @@ describe('TransactionsPage', () => {
       </MemoryRouter>
     );
 
-    // Check for key data points from the mock transactions
     expect(screen.getByText('AAPL')).toBeInTheDocument();
     expect(screen.getByText('GOOGL')).toBeInTheDocument();
     expect(screen.getByText('COMPLETED')).toBeInTheDocument();
     expect(screen.getByText('PENDING')).toBeInTheDocument();
-    expect(screen.getByText('$1,700.00')).toBeInTheDocument(); // Total value of AAPL
+    expect(screen.getByText('$1,700.00')).toBeInTheDocument();
   });
 });
