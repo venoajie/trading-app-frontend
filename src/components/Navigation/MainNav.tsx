@@ -7,7 +7,6 @@ interface MainNavProps {
 }
 
 export function MainNav({ orientation }: MainNavProps) {
-  // --- FIX: Replaced invalid 'direction' prop with the correct 'style' prop ---
   // Mantine's <Group> is a flex container; its direction is controlled via CSS.
   return (
     <Group
@@ -21,6 +20,9 @@ export function MainNav({ orientation }: MainNavProps) {
       </Anchor>
       <Anchor component={Link} to="/research">
         Research
+      </Anchor>
+      <Anchor component={Link} to="/transactions">
+        Transactions
       </Anchor>
     </Group>
   );

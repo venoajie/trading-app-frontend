@@ -21,6 +21,9 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
+const TransactionsPage = lazy(
+  () => import('./pages/TransactionsPage/TransactionsPage')
+);
 
 const router = createBrowserRouter([
   {
@@ -42,10 +45,15 @@ const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        path: '/dashboard',
+        path: '/', // The root for authenticated users
         element: <AppLayout />,
         errorElement: <ErrorBoundary />,
-        children: [{ index: true, element: <DashboardPage /> }],
+        children: [
+          { path: 'dashboard', element: <DashboardPage /> },
+          { path: 'transactions', element: <TransactionsPage /> },
+          // Redirect the base authenticated path to dashboard
+          { index: true, element: <DashboardPage /> },
+        ],
       },
     ],
   },

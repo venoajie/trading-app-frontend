@@ -7,7 +7,6 @@ import {
 } from '@tabler/icons-react';
 import { PortfolioTab } from './DashboardPage/components/PortfolioTab';
 import { PerformanceTab } from './DashboardPage/components/PerformanceTab';
-import { TransactionsTab } from './DashboardPage/components/TransactionsTab';
 
 export function DashboardPage() {
   return (
@@ -20,12 +19,6 @@ export function DashboardPage() {
             leftSection={<IconLayoutDashboard size={16} />}
           >
             Portfolio
-          </Tabs.Tab>
-          <Tabs.Tab
-            value="performance"
-            leftSection={<IconChartAreaLine size={16} />}
-          >
-            Performance
           </Tabs.Tab>
           <Tabs.Tab
             value="transactions"
