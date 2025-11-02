@@ -1,15 +1,12 @@
 
 #!/bin/sh
-# This script is designed for a mixed WSL/Windows environment.
-# It bridges the gap by using `wsl.exe` to execute a command inside Linux.
-#
-# The command passed to `bash -c` does two things:
-# 1. Sources the nvm.sh script to initialize the Node.js environment.
-# 2. Runs the npm command, which is now available in the PATH.
-# This handles the non-interactive shell issue where ~/.bashrc is not loaded.
-
-# The 'set -e' command ensures that the script will exit immediately if a command fails.
 set -e
 
-# Execute the command inside WSL, ensuring the NVM environment is loaded first.
-wsl bash -c "source ~/.nvm/nvm.sh && npm run lint-staged"
+# This script runs in a pure Linux/WSL environment.
+# Git hooks use a non-interactive shell, so we must manually source nvm.sh
+# to make node and npm available in the script's PATH.
+if [ -f "$HOME/.nvm/nvm.sh" ]; then
+  . "$HOME/.nvm/nvm.sh"
+fi
+
+npm run lint-staged
