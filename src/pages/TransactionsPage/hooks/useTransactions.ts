@@ -1,6 +1,6 @@
-// src/hooks/useTransactions.ts
+// src/pages/TransactionsPage/hooks/useTransactions.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import apiClient from '../services/apiClient';
+import apiClient from '../../../services/apiClient';
 import { notifications } from '@mantine/notifications';
 
 // The new data contract from the OCI-based API
@@ -23,8 +23,6 @@ export type NewTransactionPayload = Omit<
 
 // --- Query Hook for Fetching Transactions ---
 const fetchTransactions = async (): Promise<Transaction[]> => {
-  // NOTE: Using a placeholder endpoint as the final one is not specified.
-  // This should be updated to `/api/v1/transactions/` when ready.
   const { data } = await apiClient.get<Transaction[]>('/transactions');
   return data;
 };
@@ -53,7 +51,6 @@ export const useCreateTransaction = () => {
   return useMutation({
     mutationFn: createTransaction,
     onSuccess: () => {
-      // Invalidate the cache to trigger a refetch of the transaction list
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       notifications.show({
         title: 'Success',
