@@ -1,13 +1,14 @@
+
 #!/bin/sh
 set -e
 
 # This is the canonical pre-commit hook for a mixed Windows/WSL environment.
-# It detects where it is running and adapts its execution strategy.
+# It ensures both command availability and working directory context are preserved.
 
-LINT_COMMAND="source ~/.nvm/nvm.sh && npm run lint-staged"
+LINT_COMMAND='cd "$(pwd)" && source ~/.nvm/nvm.sh && npm run lint-staged'
 
-# Check if wsl.exe is available in the PATH. This is true for Windows-based shells
-# like Git Bash, but false when running inside WSL.
+# Check if wsl.exe is available. This is true for Windows-based shells
+# (like Git Bash) but false when running inside WSL.
 if command -v wsl.exe >/dev/null 2>&1; then
   # We are on the Windows side. Delegate the command into WSL.
   wsl.exe bash -c "$LINT_COMMAND"

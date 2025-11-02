@@ -19,6 +19,16 @@ const AuthLayout = lazy(() => import('./layouts/AuthLayout'));
 const HomePage = lazy(() => import('./pages/HomePage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 
+// Lazily load the new LoginPage and existing RegisterPage.
+// The new LoginPage uses a default export, aligning with HomePage/DashboardPage.
+const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
+// The legacy RegisterPage uses a named export, requiring the .then() pattern.
+const RegisterPage = lazy(() =>
+  import('./pages/auth/RegisterPage').then((module) => ({
+    default: module.RegisterPage,
+  }))
+);
+
 const router = createBrowserRouter([
   {
     element: <PublicRoute />,
@@ -27,7 +37,12 @@ const router = createBrowserRouter([
         path: '/',
         element: <AuthLayout />,
         errorElement: <ErrorBoundary />,
-        children: [{ index: true, element: <HomePage /> }],
+        children: [
+          { index: true, element: <HomePage /> },
+          // Add routes for Login and Register pages under the AuthLayout.
+          { path: '/login', element: <LoginPage /> },
+          { path: '/register', element: <RegisterPage /> },
+        ],
       },
     ],
   },
