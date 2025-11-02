@@ -1,4 +1,4 @@
-/** src/components/auth/ProtectedRoute.spec.tsx */
+// src/components/auth/ProtectedRoute.spec.tsx */
 
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, Mock } from 'vitest';
