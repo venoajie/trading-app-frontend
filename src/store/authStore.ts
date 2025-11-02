@@ -1,5 +1,5 @@
 // src/store/authStore.ts
-
+// Zustand store for authentication state management
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import apiClient, { isAxiosError } from '../services/apiClient';
