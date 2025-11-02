@@ -5,7 +5,6 @@ import { devtools, persist } from 'zustand/middleware';
 import apiClient, { isAxiosError } from '../services/apiClient';
 import { notifications } from '@mantine/notifications';
 
-// This is the canonical User interface for the entire application.
 interface User {
   id: string;
   email: string;
@@ -50,21 +49,29 @@ const useAuthStore = create<AuthState>()(
             formBody.append('username', credentials.email);
             formBody.append('password', credentials.password);
 
-            // CORRECTED: Call the exact endpoint from the API contract: POST /login
-            const loginResponse = await apiClient.post('/login', formBody, {
-              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            });
+            const loginResponse = await apiClient.post(
+              '/auth/login',
+              formBody,
+              {
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                },
+              }
+            );
             const { access_token } = loginResponse.data;
 
-            set({ token: access_token });
-
-            // NOTE: The /users/me endpoint is not in the contract you provided.
-            // Assuming it exists at /api/v1/users/me or similar and is handled correctly by the default apiClient baseURL.
-            // If this call fails, its path also needs to be corrected.
-            const userResponse = await apiClient.get('/users/me');
+            // --- ARCHITECTURAL FIX: RESTORE TRANSACTIONAL INTEGRITY ---
+            // Manually inject the token for the immediate next call, just as the legacy code did.
+            // This eliminates the race condition.
+            const userResponse = await apiClient.get('/users/me', {
+              headers: { Authorization: `Bearer ${access_token}` },
+            });
             const user = userResponse.data;
 
+            // Now that the entire transaction has succeeded, commit the final state.
+            // The `subscribe` mechanism will still run, but it is no longer critical for this specific action.
             set({
+              token: access_token,
               user,
               isAuthenticated: true,
               isLoading: false,
@@ -93,8 +100,7 @@ const useAuthStore = create<AuthState>()(
         register: async (credentials) => {
           set({ isLoading: true });
           try {
-            // CORRECTED: Call the exact endpoint from the API contract: POST /register
-            await apiClient.post('/register', credentials);
+            await apiClient.post('/auth/register', credentials);
             notifications.show({
               title: 'Registration Successful',
               message: 'Your account has been created. Please log in.',
@@ -138,6 +144,8 @@ const useAuthStore = create<AuthState>()(
 );
 
 // --- ARCHITECTURAL ENFORCEMENT ---
+// This subscription is still valuable for all *other* API calls
+// that happen outside of the login transaction.
 
 const initialToken = useAuthStore.getState().token;
 if (initialToken) {
