@@ -1,34 +1,20 @@
 // src/services/apiClient.ts
 
 import axios from 'axios';
-import { useAuthStore } from '@/store/authStore';
 
 /**
  * The base Axios instance for all standard API communications.
- *
- * It is configured with a request interceptor that automatically attaches
- * the JWT token from the `useAuthStore` to the Authorization header of
- * every outgoing request.
+ * It is a "dumb" client. Authentication headers are managed externally
+ * by the authStore to enforce separation of concerns.
  */
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api', // Use environment variable or a sensible default
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Request interceptor to add the auth token to headers
-apiClient.interceptors.request.use(
-  (config) => {
-    const { token } = useAuthStore.getState();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
 export default apiClient;
+
+// Re-export the isAxiosError type guard for use in stores and components.
+export { isAxiosError } from 'axios';

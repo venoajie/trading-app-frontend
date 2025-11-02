@@ -19,13 +19,7 @@ const AuthLayout = lazy(() => import('./layouts/AuthLayout'));
 const HomePage = lazy(() => import('./pages/HomePage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
-
-// CORRECTED: Added .jsx extension for the non-TypeScript component.
-const RegisterPage = lazy(() =>
-  import('./pages/auth/RegisterPage.jsx').then((module) => ({
-    default: module.RegisterPage,
-  }))
-);
+const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
 
 const router = createBrowserRouter([
   {
