@@ -1,4 +1,3 @@
-
 // src/components/transactions/TransactionsTable.tsx
 import { Table, Text, Badge } from '@mantine/core';
 import { Transaction } from '../../hooks/useTransactions';
@@ -21,10 +20,14 @@ const formatCurrency = (value: number, currency: string) => {
 
 const getStatusColor = (status: Transaction['status']) => {
   switch (status) {
-    case 'COMPLETED': return 'green';
-    case 'PENDING': return 'yellow';
-    case 'FAILED': return 'red';
-    default: return 'gray';
+    case 'COMPLETED':
+      return 'green';
+    case 'PENDING':
+      return 'yellow';
+    case 'FAILED':
+      return 'red';
+    default:
+      return 'gray';
   }
 };
 
@@ -44,7 +47,9 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
           {tx.type}
         </Text>
       </Table.Td>
-      <Table.Td>{tx.quantity.toLocaleString('en-US', { maximumFractionDigits: 8 })}</Table.Td>
+      <Table.Td>
+        {tx.quantity.toLocaleString('en-US', { maximumFractionDigits: 8 })}
+      </Table.Td>
       <Table.Td>{formatCurrency(tx.price, tx.currency)}</Table.Td>
       <Table.Td>{formatCurrency(tx.quantity * tx.price, tx.currency)}</Table.Td>
       <Table.Td>
@@ -69,10 +74,14 @@ export function TransactionsTable({ transactions }: TransactionsTableProps) {
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
-        {rows.length > 0 ? rows : (
+        {rows.length > 0 ? (
+          rows
+        ) : (
           <Table.Tr>
             <Table.Td colSpan={7}>
-              <Text ta="center" c="dimmed" py="lg">No transactions found.</Text>
+              <Text ta="center" c="dimmed" py="lg">
+                No transactions found.
+              </Text>
             </Table.Td>
           </Table.Tr>
         )}
