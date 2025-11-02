@@ -18,7 +18,7 @@ import { z } from 'zod';
 import { useAuthStore, AuthState } from '../../store/authStore';
 import { ConsentCheckbox } from './components/ConsentCheckbox';
 
-// Pillar 5: All validation logic is defined in a single Zod schema.
+// CORRECTED: The `z.literal` call now uses the correct `message` property for its custom error.
 const registerSchema = z
   .object({
     email: z.string().email({ message: 'Invalid email address' }),
@@ -27,9 +27,7 @@ const registerSchema = z
       .min(8, { message: 'Password must be at least 8 characters long' }),
     passwordConfirmation: z.string(),
     terms: z.literal(true, {
-      errorMap: () => ({
-        message: 'You must accept the terms and conditions to continue',
-      }),
+      message: 'You must accept the terms and conditions to continue',
     }),
   })
   .refine((data) => data.password === data.passwordConfirmation, {
@@ -41,7 +39,6 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegisterPage() {
   const navigate = useNavigate();
-  // Pillar 3: Consume actions and state from the canonical Zustand store.
   const { register: registerAction, isLoading } = useAuthStore(
     (state: AuthState) => ({
       register: state.register,
@@ -58,7 +55,6 @@ export function RegisterPage() {
   });
 
   const onSubmit = async (data: RegisterFormValues) => {
-    // The component orchestrates the action and the UI side-effect (navigation).
     const success = await registerAction({
       email: data.email,
       password: data.password,

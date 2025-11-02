@@ -92,12 +92,8 @@ const useAuthStore = create<AuthState>()(
             return false;
           }
         },
-        register: async (credentials) => {
-          // ... register logic is correct and remains unchanged ...
-        },
-        logout: () => {
-          // ... logout logic is correct and remains unchanged ...
-        },
+        register: async (credentials) => {},
+        logout: () => {},
       }),
       {
         name: 'auth-storage',
