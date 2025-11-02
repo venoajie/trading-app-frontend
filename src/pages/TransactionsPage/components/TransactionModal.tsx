@@ -11,21 +11,18 @@ import { DateTimePicker } from '@mantine/dates';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-// --- FIX: Updated import path for the co-located hook ---
 import {
   useCreateTransaction,
   NewTransactionPayload,
 } from '../hooks/useTransactions';
 
-// --- FIX: Use `z.coerce.date()` for robust date validation ---
-// This is the correct Zod v3 pattern for handling date inputs from forms
-// and providing a custom error message for missing values.
+// --- FIX: Use `z.instanceof(Date)` for robust, type-safe validation ---
 const transactionSchema = z.object({
   ticker: z.string().min(1, 'Ticker symbol is required'),
   type: z.enum(['BUY', 'SELL']),
   quantity: z.number().positive('Quantity must be greater than zero'),
   price: z.number().positive('Price must be greater than zero'),
-  date: z.coerce.date({ invalid_type_error: 'Transaction date is required' }),
+  date: z.instanceof(Date, { message: 'Transaction date is required' }),
 });
 
 type TransactionFormValues = z.infer<typeof transactionSchema>;

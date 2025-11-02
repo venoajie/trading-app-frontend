@@ -1,9 +1,7 @@
 // src/pages/TransactionsPage/components/TransactionsTable.tsx
 import { Table, Text, Badge } from '@mantine/core';
-// --- FIX: Corrected import path for the co-located hook's types ---
 import { Transaction } from '../hooks/useTransactions';
 
-// l10n formatting helpers (Pillar 2)
 const formatDate = (isoDate: string) => {
   return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',

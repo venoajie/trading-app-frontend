@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { TransactionsPage } from './TransactionsPage';
-// --- FIX: Corrected import path for the co-located hook ---
 import { useTransactions, Transaction } from './hooks/useTransactions';
 
 // Mock the custom hook
