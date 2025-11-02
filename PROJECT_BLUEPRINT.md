@@ -3,8 +3,8 @@
 
 # PROJECT BLUEPRINT: Trading App Frontend
 
-<!-- Version: 1.4.0 -->
-<!-- Status: Phase 4 Complete. State & API Layer in place. -->
+<!-- Version: 1.5.0 -->
+<!-- Status: Phase 5 Complete. Configuration & Placeholders in place. -->
 
 ## 1. System Overview and Guiding Principles
 
@@ -33,7 +33,10 @@ This section codifies key insights gained during the project's foundational phas
     *   **Observation:** During Phase 2, an attempt to control the Mantine theme by passing a reactive `colorScheme` prop to the `<MantineProvider>` failed. While the prop changed, the theme did not update visually after the initial render.
     *   **Root Cause:** The `<MantineProvider>`'s `colorScheme` prop is read-only after the initial mount. The library's idiomatic, state-driven approach requires implementing a `colorSchemeManager`. This manager object acts as a formal contract, telling the provider how to get, set, and subscribe to an external state store (like Zustand).
     *   **Governing Mandate:** When integrating a UI library that manages its own internal state (like theming), do not fight its intended patterns. Always use the officially documented mechanism for state integration (e.g., managers, controllers, or context providers). The canonical pattern for this project is to create a `colorSchemeManager.ts` to bridge the `uiStore` (Zustand) with the `<MantineProvider>`.
-
+*   **Lesson 3: Dependency Versions are Contractual Obligations.** <!-- UPDATE: New lesson added from Phase 5. -->
+    *   **Observation:** During the Phase 5 stabilization, the build failed with 17+ critical TypeScript errors after dependencies were updated to their latest stable versions. Props like `align`, `sx`, and types like `ColorSchemeManager` were reported as non-existent.
+    *   **Root Cause:** The application's source code was written against the API of a deprecated major version of a core dependency (Mantine v6), while the `package.json` specified the modern, stable version (Mantine v7). This created a fundamental mismatch between the code's assumptions and the library's actual API contract, a condition known as "API drift."
+    *   **Governing Mandate:** All dependency updates, especially major versions, MUST be treated as a high-priority architectural task. The update is not complete until a full codebase audit and refactoring pass is performed to ensure 100% API compliance with the new version. Automated build and type-checking (`tsc`) are the primary mechanisms for verifying this compliance. Failure to do so results in a critically unstable architecture.
 ---
 
 ## 2. Foundational Implementation Sequence
@@ -160,12 +163,97 @@ This section defines the logical, step-by-step order for constructing the applic
     *   **Origin:** Derived from the Phase 4 bug where logout failed because route guards were not updated to use `useAuthStore` after it replaced the `useAuth.ts` placeholder. This is a direct codification of **Lesson 3**.
 
 ### Phase 5: The Remaining Pillars (Configuration & Placeholders)
-*   **Status:** `PENDING`
-1.  **i18n & l10n (Pillar 2):** Set up `i18next` provider. Wrap one piece of text in the `t()` function to validate the setup.
-2.  **Testing (Pillar 7):** Configure Vitest. Write one simple component test.
-3.  **Observability (Pillar 10):** Add the Sentry SDK initialization call to `main.tsx`.
-4.  **Milestone:** The "application skeleton" is complete. All foundational pillars are configured with a working placeholder. The project is now ready for feature development.
+*   **Status:** `[COMPLETED]`
+*   **Milestone_Achieved:** `true`
+*   **Milestone_Description:** "The 'application skeleton' is complete. All foundational pillars are configured with a working placeholder."
 
+#### **STATE DELTA**
+
+**1. Dependencies Added:**
+```json
+{
+  "dependencies": {
+    "i18next": "^23.x",
+    "react-i18next": "^14.x",
+    "i18next-browser-languagedetector": "^8.x",
+    "@sentry/react": "^8.x"
+  },
+  "devDependencies": {
+    "vitest": "^1.x",
+    "@vitest/ui": "^1.x",
+    "jsdom": "^24.x",
+    "@testing-library/react": "^15.x",
+    "@testing-library/jest-dom": "^6.x"
+  }
+}
+```
+
+**2. Artifacts Created (File Manifest):**
+```
+/src/lib/i18n.ts
+/src/locales/en/translation.json
+/src/tests/setup.ts
+/src/components/utility/WelcomeMessage.tsx
+/src/components/utility/WelcomeMessage.spec.tsx
+/.eslintrc.cjs
+/.eslintignore
+```
+
+**3. Artifacts Modified (Refactored):**
+```
+/vite.config.ts
+/tsconfig.json
+/src/main.tsx
+/src/pages/HomePage.tsx
+/src/components/utility/ErrorBoundary.tsx
+/src/layouts/AppLayout.tsx
+/src/layouts/AuthLayout.tsx
+/src/pages/DashboardPage.tsx
+/src/styles/theme.ts
+/src/styles/colorSchemeManager.ts
+/src/store/uiStore.ts
+```
+
+**4. Artifacts Deleted (Architectural Simplification):**
+```
+/eslint.config.js
+/tsconfig.app.json
+```
+
+---
+
+#### **IMPLEMENTATION & HEURISTICS**
+
+**1. Blueprint Compliance Log:**
+
+*   **Pillar 2 (i18n & l10n):** `IMPLEMENTED`.
+    *   **Mechanism:** `i18next` configured at the application root.
+    *   **Strategy:** Validated with a `WelcomeMessage` component using the `useTranslation` hook.
+*   **Pillar 7 (Testing):** `IMPLEMENTED`.
+    *   **Mechanism:** `Vitest` configured in `vite.config.ts`.
+    *   **Strategy:** A sample component test (`WelcomeMessage.spec.tsx`) was created to validate the DOM environment and assertions.
+*   **Pillar 10 (Observability):** `IMPLEMENTED`.
+    *   **Mechanism:** `Sentry SDK`.
+    *   **Strategy:** Initialized in `main.tsx` with a production-only guard.
+*   **Pillar 9 (Developer Experience):** `HARDENED`.
+    *   **Mechanism:** The ESLint/TypeScript toolchain was refactored.
+    *   **Strategy:** The Vite-default project reference (`tsconfig.app.json`) was found to be unstable with the ESLint parser. The architecture was simplified to a single, consolidated root `tsconfig.json`, permanently resolving all pre-commit hook failures and increasing tooling predictability.
+
+**2. New Heuristics Derived (For Future Operations):**
+
+*   **HEURISTIC_ID: `H-004`**
+    *   **Name:** `MANTINE_V7_API_MIGRATION`
+    *   **Rule:** When working with the Mantine v7 library, the following API changes from v6 MUST be respected:
+        1.  The `align` prop on text components (`<Title>`, `<Text>`) is now `ta`.
+        2.  The `sx` prop for inline styles is now `style`.
+        3.  The `<MantineProvider>` props `withGlobalStyles` and `withCssVariables` are removed and their functionality is now default behavior.
+        4.  The `colorSchemeManager` object MUST implement the `MantineColorSchemeManager` interface, which includes a required `unsubscribe` method.
+        5.  The `children` prop of a component used as a React Router `errorElement` MUST be typed as optional (`children?: ReactNode`).
+    *   **Origin:** Derived from the systematic refactoring required to resolve 17+ build errors during the Phase 5 stabilization effort (see **Lesson 3**).
+
+**3. Technical Debt / Workarounds:**
+*   **Status:** `NONE`.
+*   **Analysis:** All identified issues during Phase 5 were architectural defects, not candidates for workarounds. These defects, including API drift and tooling instability, were resolved at their root cause through systematic refactoring. The final state of the codebase is architecturally sound and carries no known technical debt from this phase.
 ---
 
 ## 3. Detailed Pillar Architecture
