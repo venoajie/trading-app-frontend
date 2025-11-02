@@ -3,8 +3,8 @@
 
 # PROJECT BLUEPRINT: Trading App Frontend
 
-<!-- Version: 1.2 -->
-<!-- Status: Phase 2 Complete. UI Foundation in place. -->
+<!-- Version: 1.3 -->
+<!-- Status: Phase 3 Complete. Routing & Global Structure in place. -->
 
 ## 1. System Overview and Guiding Principles
 
@@ -49,20 +49,48 @@ This section defines the logical, step-by-step order for constructing the applic
 5.  **Milestone:** A clean "Hello World" app with automated code quality, ready for version control.
 
 ### Phase 2: The UI & Theming Foundation (Pillar 1)
-*   **Status:** `COMPLETE` <!-- UPDATE: Status changed from PENDING to COMPLETE. -->
+*   **Status:** `COMPLETE`
 1.  Integrate Mantine UI library.
 2.  Create the `theme.ts` file with dual light/dark mode support.
-3.  Implement the state-driven theme switching mechanism (`uiStore.ts` + `colorSchemeManager.ts`). <!-- UPDATE: Reflected the final, correct architecture. -->
+3.  Implement the state-driven theme switching mechanism (`uiStore.ts` + `colorSchemeManager.ts`).
 4.  **Milestone:** A single page with a button that correctly and seamlessly toggles the entire application theme between light and dark.
 
 ### Phase 3: Routing & Global Structure (Pillar 4 & 6)
-*   **Status:** `PENDING`
-1.  Integrate React Router.
-2.  Create the skeleton `AppLayout` and `AuthLayout` components.
-3.  Implement `PublicRoute` and `ProtectedRoute` guards.
-4.  Set up the top-level React Error Boundary.
-5.  **Milestone:** A multi-page app with distinct layouts for logged-in vs. logged-out states, where navigation is functional and protected routes correctly redirect unauthenticated users.
+*   **Status:** `[COMPLETED]`
+*   **Milestone Achieved:** "A multi-page app with distinct layouts for logged-in vs. logged-out states, where navigation is functional and protected routes correctly redirect unauthenticated users."
 
+### 1. Technical Progress & Implementation Details
+*   **Routing Foundation:** `react-router-dom` has been successfully integrated as the core routing library. The main router is configured in `App.tsx` using `createBrowserRouter`, which serves as the single source of truth for all application routes.
+*   **Code Splitting:** In adherence with Pillar 5 (Performance), all page and layout components are loaded using `React.lazy` and wrapped in a global `<Suspense>` component. This enables route-based code splitting, ensuring that users only download the JavaScript necessary for the view they are currently accessing. A `Loading.tsx` component provides the necessary fallback UI.
+*   **Layout Architecture:** Two distinct, lazy-loaded layouts have been established to enforce a clean separation of concerns between application states:
+    *   `AppLayout.tsx`: Provides the primary application shell, including the header and main content area, for authenticated users.
+    *   `AuthLayout.tsx`: Provides a consistent shell for public-facing pages (e.g., home, login), ensuring global elements like the header and theme toggle are always present.
+*   **Access Control:** Declarative route guards have been implemented to manage application access:
+    *   `ProtectedRoute.tsx`: Restricts access to authenticated users, redirecting to a public route if the authentication check fails.
+    *   `PublicRoute.tsx`: Prevents authenticated users from accessing public-only pages (like a login form), redirecting them to the main application dashboard.
+    *   A placeholder `useAuth.ts` hook was created to facilitate development and testing of these guards in isolation, prior to the implementation of the actual authentication state.
+*   **Global Error Handling:** An `ErrorBoundary.tsx` class component has been created and integrated at the root of each route tree, fulfilling the requirements of Pillar 6. This component catches JavaScript errors during rendering, prevents a full application crash, and displays a user-friendly fallback UI.
+
+### 2. Component Inventory (New Artifacts)
+*   **Layouts:**
+    *   `src/layouts/AppLayout.tsx`
+    *   `src/layouts/AuthLayout.tsx`
+*   **Components:**
+    *   `src/components/auth/ProtectedRoute.tsx` (+ `spec.tsx`)
+    *   `src/components/auth/PublicRoute.tsx` (+ `spec.tsx`)
+    *   `src/components/utility/ErrorBoundary.tsx`
+    *   `src/components/utility/Loading.tsx`
+*   **Pages (Placeholders):**
+    *   `src/pages/HomePage.tsx`
+    *   `src/pages/DashboardPage.tsx`
+*   **Hooks (Placeholder):**
+    *   `src/hooks/useAuth.ts`
+
+### 3. Critical Observations & Lessons Learned
+*   **Layout Consistency is Paramount:** The initial implementation of `AuthLayout` omitted the shared `AppShell` header, leading to a regression where the theme toggle was unavailable on the home page. This was promptly corrected. **Conclusion:** Global UI elements must be consistently applied across all top-level layouts to maintain a predictable user experience. This reinforces the "Layouts per App Section" strategy outlined in Pillar 4.
+*   **Validation of QA Tooling:** The `lint-staged` pre-commit hook proved its value by successfully catching multiple type-safety violations (`no-explicit-any`) in test files. This confirms the robustness of the static analysis setup in enforcing code quality and preventing technical debt before it enters the codebase.
+*   **Decoupled Development Works:** The use of a placeholder `useAuth` hook was highly effective. It allowed for the complete, testable implementation of the routing and access control logic without any dependency on the authentication state management system. This validates the project's phased, decoupled approach, reducing complexity at each stage.
+*   
 ### Phase 4: State & API Layer (Pillar 3)
 *   **Status:** `PENDING`
 1.  Set up Zustand for client state (`uiStore.ts`, `authStore.ts`).
