@@ -1,14 +1,10 @@
 
 ---
 
-### **Generated Artifacts**
-
-**File: `frontend/PROJECT_BLUEPRINT.md`**
-```markdown
 # PROJECT BLUEPRINT: Trading App Frontend
 
-<!-- Version: 1.1 -->
-<!-- Status: Phase 1 Complete. Foundational Architecture in place. -->
+<!-- Version: 1.2 -->
+<!-- Status: Phase 2 Complete. UI Foundation in place. -->
 
 ## 1. System Overview and Guiding Principles
 
@@ -33,6 +29,11 @@ This section codifies key insights gained during the project's foundational phas
     *   **Root Cause:** A fundamental mismatch existed between the *development environment* (WSL/Linux, where Node.js was installed) and the *script execution environment* (Git for Windows, which used a minimal Windows shell). Furthermore, even when execution was delegated to WSL, it ran in a non-interactive shell that did not source the user's `.bashrc` to initialize NVM.
     *   **Governing Mandate:** All automation scripts (e.g., Git hooks, CI/CD pipelines) MUST be assumed to run in a minimal, non-interactive, and potentially cross-OS environment. Scripts MUST NOT rely on a user's interactive shell configuration (`.bashrc`, `.zshrc`, etc.). They must be self-contained and explicitly handle their own environment setup, either by bridging OS gaps (e.g., using `wsl.exe`) or by sourcing necessary configurations (e.g., `source ~/.nvm/nvm.sh`).
 
+*   **Lesson 2: Respect the Library's State Management Patterns.** <!-- UPDATE: New lesson added from Phase 2. -->
+    *   **Observation:** During Phase 2, an attempt to control the Mantine theme by passing a reactive `colorScheme` prop to the `<MantineProvider>` failed. While the prop changed, the theme did not update visually after the initial render.
+    *   **Root Cause:** The `<MantineProvider>`'s `colorScheme` prop is read-only after the initial mount. The library's idiomatic, state-driven approach requires implementing a `colorSchemeManager`. This manager object acts as a formal contract, telling the provider how to get, set, and subscribe to an external state store (like Zustand).
+    *   **Governing Mandate:** When integrating a UI library that manages its own internal state (like theming), do not fight its intended patterns. Always use the officially documented mechanism for state integration (e.g., managers, controllers, or context providers). The canonical pattern for this project is to create a `colorSchemeManager.ts` to bridge the `uiStore` (Zustand) with the `<MantineProvider>`.
+
 ---
 
 ## 2. Foundational Implementation Sequence
@@ -44,14 +45,14 @@ This section defines the logical, step-by-step order for constructing the applic
 1.  Initialize Vite Project (TypeScript + SWC).
 2.  Setup Code Quality (ESLint, Prettier).
 3.  Implement Pre-commit Hooks (Husky).
-4.  Configure Absolute Imports (`tsconfig.json`).
+4.  Configure Absolute Imports (`tsconfig.json` + `vite.config.ts`).
 5.  **Milestone:** A clean "Hello World" app with automated code quality, ready for version control.
 
 ### Phase 2: The UI & Theming Foundation (Pillar 1)
-*   **Status:** `PENDING`
+*   **Status:** `COMPLETE` <!-- UPDATE: Status changed from PENDING to COMPLETE. -->
 1.  Integrate Mantine UI library.
 2.  Create the `theme.ts` file with dual light/dark mode support.
-3.  Implement the state-driven theme switching mechanism (`uiStore.ts` + `ThemeBridge` component).
+3.  Implement the state-driven theme switching mechanism (`uiStore.ts` + `colorSchemeManager.ts`). <!-- UPDATE: Reflected the final, correct architecture. -->
 4.  **Milestone:** A single page with a button that correctly and seamlessly toggles the entire application theme between light and dark.
 
 ### Phase 3: Routing & Global Structure (Pillar 4 & 6)
@@ -84,7 +85,7 @@ This section defines the logical, step-by-step order for constructing the applic
 ### Pillar 1: UI & Theming System
 *   **Purpose:** To provide a consistent, accessible, and mobile-first design system.
 *   **Tooling:** **Mantine UI**.
-*   **Day One Plan:** The theme file (`theme.ts`) will define all brand colors, typography, and component styles for both light and dark modes. Global styles for the `<body>` will be explicitly defined to ensure seamless backgrounds.
+*   **Day One Plan:** The theme file (`theme.ts`) will define all brand colors, typography, and component styles for both light and dark modes. Global styles for the `<body>` will be explicitly defined to ensure seamless backgrounds. **State-driven theme changes MUST be implemented via a `colorSchemeManager` that connects to the `uiStore` (see Lesson 2).** <!-- UPDATE: Added mandate based on lesson learned. -->
 
 ### Pillar 2: Internationalization (i18n) & Localization (l10n)
 *   **Purpose:** To build an application that can be adapted for different languages and regions without refactoring.
@@ -99,7 +100,7 @@ This section defines the logical, step-by-step order for constructing the applic
     *   **Server State:** **TanStack Query**.
     *   **Client State:** **Zustand**.
     *   **API Client:** **Axios**.
-*   **Day One Plan:** All data fetching from the backend MUST be handled by TanStack Query hooks. All global, non-server UI state MUST be managed in Zustand stores.
+*   **Day One Plan:** All data fetching from the backend MUST be handled by TanStack Query hooks. All global, non-server UI state MUST be managed in Zustand stores. The canonical pattern for integrating Zustand with Mantine's theme is via a `colorSchemeManager`.
 
 ### Pillar 4: Routing & Layout Architecture
 *   **Purpose:** To provide a clear, secure, and maintainable navigation structure.
@@ -131,15 +132,28 @@ This section defines the logical, step-by-step order for constructing the applic
 *   **Tooling:** **TypeScript**, **ESLint**, **Prettier**, **Husky**.
 *   **Day One Plan:** A strict TypeScript configuration will be used. The ESLint/Prettier combo, enforced by a Husky pre-commit hook, is non-negotiable.
 *   **9.1. Canonical Pre-commit Hook for Mixed Environments (WSL + Git for Windows)**
-    *   **Context:** The execution of Git hooks by Git for Windows in a WSL-based development environment creates a common `PATH` issue, as detailed in **Lesson 1 (Section 1.2)**.
-    *   **Problem:** Standard hook scripts (e.g., `npm run lint-staged`) will fail with `npm: command not found`.
-    *   **Canonical Solution:** The pre-commit hook MUST bridge this environmental gap. It uses `wsl.exe` to delegate command execution into the Linux environment, and `bash -c` to ensure the NVM environment is sourced correctly within the resulting non-interactive shell. This is the mandated configuration for this project.
-    *   **Implementation (`.husky/pre-commit`):**
+    *   **Context:** The execution of Git hooks can occur in different shell environments (e.g., Git for Windows' minimal shell, or a WSL/Linux shell), creating `PATH` and command availability issues as detailed in **Lesson 1**.
+    *   **Problem:** A script written only for WSL will fail with `npm: command not found` when run from a Windows Git client. A script written for Windows will fail inside WSL.
+    *   **Canonical Solution:** The pre-commit hook MUST be universal. It must detect its execution environment and adapt its strategy accordingly. The script checks for the presence of `wsl.exe`. If found, it delegates the command *into* WSL. If not found, it assumes it is already *inside* WSL and executes directly. This ensures a "commit-from-anywhere" experience. <!-- UPDATE: Rationale updated for the universal script. -->
+    *   **Implementation (`.husky/pre-commit`):** <!-- UPDATE: Script replaced with the final, robust version. -->
         ```sh
         #!/bin/sh
-        # This script is designed for a mixed WSL/Windows environment.
         set -e
-        wsl bash -c "source ~/.nvm/nvm.sh && npm run lint-staged"
+
+        # This is the canonical pre-commit hook for a mixed Windows/WSL environment.
+        # It detects where it is running and adapts its execution strategy.
+
+        LINT_COMMAND="source ~/.nvm/nvm.sh && npm run lint-staged"
+
+        # Check if wsl.exe is available. This is true for Windows-based shells
+        # (like Git Bash) but false when running inside WSL.
+        if command -v wsl.exe >/dev/null 2>&1; then
+          # We are on the Windows side. Delegate the command into WSL.
+          wsl.exe bash -c "$LINT_COMMAND"
+        else
+          # We are already inside WSL. Execute the command directly.
+          bash -c "$LINT_COMMAND"
+        fi
         ```
 
 ### Pillar 10: Production Observability
@@ -189,14 +203,3 @@ This section defines the architectural approach for integrating specialized thir
 ## 6. Cost & Maintainability Analysis
 
 This architecture has been explicitly designed for a solo/AI-assisted developer. It carries **zero mandatory monetary costs**, relying on open-source software. The primary benefit is **high maintainability**, achieved by choosing tools (like TanStack Query and Mantine) that reduce boilerplate, enforce consistency, and provide clear, predictable patterns that are easy for both humans and AI to understand and extend.
-```
-
-### **Test Files**
-
-As this task involved updating a documentation file, no `.spec.tsx` test files are required.
-
-### **Blueprint Compliance**
-
-*   **Documentation as Code:** The blueprint has been updated to `Version 1.1`. This change transforms a hard-won debugging experience into a permanent, codified architectural principle, ensuring the knowledge is not lost and can guide future development.
-*   **Guiding Principle 1.1 (Maintainability First):** By explicitly documenting the "why" behind a complex configuration, we significantly improve the maintainability of the development environment itself. The new `1.2` section provides deep context that makes the system easier to reason about, debug, and extend, directly serving this principle.
-*   **Pillar 9 (Developer Experience & Code Maintainability):** The new section provides the foundational justification for the specific implementation mandated in section `9.1`. This creates a clear, logical link between a high-level principle and its concrete implementation, strengthening the entire pillar.
