@@ -5,11 +5,11 @@ import { devtools, persist } from 'zustand/middleware';
 import apiClient, { isAxiosError } from '../services/apiClient';
 import { notifications } from '@mantine/notifications';
 
-// This is now the canonical User interface for the entire application.
+// This is the canonical User interface for the entire application.
 interface User {
   id: string;
   email: string;
-  name: string; // Added 'name' to create a single source of truth.
+  name: string;
 }
 
 interface AuthCredentials {
@@ -92,8 +92,48 @@ const useAuthStore = create<AuthState>()(
             return false;
           }
         },
-        register: async (credentials) => {},
-        logout: () => {},
+        // Full implementation of the register function, resolving both build errors.
+        register: async (credentials) => {
+          set({ isLoading: true });
+          try {
+            // Use the 'credentials' parameter in the API call.
+            await apiClient.post('/auth/register/', credentials);
+            notifications.show({
+              title: 'Registration Successful',
+              message: 'Your account has been created. Please log in.',
+              color: 'green',
+            });
+            set({ isLoading: false });
+            // Return 'true' on success to match the Promise<boolean> type.
+            return true;
+          } catch (error: unknown) {
+            let errorMessage = 'An unexpected error occurred.';
+            if (isAxiosError(error) && error.response?.data?.detail) {
+              errorMessage = error.response.data.detail;
+            }
+            notifications.show({
+              title: 'Registration Failed',
+              message: errorMessage,
+              color: 'red',
+            });
+            set({ isLoading: false });
+            // Return 'false' on failure to match the Promise<boolean> type.
+            return false;
+          }
+        },
+        logout: () => {
+          set({
+            token: null,
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+          notifications.show({
+            title: 'Logged Out',
+            message: 'You have been successfully logged out.',
+            color: 'blue',
+          });
+        },
       }),
       {
         name: 'auth-storage',
@@ -109,8 +149,6 @@ if (initialToken) {
   apiClient.defaults.headers.common['Authorization'] = `Bearer ${initialToken}`;
 }
 
-// Use the standard `subscribe` signature which takes one argument.
-// We track the previous token to ensure the header is only updated when the token actually changes.
 let currentToken = initialToken;
 useAuthStore.subscribe((state) => {
   if (state.token !== currentToken) {
