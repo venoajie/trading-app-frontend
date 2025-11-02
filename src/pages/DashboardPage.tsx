@@ -59,11 +59,12 @@ function DashboardPage() {
 
   return (
     <Paper withBorder p="lg" radius="md" shadow="md">
-      <Title order={2} align="center" mt="md" mb="xl">
+      {/* V7 API CHANGE: The 'align' prop is now 'ta' (text-align). */}
+      <Title order={2} ta="center" mt="md" mb="xl">
         Dashboard
       </Title>
       <Stack align="center" mb="xl">
-        <Text align="center">
+        <Text ta="center">
           This is a protected page. You can only see this content because you
           are authenticated.
         </Text>

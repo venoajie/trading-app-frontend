@@ -11,10 +11,6 @@ import {
 import { IconSun, IconMoonStars } from '@tabler/icons-react';
 import { Outlet } from 'react-router-dom';
 
-/**
- * The main application layout for authenticated users.
- * Includes the header with theme toggle and the main content area.
- */
 function AppLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
@@ -22,17 +18,20 @@ function AppLayout() {
     <AppShell
       padding="md"
       header={{ height: 60 }}
+      // V7 API CHANGE: `theme.colorScheme` is no longer valid in `styles`.
+      // The `colorScheme` value from the hook should be used directly.
       styles={(theme) => ({
         main: {
           backgroundColor:
-            theme.colorScheme === 'dark'
+            colorScheme === 'dark'
               ? theme.colors.dark[8]
               : theme.colors.gray[0],
         },
       })}
     >
       <AppShell.Header p="xs">
-        <Group sx={{ height: '100%' }} px={20} position="apart">
+        {/* V7 API CHANGE: The 'sx' prop is now 'style'. */}
+        <Group style={{ height: '100%' }} px={20} justify="space-between">
           <Title order={3}>Trading App</Title>
           <ActionIcon
             variant="default"

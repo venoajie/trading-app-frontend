@@ -9,7 +9,6 @@ function HomePage() {
   const login = useAuthStore((state) => state.login);
 
   const handleLogin = () => {
-    // In a real app, this would come from an API response
     const mockUser = {
       id: 'user-123',
       name: 'Jane Doe',
@@ -23,10 +22,10 @@ function HomePage() {
 
   return (
     <Paper withBorder p="lg" radius="md" shadow="md" style={{ maxWidth: 500 }}>
-      {/* The hardcoded title has been replaced with the i18n-powered component */}
       <WelcomeMessage />
 
-      <Text align="center" mt="xl" mb="xl">
+      {/* V7 API CHANGE: The 'align' prop is now 'ta' (text-align). */}
+      <Text ta="center" mt="xl" mb="xl">
         This is the public home/login page. Since you are not authenticated, you
         can see this page.
       </Text>

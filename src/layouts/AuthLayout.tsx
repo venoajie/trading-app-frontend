@@ -11,10 +11,6 @@ import {
 import { IconSun, IconMoonStars } from '@tabler/icons-react';
 import { Outlet } from 'react-router-dom';
 
-/**
- * A layout for public-facing pages like login, register, etc.
- * Includes a header with a theme toggle and centers the main content.
- */
 function AuthLayout() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
 
@@ -22,17 +18,20 @@ function AuthLayout() {
     <AppShell
       padding="md"
       header={{ height: 60 }}
+      // V7 API CHANGE: `theme.colorScheme` is no longer valid in `styles`.
+      // The `colorScheme` value from the hook should be used directly.
       styles={(theme) => ({
         main: {
           backgroundColor:
-            theme.colorScheme === 'dark'
+            colorScheme === 'dark'
               ? theme.colors.dark[8]
               : theme.colors.gray[0],
         },
       })}
     >
       <AppShell.Header p="xs">
-        <Group sx={{ height: '100%' }} px={20} position="apart">
+        {/* V7 API CHANGE: The 'sx' prop is now 'style'. */}
+        <Group style={{ height: '100%' }} px={20} justify="space-between">
           <Title order={3}>Trading App</Title>
           <ActionIcon
             variant="default"
@@ -49,7 +48,6 @@ function AuthLayout() {
       </AppShell.Header>
 
       <AppShell.Main>
-        {/* We adjust the Center height to account for the header and AppShell padding */}
         <Center
           style={{
             height: 'calc(100vh - 60px - (var(--mantine-spacing-md) * 2))',

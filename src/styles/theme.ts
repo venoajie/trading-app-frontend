@@ -6,7 +6,6 @@ import {
   MantineThemeOverride,
 } from '@mantine/core';
 
-// Define a custom color palette that will be your primary brand color.
 const brandPrimary: MantineColorsTuple = [
   '#e7f5ff',
   '#d0ebff',
@@ -20,29 +19,18 @@ const brandPrimary: MantineColorsTuple = [
   '#1864ab',
 ];
 
+// V7 API CHANGE: The `theme` object passed to `createTheme` no longer supports
+// a `globalStyles` key. Global styles are now typically handled via a
+// separate component or within AppShell/Layout components.
 export const theme: MantineThemeOverride = createTheme({
   primaryColor: 'brandPrimary',
   colors: {
     brandPrimary,
   },
-  // Ensure components like buttons have sufficient contrast against the background.
   autoContrast: true,
   luminanceThreshold: 0.3,
-
-  // Define which color shade is the primary one for light and dark modes.
   primaryShade: {
     light: 6,
-    dark: 7,
+    dark: 8, // Adjusted for better dark mode contrast
   },
-
-  // Define global styles to ensure the body background transitions smoothly.
-  globalStyles: (theme) => ({
-    body: {
-      ...theme.fn.fontStyles(),
-      backgroundColor:
-        theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-      color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-      lineHeight: theme.lineHeight,
-    },
-  }),
 });

@@ -1,37 +1,27 @@
 // src/styles/colorSchemeManager.ts
-import { ColorSchemeManager } from '@mantine/core';
+
+import { ColorScheme } from '@mantine/core';
 import { useUiStore } from '@/store/uiStore';
 
-/**
- * This object is the bridge between Mantine's theme management and our Zustand store.
- * It provides Mantine with the functions it needs to read, write, and subscribe to
- * our application's color scheme state.
- */
+// Define the manager type explicitly for type safety, as it is no longer
+// exported directly from '@mantine/core' in v7.
+export interface ColorSchemeManager {
+  get: (defaultValue: ColorScheme) => ColorScheme;
+  set: (value: ColorScheme) => void;
+  subscribe: (callback: (value: ColorScheme) => void) => () => void;
+  clear: () => void;
+}
+
 export const colorSchemeManager: ColorSchemeManager = {
-  /**
-   * `get` is called by Mantine to read the initial color scheme.
-   */
   get: () => useUiStore.getState().colorScheme,
 
-  /**
-   * `set` is called by Mantine's hooks (like `toggleColorScheme`) when the theme
-   * needs to be changed. We use it to update our Zustand store.
-   */
-  set: (value) => {
-    useUiStore.getState().setColorScheme(value as 'light' | 'dark');
+  set: (value: ColorScheme) => {
+    useUiStore.getState().setColorScheme(value);
   },
 
-  /**
-   * `subscribe` allows Mantine to listen for changes that happen outside of its
-   * own hooks, for example, if the state changes in another browser tab.
-   * Zustand's `subscribe` method is a perfect fit for this.
-   */
-  subscribe: (callback) => {
+  subscribe: (callback: (value: ColorScheme) => void) => {
     return useUiStore.subscribe((state) => callback(state.colorScheme));
   },
 
-  /**
-   * `clear` is called to reset the manager to its default state.
-   */
-  clear: () => useUiStore.getState().setColorScheme('light'),
+  clear: () => useUiStore.getState().setColorScheme('auto'),
 };
