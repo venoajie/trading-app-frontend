@@ -49,8 +49,9 @@ const useAuthStore = create<AuthState>()(
             formBody.append('username', credentials.email);
             formBody.append('password', credentials.password);
 
+            // CORRECTED: Added the trailing slash to match the backend's canonical path.
             const loginResponse = await apiClient.post(
-              '/auth/login',
+              '/auth/login/',
               formBody,
               {
                 headers: {
@@ -60,7 +61,8 @@ const useAuthStore = create<AuthState>()(
             );
             const { access_token } = loginResponse.data;
 
-            const userResponse = await apiClient.get('/users/me', {
+            // CORRECTED: Added trailing slash to user path.
+            const userResponse = await apiClient.get('/users/me/', {
               headers: { Authorization: `Bearer ${access_token}` },
             });
             const user = userResponse.data;
@@ -79,17 +81,6 @@ const useAuthStore = create<AuthState>()(
             });
             return true;
           } catch (error: unknown) {
-            // --- DIAGNOSTIC LOGGING ---
-            console.error('--- FSA-2 DIAGNOSTIC: LOGIN FAILED ---');
-            console.error('Full error object:', error);
-            if (isAxiosError(error)) {
-              console.error('Axios Error Details:');
-              console.error('Status:', error.response?.status);
-              console.error('Response Data:', error.response?.data);
-              console.error('Request Config:', error.config);
-            }
-            // --- END DIAGNOSTIC LOGGING ---
-
             set({ isLoading: false, token: null });
             let errorMessage = 'An unexpected error occurred.';
             if (isAxiosError(error) && error.response?.data?.detail) {
@@ -103,11 +94,11 @@ const useAuthStore = create<AuthState>()(
             return false;
           }
         },
-        // CORRECTED: The full implementation of the register function is restored.
         register: async (credentials) => {
           set({ isLoading: true });
           try {
-            await apiClient.post('/auth/register', credentials);
+            // CORRECTED: Added the trailing slash to match the backend's canonical path.
+            await apiClient.post('/auth/register/', credentials);
             notifications.show({
               title: 'Registration Successful',
               message: 'Your account has been created. Please log in.',
