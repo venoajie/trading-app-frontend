@@ -1,10 +1,14 @@
 
---- START OF FILE frontend/PROJECT_BLUEPRINT.md ---
+---
 
+### **Generated Artifacts**
+
+**File: `frontend/PROJECT_BLUEPRINT.md`**
+```markdown
 # PROJECT BLUEPRINT: Trading App Frontend
 
-<!-- Version: 1.0 -->
-<!-- Status: Initial Foundational Architecture -->
+<!-- Version: 1.1 -->
+<!-- Status: Phase 1 Complete. Foundational Architecture in place. -->
 
 ## 1. System Overview and Guiding Principles
 
@@ -20,6 +24,15 @@ The frontend is a modern, responsive Single-Page Application (SPA) built with **
 4.  **Placeholder-Driven MVP:** The foundation is built to be "feature-ready" from day one by establishing all necessary architectural patterns as placeholders. This allows for gradual, iterative implementation without incurring future technical debt.
 5.  **Cost-Effective & Open Source:** The architecture is built on a foundation of best-in-class, free, open-source software to minimize monetary cost and avoid vendor lock-in.
 
+### 1.2. Architectural Lessons Learned
+
+This section codifies key insights gained during the project's foundational phases. These lessons are considered first-class architectural principles.
+
+*   **Lesson 1: The Execution Environment is Part of the Architecture.**
+    *   **Observation:** During Phase 1, the pre-commit hook repeatedly failed with `npm: command not found`, even though `npm` was correctly installed and available in the developer's interactive terminal.
+    *   **Root Cause:** A fundamental mismatch existed between the *development environment* (WSL/Linux, where Node.js was installed) and the *script execution environment* (Git for Windows, which used a minimal Windows shell). Furthermore, even when execution was delegated to WSL, it ran in a non-interactive shell that did not source the user's `.bashrc` to initialize NVM.
+    *   **Governing Mandate:** All automation scripts (e.g., Git hooks, CI/CD pipelines) MUST be assumed to run in a minimal, non-interactive, and potentially cross-OS environment. Scripts MUST NOT rely on a user's interactive shell configuration (`.bashrc`, `.zshrc`, etc.). They must be self-contained and explicitly handle their own environment setup, either by bridging OS gaps (e.g., using `wsl.exe`) or by sourcing necessary configurations (e.g., `source ~/.nvm/nvm.sh`).
+
 ---
 
 ## 2. Foundational Implementation Sequence
@@ -27,6 +40,7 @@ The frontend is a modern, responsive Single-Page Application (SPA) built with **
 This section defines the logical, step-by-step order for constructing the application's foundational skeleton. Each phase builds upon the last and concludes with a testable milestone.
 
 ### Phase 1: The Core Shell (Barebones Setup)
+*   **Status:** `COMPLETE`
 1.  Initialize Vite Project (TypeScript + SWC).
 2.  Setup Code Quality (ESLint, Prettier).
 3.  Implement Pre-commit Hooks (Husky).
@@ -34,12 +48,14 @@ This section defines the logical, step-by-step order for constructing the applic
 5.  **Milestone:** A clean "Hello World" app with automated code quality, ready for version control.
 
 ### Phase 2: The UI & Theming Foundation (Pillar 1)
+*   **Status:** `PENDING`
 1.  Integrate Mantine UI library.
 2.  Create the `theme.ts` file with dual light/dark mode support.
 3.  Implement the state-driven theme switching mechanism (`uiStore.ts` + `ThemeBridge` component).
 4.  **Milestone:** A single page with a button that correctly and seamlessly toggles the entire application theme between light and dark.
 
 ### Phase 3: Routing & Global Structure (Pillar 4 & 6)
+*   **Status:** `PENDING`
 1.  Integrate React Router.
 2.  Create the skeleton `AppLayout` and `AuthLayout` components.
 3.  Implement `PublicRoute` and `ProtectedRoute` guards.
@@ -47,6 +63,7 @@ This section defines the logical, step-by-step order for constructing the applic
 5.  **Milestone:** A multi-page app with distinct layouts for logged-in vs. logged-out states, where navigation is functional and protected routes correctly redirect unauthenticated users.
 
 ### Phase 4: State & API Layer (Pillar 3)
+*   **Status:** `PENDING`
 1.  Set up Zustand for client state (`uiStore.ts`, `authStore.ts`).
 2.  Configure Axios for the base `apiClient.ts`.
 3.  Integrate TanStack Query and its `<QueryClientProvider>`.
@@ -54,6 +71,7 @@ This section defines the logical, step-by-step order for constructing the applic
 5.  **Milestone:** The application can manage a simulated login/logout flow, storing auth state in Zustand and using a TanStack Query `useQuery` hook to fetch mock user data.
 
 ### Phase 5: The Remaining Pillars (Configuration & Placeholders)
+*   **Status:** `PENDING`
 1.  **i18n & l10n (Pillar 2):** Set up `i18next` provider. Wrap one piece of text in the `t()` function to validate the setup.
 2.  **Testing (Pillar 7):** Configure Vitest. Write one simple component test.
 3.  **Observability (Pillar 10):** Add the Sentry SDK initialization call to `main.tsx`.
@@ -112,6 +130,17 @@ This section defines the logical, step-by-step order for constructing the applic
 *   **Purpose:** To automate code quality and enforce consistency.
 *   **Tooling:** **TypeScript**, **ESLint**, **Prettier**, **Husky**.
 *   **Day One Plan:** A strict TypeScript configuration will be used. The ESLint/Prettier combo, enforced by a Husky pre-commit hook, is non-negotiable.
+*   **9.1. Canonical Pre-commit Hook for Mixed Environments (WSL + Git for Windows)**
+    *   **Context:** The execution of Git hooks by Git for Windows in a WSL-based development environment creates a common `PATH` issue, as detailed in **Lesson 1 (Section 1.2)**.
+    *   **Problem:** Standard hook scripts (e.g., `npm run lint-staged`) will fail with `npm: command not found`.
+    *   **Canonical Solution:** The pre-commit hook MUST bridge this environmental gap. It uses `wsl.exe` to delegate command execution into the Linux environment, and `bash -c` to ensure the NVM environment is sourced correctly within the resulting non-interactive shell. This is the mandated configuration for this project.
+    *   **Implementation (`.husky/pre-commit`):**
+        ```sh
+        #!/bin/sh
+        # This script is designed for a mixed WSL/Windows environment.
+        set -e
+        wsl bash -c "source ~/.nvm/nvm.sh && npm run lint-staged"
+        ```
 
 ### Pillar 10: Production Observability
 *   **Purpose:** To provide visibility into how the application behaves for real users.
@@ -160,5 +189,14 @@ This section defines the architectural approach for integrating specialized thir
 ## 6. Cost & Maintainability Analysis
 
 This architecture has been explicitly designed for a solo/AI-assisted developer. It carries **zero mandatory monetary costs**, relying on open-source software. The primary benefit is **high maintainability**, achieved by choosing tools (like TanStack Query and Mantine) that reduce boilerplate, enforce consistency, and provide clear, predictable patterns that are easy for both humans and AI to understand and extend.
+```
 
---- END OF FILE frontend/PROJECT_BLUEPRINT.md ---
+### **Test Files**
+
+As this task involved updating a documentation file, no `.spec.tsx` test files are required.
+
+### **Blueprint Compliance**
+
+*   **Documentation as Code:** The blueprint has been updated to `Version 1.1`. This change transforms a hard-won debugging experience into a permanent, codified architectural principle, ensuring the knowledge is not lost and can guide future development.
+*   **Guiding Principle 1.1 (Maintainability First):** By explicitly documenting the "why" behind a complex configuration, we significantly improve the maintainability of the development environment itself. The new `1.2` section provides deep context that makes the system easier to reason about, debug, and extend, directly serving this principle.
+*   **Pillar 9 (Developer Experience & Code Maintainability):** The new section provides the foundational justification for the specific implementation mandated in section `9.1`. This creates a clear, logical link between a high-level principle and its concrete implementation, strengthening the entire pillar.
