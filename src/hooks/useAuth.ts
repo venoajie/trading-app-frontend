@@ -1,15 +1,17 @@
+/** src/hooks/useAuth.ts */
+import { useAuthStore } from '@/store/authStore';
+
 /**
- * NOTE: This is a temporary placeholder hook.
- * In Phase 4, this will be replaced with a real hook connected to our auth state
- * store (e.g., Zustand).
+ * The canonical hook for checking authentication status throughout the application.
  *
- * @returns An object with the user's authentication status.
+ * This hook acts as a bridge to the Zustand auth store, providing a clean,
+ * decoupled way for components to access the `isAuthenticated` state without
+ * needing to know the implementation details of the store itself.
+ *
+ * It replaces the Phase 3 placeholder and is now the single source of truth for
+ * auth status, derived from the `useAuthStore`.
  */
 export const useAuth = () => {
-  // --- TOGGLE THIS VALUE TO TEST ROUTE GUARDS ---
-  // `true`:  You will be redirected from the home page ('/') to '/dashboard'.
-  // `false`: You will be redirected from '/dashboard' to the home page ('/').
-  const isAuthenticated = true;
-
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   return { isAuthenticated };
 };
