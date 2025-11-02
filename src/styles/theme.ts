@@ -1,3 +1,5 @@
+// src/styles/theme.ts
+
 import {
   createTheme,
   MantineColorsTuple,

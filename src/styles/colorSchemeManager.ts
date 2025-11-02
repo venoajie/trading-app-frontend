@@ -1,3 +1,4 @@
+// src/styles/colorSchemeManager.ts
 import { ColorSchemeManager } from '@mantine/core';
 import { useUiStore } from '@/store/uiStore';
 
