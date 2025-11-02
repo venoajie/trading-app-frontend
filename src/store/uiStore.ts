@@ -1,23 +1,29 @@
+// src/store/uiStore.ts
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { MantineColorScheme } from '@mantine/core';
 
-type ColorScheme = 'light' | 'dark';
+// V7 API CHANGE: The local `ColorScheme` type is replaced with the official
+// `MantineColorScheme` from the library itself. This ensures our state store
+// is always in sync with the library's API, supporting 'light', 'dark', and 'auto'.
+// This resolves the type mismatch that caused the build failure.
 
 interface UiState {
-  colorScheme: ColorScheme;
-  setColorScheme: (scheme: ColorScheme) => void;
+  colorScheme: MantineColorScheme;
+  setColorScheme: (scheme: MantineColorScheme) => void;
 }
 
 export const useUiStore = create<UiState>()(
   persist(
     (set) => ({
-      // The default value before hydration. Mantine's `defaultColorScheme` prop
-      // will handle the initial OS detection.
-      colorScheme: 'light',
+      // The default value is now 'auto', allowing the application to respect
+      // the user's OS preference on first load.
+      colorScheme: 'auto',
       setColorScheme: (scheme) => set({ colorScheme: scheme }),
     }),
     {
-      name: 'ui-storage',
+      name: 'ui-storage', // The key for localStorage
     }
   )
 );
