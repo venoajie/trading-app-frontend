@@ -1,14 +1,19 @@
 // src/pages/auth/components/ConsentCheckbox.tsx
 
 import { Checkbox, Anchor, Text } from '@mantine/core';
-import { ComponentProps } from 'react';
+// CORRECTED: Import `forwardRef` from React to handle the ref.
+import { ComponentProps, forwardRef } from 'react';
 import { Link } from 'react-router-dom';
 
-// Define explicit props for strong typing, using ComponentProps to inherit
-// all valid props from the underlying Mantine Checkbox component.
 interface ConsentCheckboxProps extends ComponentProps<typeof Checkbox> {}
 
-export function ConsentCheckbox(props: ConsentCheckboxProps) {
+// CORRECTED: Wrap the entire component in `forwardRef`.
+// This provides the `ref` as the second argument to the component function.
+// The generic arguments <HTMLInputElement, ConsentCheckboxProps> provide type safety.
+export const ConsentCheckbox = forwardRef<
+  HTMLInputElement,
+  ConsentCheckboxProps
+>(({ ...props }, ref) => {
   return (
     <Checkbox
       mt="md"
@@ -25,7 +30,11 @@ export function ConsentCheckbox(props: ConsentCheckboxProps) {
           .
         </Text>
       }
-      {...props} // Spread props for validation and state binding from React Hook Form
+      // Pass all original props (like `error`, `disabled`, etc.)
+      {...props}
+      // CORRECTED: Apply the forwarded ref directly to the Mantine Checkbox.
+      // Mantine components are built to accept refs, so this works seamlessly.
+      ref={ref}
     />
   );
-}
+});
