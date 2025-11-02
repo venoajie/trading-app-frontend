@@ -23,9 +23,12 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"]
-    }
+      "@/*": ["src/*"]
+    },
+
+    /* Add types for Vitest and Testing Library */
+    "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
-  "include": ["src"],
+  "include": ["src/**/*"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
