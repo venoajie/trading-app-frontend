@@ -33,7 +33,8 @@ function App() {
           <Title order={3}>Trading App</Title>
           <ActionIcon
             variant="default"
-            onClick={() => toggleColorScheme()}
+            // Pass the resolved colorScheme to the toggle function.
+            onClick={() => toggleColorScheme(colorScheme)}
             size={30}
           >
             {colorScheme === 'dark' ? (
