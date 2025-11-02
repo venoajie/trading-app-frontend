@@ -1,4 +1,4 @@
-// src/components/transactions/TransactionModal.tsx
+// src/pages/TransactionsPage/components/TransactionModal.tsx
 import {
   Modal,
   Button,
@@ -14,15 +14,17 @@ import { z } from 'zod';
 import {
   useCreateTransaction,
   NewTransactionPayload,
-} from '../../hooks/useTransactions';
+} from '../../../hooks/useTransactions';
 
-// Zod schema for validation (Pillar 5)
+// --- FIX: Corrected Zod schema validation ---
+// The 'required_error' property is not valid for z.date().
+// 'invalid_type_error' correctly handles missing or malformed dates.
 const transactionSchema = z.object({
   ticker: z.string().min(1, 'Ticker symbol is required'),
   type: z.enum(['BUY', 'SELL']),
   quantity: z.number().positive('Quantity must be greater than zero'),
   price: z.number().positive('Price must be greater than zero'),
-  date: z.date({ required_error: 'Transaction date is required' }),
+  date: z.date({ invalid_type_error: 'Transaction date is required' }),
 });
 
 type TransactionFormValues = z.infer<typeof transactionSchema>;

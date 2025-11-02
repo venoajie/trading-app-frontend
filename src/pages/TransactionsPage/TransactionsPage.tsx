@@ -12,8 +12,9 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useTransactions } from '../../hooks/useTransactions';
-import { TransactionsTable } from '../../components/transactions/TransactionsTable';
-import { TransactionModal } from '../../components/transactions/TransactionModal';
+// --- FIX: Updated import paths for co-located components ---
+import { TransactionsTable } from './components/TransactionsTable';
+import { TransactionModal } from './components/TransactionModal';
 
 export function TransactionsPage() {
   const [modalOpened, { open: openModal, close: closeModal }] =
