@@ -6,14 +6,13 @@ import {
   Paper,
   Text,
   Title,
-  useMantineColorScheme,
 } from '@mantine/core';
 import { IconSun, IconMoonStars } from '@tabler/icons-react';
 import { useUiStore } from './store/uiStore';
 
 function App() {
-  const { toggleColorScheme } = useUiStore();
-  const { colorScheme } = useMantineColorScheme();
+  // The component now relies on a single, unambiguous source of truth.
+  const { colorScheme, toggleColorScheme } = useUiStore();
 
   return (
     <AppShell
@@ -33,9 +32,11 @@ function App() {
           <Title order={3}>Trading App</Title>
           <ActionIcon
             variant="default"
-            // Pass the resolved colorScheme to the toggle function.
-            onClick={() => toggleColorScheme(colorScheme)}
+            // The onClick handler is now simpler and more robust.
+            onClick={toggleColorScheme}
             size={30}
+            // Prevent clicking until the store has loaded to avoid errors.
+            disabled={!colorScheme}
           >
             {colorScheme === 'dark' ? (
               <IconSun size="1rem" />

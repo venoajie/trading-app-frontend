@@ -1,27 +1,29 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { MantineColorScheme } from '@mantine/core';
+
+// The store is now simple and only deals with the two explicit states.
+type ColorScheme = 'light' | 'dark';
 
 interface UiState {
-  colorScheme: MantineColorScheme;
-  setColorScheme: (scheme: MantineColorScheme) => void;
-  // The toggle function now accepts the currently resolved scheme.
-  toggleColorScheme: (currentScheme: 'light' | 'dark') => void;
+  // It starts as `null` so we can detect the first-ever load.
+  colorScheme: ColorScheme | null;
+  setColorScheme: (scheme: ColorScheme) => void;
+  toggleColorScheme: () => void;
 }
 
 export const useUiStore = create<UiState>()(
   persist(
     (set) => ({
-      colorScheme: 'auto',
+      colorScheme: null,
       setColorScheme: (scheme) => set({ colorScheme: scheme }),
-      // The logic is now a simple, unambiguous flip.
-      toggleColorScheme: (currentScheme) =>
-        set({
-          colorScheme: currentScheme === 'dark' ? 'light' : 'dark',
-        }),
+      // The toggle logic is now foolproof.
+      toggleColorScheme: () =>
+        set((state) => ({
+          colorScheme: state.colorScheme === 'dark' ? 'light' : 'dark',
+        })),
     }),
     {
-      name: 'ui-storage',
+      name: 'ui-storage', // The key for localStorage.
     }
   )
 );

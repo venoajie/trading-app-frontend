@@ -1,6 +1,7 @@
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, MantineColorScheme } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
-import { ReactNode } from 'react';
+import { useColorScheme } from '@mantine/hooks';
+import { ReactNode, useEffect } from 'react';
 import { theme } from '@/styles/theme';
 import { useUiStore } from '@/store/uiStore';
 
@@ -9,25 +10,35 @@ interface ThemeBridgeProps {
 }
 
 /**
- * A bridge component that syncs the Zustand uiStore with the MantineProvider.
- * This ensures that the theme is reactive to state changes and is applied globally.
- * It also serves as the single entry point for all global Mantine providers.
- *
- * @param {ThemeBridgeProps} props
- * @returns {JSX.Element} The application wrapped in Mantine providers.
+ * This component now handles the initial theme detection.
+ * It syncs the OS preference to our store on the very first load,
+ * then yields control to the user's explicit choices.
  */
 export function ThemeBridge({ children }: ThemeBridgeProps) {
-  const { colorScheme } = useUiStore();
+  const { colorScheme, setColorScheme } = useUiStore();
+  // This Mantine hook safely detects the OS-level color scheme.
+  const preferredColorScheme = useColorScheme('dark');
+
+  // This effect runs on mount to initialize the theme state.
+  useEffect(() => {
+    // If colorScheme is null, it's the first load and we haven't hydrated from storage yet.
+    // We set the theme based on the user's OS preference.
+    if (colorScheme === null) {
+      setColorScheme(preferredColorScheme);
+    }
+  }, [colorScheme, preferredColorScheme, setColorScheme]);
+
+  // We must handle the `null` state before the store is hydrated.
+  // We can default to the preferred scheme to avoid a flash of unstyled content.
+  const effectiveColorScheme = colorScheme || preferredColorScheme;
 
   return (
     <MantineProvider
       theme={theme}
       withCssVariables
       withGlobalStyles
-      colorScheme={colorScheme}
+      colorScheme={effectiveColorScheme as MantineColorScheme}
     >
-      {/* The Notifications component is a requirement from Pillar 6.
-          Placing it here makes it available globally. */}
       <Notifications />
       {children}
     </MantineProvider>
