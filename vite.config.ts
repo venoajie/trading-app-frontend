@@ -12,24 +12,24 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  // CORRECTED: Add the server configuration block.
+  // CORRECTED: The proxy configuration is updated to mimic the production
+  // Nginx server's behavior for root-relative API paths.
   server: {
-    // This tells the Vite dev server to proxy any requests that it doesn't have a file for.
     proxy: {
-      // Any request starting with '/api' will be forwarded.
-      '/api': {
-        // The target is your backend server, which is running in Docker on port 8000.
+      // Any request starting with '/auth' will be forwarded to the backend.
+      '/auth': {
         target: 'http://localhost:8000',
-        // This is crucial for virtual hosts and ensures the origin header is correct.
         changeOrigin: true,
-        // Optional: If your backend API doesn't have the /api prefix,
-        // you can rewrite the path. For example, /api/auth/login -> /auth/login.
-        // If your backend FastAPI routes include /api, you can remove this rewrite line.
-        rewrite: (path) => path.replace(/^\/api/, ''),
       },
+      // Any request starting with '/users' will also be forwarded.
+      // This is required for the `get('/users/me')` call after login.
+      '/users': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+      // Add other root-level API prefixes here as they are implemented.
     },
   },
-  // Vitest configuration for testing
   test: {
     globals: true,
     environment: 'jsdom',
