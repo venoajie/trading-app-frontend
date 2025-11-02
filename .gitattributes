@@ -1,0 +1,9 @@
+
+    # .gitattributes
+
+    # Default behavior for all files
+    * text=auto
+
+    # Force LF (Unix) line endings for shell scripts to ensure
+    # they are executable in Linux/WSL/macOS environments.
+    *.sh text eol=lf
