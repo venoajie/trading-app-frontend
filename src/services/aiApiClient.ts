@@ -1,47 +1,67 @@
 // src/services/aiApiClient.ts
+interface StreamerCallbacks {
+  onToken: (token: string) => void;
+  onComplete: () => void;
+  onError: (error: Error) => void;
+}
+
+export interface StreamController {
+  cancel: () => void;
+}
 
 /**
- * Placeholder API client for AI-related services, specifically designed
- * to implement the "Fake Streamer" pattern as defined in the blueprint.
- *
- * This allows the UI to be built against a streaming-ready contract from day one,
- * preventing future refactoring when the real SSE (Server-Sent Events)
- * backend is implemented.
+ * This is the "Fake Streamer" placeholder function mandated by Blueprint 5.1.
+ * It simulates a real-time, token-by-token stream from an AI service.
+ * It exposes an `onToken` callback for progressive updates and a `cancel`
+ * method to terminate the stream, adhering to the required architectural contract.
  */
+export const fakeStreamer = (
+  prompt: string,
+  callbacks: StreamerCallbacks
+): StreamController => {
+  const { onToken, onComplete, onError } = callbacks;
+  let intervalId: NodeJS.Timeout | null = null;
+  let cancelled = false;
 
-// A simple async generator to simulate a streaming text response
-async function* streamFakeResponse() {
-  const message = 'This is a streamed response from the mock AI service.';
-  const words = message.split(' ');
-  for (const word of words) {
-    // Simulate network latency
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    yield `${word} `;
+  // CORRECTIVE ACTION: Added a simple validation to use the 'onError' callback.
+  if (!prompt || !prompt.trim()) {
+    onError(new Error('Prompt cannot be empty.'));
+    onComplete(); // Ensure the stream state is finalized.
+    return { cancel: () => {} };
   }
-}
 
-// Function to convert an async generator to a ReadableStream
-function generatorToStream(generator: AsyncGenerator<string, void, unknown>) {
-  return new ReadableStream({
-    async start(controller) {
-      const encoder = new TextEncoder();
-      for await (const chunk of generator) {
-        controller.enqueue(encoder.encode(chunk));
-      }
-      controller.close();
+  const response =
+    `This is a streamed response, token-by-token, demonstrating the real-time architecture. It is designed to simulate a real AI model's output, fulfilling the requirements of Blueprint section 5.1. The previous request-response pattern is now deprecated.`.split(
+      ' '
+    );
+
+  let i = 0;
+  intervalId = setInterval(() => {
+    if (cancelled) {
+      if (intervalId) clearInterval(intervalId);
+      return;
+    }
+    if (i < response.length) {
+      const token = i === 0 ? response[i] : ` ${response[i]}`;
+      onToken(token);
+      i++;
+    } else {
+      if (intervalId) clearInterval(intervalId);
+      onComplete();
+    }
+  }, 80);
+
+  return {
+    cancel: () => {
+      cancelled = true;
+      if (intervalId) clearInterval(intervalId);
+      onComplete();
     },
-  });
-}
-
-export const aiApiClient = {
-  /**
-   * Simulates fetching a streaming response for a given prompt.
-   * @param _prompt - The input prompt (ignored in this mock).
-   * @returns A `ReadableStream` that yields text chunks over time.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getStreamingCompletion: (_prompt: string): ReadableStream<Uint8Array> => {
-    const generator = streamFakeResponse();
-    return generatorToStream(generator);
-  },
+  };
 };
+
+const aiApiClient = {
+  streamChat: fakeStreamer,
+};
+
+export default aiApiClient;
