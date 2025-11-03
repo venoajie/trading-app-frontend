@@ -1,7 +1,10 @@
 // src/App.tsx
 
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react'; // Import useEffect
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+// Import the store to access the action
+import { useUiStore } from './store/uiStore';
 
 // Utility Components
 import ErrorBoundary from './components/utility/ErrorBoundary';
@@ -20,7 +23,6 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
-// --- FIX: Removed the import for the deleted TransactionsPage ---
 
 const router = createBrowserRouter([
   {
@@ -42,13 +44,11 @@ const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        path: '/', // The root for authenticated users
+        path: '/',
         element: <AppLayout />,
         errorElement: <ErrorBoundary />,
         children: [
           { path: 'dashboard', element: <DashboardPage /> },
-          // --- FIX: Removed the route for the deleted TransactionsPage ---
-          // Redirect the base authenticated path to dashboard
           { index: true, element: <DashboardPage /> },
         ],
       },
@@ -57,6 +57,14 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  // Re-introduce the logic to set AI availability from environment variables
+  const { setAiAssistantAvailability } = useUiStore();
+
+  useEffect(() => {
+    const isAiEnabled = import.meta.env.VITE_AI_ASSISTANT_ENABLED === 'true';
+    setAiAssistantAvailability(isAiEnabled);
+  }, [setAiAssistantAvailability]);
+
   return (
     <Suspense fallback={<Loading />}>
       <RouterProvider router={router} />

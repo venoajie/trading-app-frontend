@@ -4,36 +4,28 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { MantineColorScheme } from '@mantine/core';
 
-// --- BLUEPRINT ALIGNMENT ---
-// The state interface is expanded to manage all global UI concerns as required
-// by AppLayout, including AI sidebar visibility and a convenience toggle for
-// the color scheme. This makes the store the single source of truth for UI state.
-
 interface UiState {
   colorScheme: MantineColorScheme;
   isAiSidebarVisible: boolean;
-  isAiAssistantAvailable: boolean; // Placeholder for feature flagging
+  isAiAssistantAvailable: boolean;
   setColorScheme: (scheme: MantineColorScheme) => void;
   toggleColorScheme: () => void;
   toggleAiSidebar: () => void;
+  // Add the missing action signature
+  setAiAssistantAvailability: (isAvailable: boolean) => void;
 }
 
 export const useUiStore = create<UiState>()(
   persist(
     (set, get) => ({
-      // The default value is now 'auto', allowing the application to respect
-      // the user's OS preference on first load.
       colorScheme: 'auto',
       isAiSidebarVisible: true,
-      isAiAssistantAvailable: true, // Enabled by default for development
+      isAiAssistantAvailable: true,
 
       setColorScheme: (scheme) => set({ colorScheme: scheme }),
 
-      // The toggle function provides a simple API for components, abstracting
-      // the 'light'/'dark' logic away from the UI.
       toggleColorScheme: () => {
         const currentScheme = get().colorScheme;
-        // If current is 'auto', default to toggling to 'dark'
         set({ colorScheme: currentScheme === 'dark' ? 'light' : 'dark' });
       },
 
@@ -41,9 +33,19 @@ export const useUiStore = create<UiState>()(
         set((state) => ({
           isAiSidebarVisible: !state.isAiSidebarVisible,
         })),
+
+      // Add the missing action implementation
+      setAiAssistantAvailability: (isAvailable) =>
+        set({ isAiAssistantAvailable: isAvailable }),
     }),
     {
-      name: 'ui-storage', // The key for localStorage
+      name: 'ui-storage',
+      // It is also advisable to persist only specific UI settings to prevent
+      // feature flag states from becoming stuck in localStorage.
+      partialize: (state) => ({
+        colorScheme: state.colorScheme,
+        isAiSidebarVisible: state.isAiSidebarVisible,
+      }),
     }
   )
 );
