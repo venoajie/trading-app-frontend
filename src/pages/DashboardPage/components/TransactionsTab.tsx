@@ -8,16 +8,16 @@ import {
   Text,
   Group,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+// REMOVED: useDisclosure is no longer needed
 import { IconInfoCircle } from '@tabler/icons-react';
+import { useUiStore } from '../../../store/uiStore'; // Import the UI store
 import { useTransactions } from '../../TransactionsPage/hooks/useTransactions';
 import { TransactionsTable } from '../../TransactionsPage/components/TransactionsTable';
-import { TransactionModal } from '../../TransactionsPage/components/TransactionModal';
+// REMOVED: TransactionModal is no longer rendered here
 
 export function TransactionsTab() {
-  // --- FIX: Removed the erroneous "a=" typo to correct the syntax ---
-  const [modalOpened, { open: openModal, close: closeModal }] =
-    useDisclosure(false);
+  // FIX: Use the global state from the uiStore
+  const { openTransactionModal } = useUiStore();
   const { data: transactions, isLoading, isError, error } = useTransactions();
 
   const renderContent = () => {
@@ -43,14 +43,13 @@ export function TransactionsTab() {
   };
 
   return (
-    <>
-      <TransactionModal opened={modalOpened} onClose={closeModal} />
-      <Stack>
-        <Group justify="flex-end">
-          <Button onClick={openModal}>Add Transaction</Button>
-        </Group>
-        {renderContent()}
-      </Stack>
-    </>
+    // The TransactionModal is no longer rendered here
+    <Stack>
+      <Group justify="flex-end">
+        {/* This button now triggers the global state change */}
+        <Button onClick={openTransactionModal}>Add Transaction</Button>
+      </Group>
+      {renderContent()}
+    </Stack>
   );
 }
