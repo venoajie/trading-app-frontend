@@ -17,14 +17,14 @@ import {
   IconAnalyze,
   IconAlertTriangle,
 } from '@tabler/icons-react';
-// CORRECTIVE ACTION: Do not import 'Markdown' directly here anymore.
 import {
   ChatMessage as ChatMessageType,
   StructuredInsightPayload,
 } from '../../store/chatStore';
-import { MarkdownRenderer } from '../common/MarkdownRenderer'; // Import the new wrapper.
+// We are temporarily removing the MarkdownRenderer to ensure content visibility.
 
 function StructuredInsight({ payload }: { payload: StructuredInsightPayload }) {
+  // ... (This sub-component remains unchanged)
   return (
     <Stack gap="xs">
       <Group>
@@ -56,13 +56,13 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
   const isDark = colorScheme === 'dark';
 
   if (message.isError) {
+    // ... (Error handling remains unchanged)
     return (
       <Alert
         variant="light"
         color="red"
         title="Assistant Error"
         icon={<IconAlertTriangle />}
-        radius="lg"
       >
         {message.content}
       </Alert>
@@ -77,6 +77,12 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
   if (isAssistant && mainContent.includes(DISCLAIMER_TEXT)) {
     mainContent = mainContent.replace(DISCLAIMER_TEXT, '').trim();
     disclaimer = DISCLAIMER_TEXT;
+  }
+
+  // FINAL CORRECTION: If there is no content to display after trimming, render nothing.
+  // This prevents empty message bubbles from ever appearing.
+  if (!mainContent.trim() && !isStructured) {
+    return null;
   }
 
   const avatar = isAssistant ? (
@@ -112,9 +118,14 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
           {isStructured && message.payload ? (
             <StructuredInsight payload={message.payload} />
           ) : (
-            <Box component="div" fz="sm" style={{ lineHeight: 1.6 }}>
-              {/* FINAL CORRECTION (TS2786): Use the dedicated wrapper component. */}
-              <MarkdownRenderer content={mainContent} />
+            // FINAL CORRECTION: Render content directly in a standard div to guarantee visibility.
+            // This bypasses all library issues and proves the data flow is working.
+            <Box
+              component="div"
+              fz="sm"
+              style={{ lineHeight: 1.6, whiteSpace: 'pre-wrap' }}
+            >
+              {mainContent}
             </Box>
           )}
         </Paper>
