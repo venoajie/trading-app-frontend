@@ -1,6 +1,13 @@
 // src/components/common/MarkdownRenderer.tsx
-import Markdown from 'react-markdown';
-import { ReactElement } from 'react';
+import React from 'react';
+// We import the library under an alias to avoid name collision.
+import OriginalMarkdown from 'react-markdown';
+import { Options } from 'react-markdown';
+
+// This is the critical fix. We are casting the problematic import to a type
+// that is compatible with React's JSX engine. This is a targeted type assertion
+// that solves the compiler issue without changing the runtime behavior.
+const Markdown = OriginalMarkdown as React.FC<Options>;
 
 interface MarkdownRendererProps {
   content: string;
@@ -8,15 +15,10 @@ interface MarkdownRendererProps {
 
 /**
  * A dedicated wrapper component for the 'react-markdown' library.
- * This component isolates a persistent TypeScript type inference issue (TS2786),
- * providing a stable and type-safe interface for the rest of the application.
- *
- * FINAL CORRECTION: The type incompatibility is fundamental. The solution is to
- * bypass the JSX tag check by invoking the component directly as a function,
- * which is a valid but less common usage pattern.
+ * This component isolates and corrects a persistent TypeScript type issue (TS2786).
  */
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
-  // This function call is the definitive fix. It sidesteps the JSX type-checker's
-  // issue with the library's type definition while remaining fully type-safe.
-  return Markdown({ children: content }) as ReactElement;
+  // Now that the 'Markdown' variable is correctly typed, we can use it
+  // as a standard JSX component, which ensures it renders correctly.
+  return <Markdown>{content}</Markdown>;
 }
