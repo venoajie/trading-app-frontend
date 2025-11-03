@@ -1,9 +1,9 @@
 // src/pages/DashboardPage.tsx
 import { Tabs, Title, Stack } from '@mantine/core';
-import { IconArrowsExchange, IconLayoutDashboard } from '@mantine/icons-react'; // REMOVED: IconChartAreaLine
+// --- FIX: Corrected package name from '@mantine/icons-react' to '@tabler/icons-react' ---
+import { IconArrowsExchange, IconLayoutDashboard } from '@tabler/icons-react';
 import { PortfolioTab } from './DashboardPage/components/PortfolioTab';
 import { PerformanceTab } from './DashboardPage/components/PerformanceTab';
-// --- ADD THIS IMPORT ---
 import { TransactionsTab } from './DashboardPage/components/TransactionsTab';
 
 export function DashboardPage() {
@@ -18,7 +18,6 @@ export function DashboardPage() {
           >
             Portfolio
           </Tabs.Tab>
-          {/* NOTE: You removed the Performance tab, so I am leaving it out. */}
           <Tabs.Tab
             value="transactions"
             leftSection={<IconArrowsExchange size={16} />}
@@ -36,7 +35,6 @@ export function DashboardPage() {
         </Tabs.Panel>
 
         <Tabs.Panel value="transactions" pt="xl">
-          {/* This now correctly renders our functional component */}
           <TransactionsTab />
         </Tabs.Panel>
       </Tabs>

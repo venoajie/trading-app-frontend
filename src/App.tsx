@@ -12,7 +12,6 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import PublicRoute from './components/auth/PublicRoute';
 
 // Lazily-loaded Layouts
-// --- FIX: This import now correctly resolves to a module with a default export ---
 const AppLayout = lazy(() => import('./layouts/AppLayout'));
 const AuthLayout = lazy(() => import('./layouts/AuthLayout'));
 
@@ -21,9 +20,7 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const LoginPage = lazy(() => import('./pages/auth/LoginPage'));
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage'));
-const TransactionsPage = lazy(
-  () => import('./pages/TransactionsPage/TransactionsPage')
-);
+// --- FIX: Removed the import for the deleted TransactionsPage ---
 
 const router = createBrowserRouter([
   {
@@ -50,7 +47,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorBoundary />,
         children: [
           { path: 'dashboard', element: <DashboardPage /> },
-          { path: 'transactions', element: <TransactionsPage /> },
+          // --- FIX: Removed the route for the deleted TransactionsPage ---
           // Redirect the base authenticated path to dashboard
           { index: true, element: <DashboardPage /> },
         ],
