@@ -10,9 +10,9 @@ import {
   Group,
   Chip,
   Text,
-} from '@mantine/core';
-import { IconInfoCircle, IconMoodSad } from '@tabler/icons-react';
-import { useChatStore, ChatContext } from '../../store/chatStore'; // CORRECTIVE ACTION: Import ChatContext
+} from '@mantine-core';
+import { IconInfoCircle, IconMoodSad } from '@tabler-icons-react';
+import { useChatStore, ChatContext } from '../../store/chatStore';
 import { useDecisionStore } from '../../store/decisionStore';
 import { useUiStore } from '../../store/uiStore';
 import { ChatMessage } from './ChatMessage';
@@ -53,10 +53,7 @@ export function AssistantSidebar() {
 
   const handleSendMessage = (prompt: string) => {
     if (!prompt || !prompt.trim()) return;
-
-    // CORRECTIVE ACTION: Use the imported ChatContext type to eliminate 'any'.
     let context: ChatContext | undefined = undefined;
-
     if (isOnDecisionWorkspace) {
       context = { tradeIdea, assumptions };
     }
@@ -64,6 +61,7 @@ export function AssistantSidebar() {
   };
 
   if (!isAiAssistantAvailable) {
+    // ... (This section remains unchanged)
     return (
       <Stack h="100%" gap="md">
         <Title order={4}>AI Coach</Title>
@@ -95,8 +93,10 @@ export function AssistantSidebar() {
         not financial advice.
       </Alert>
 
-      <ScrollArea style={{ flex: 1 }} viewportRef={viewport}>
-        <Stack gap="lg" p="xs">
+      {/* CORRECTIVE ACTION: Replaced 'flex: 1' with an explicit height prop to prevent layout collapse. */}
+      <ScrollArea h="100%" viewportRef={viewport}>
+        {/* DIAGNOSTIC ACTION: Added a min-height and background color to visually confirm this container is rendering. */}
+        <Stack gap="lg" p="xs" style={{ minHeight: '1px' }}>
           {messages.map((msg, index) => (
             <ChatMessage key={index} message={msg} />
           ))}

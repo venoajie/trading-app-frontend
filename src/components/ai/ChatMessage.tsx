@@ -10,7 +10,7 @@ import {
   Alert,
   Box,
   useMantineColorScheme,
-} from '@mantine/core';
+} from '@mantine-core';
 import {
   IconUser,
   IconRobot,
@@ -21,10 +21,8 @@ import {
   ChatMessage as ChatMessageType,
   StructuredInsightPayload,
 } from '../../store/chatStore';
-// We are temporarily removing the MarkdownRenderer to ensure content visibility.
 
 function StructuredInsight({ payload }: { payload: StructuredInsightPayload }) {
-  // ... (This sub-component remains unchanged)
   return (
     <Stack gap="xs">
       <Group>
@@ -56,7 +54,6 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
   const isDark = colorScheme === 'dark';
 
   if (message.isError) {
-    // ... (Error handling remains unchanged)
     return (
       <Alert
         variant="light"
@@ -79,8 +76,6 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
     disclaimer = DISCLAIMER_TEXT;
   }
 
-  // FINAL CORRECTION: If there is no content to display after trimming, render nothing.
-  // This prevents empty message bubbles from ever appearing.
   if (!mainContent.trim() && !isStructured) {
     return null;
   }
@@ -91,7 +86,7 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
     </Avatar>
   ) : (
     <Avatar color="gray" radius="xl">
-      <IconUser size="1.5rem" />
+      <IconUser size="1.srem" />
     </Avatar>
   );
 
@@ -118,8 +113,6 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
           {isStructured && message.payload ? (
             <StructuredInsight payload={message.payload} />
           ) : (
-            // FINAL CORRECTION: Render content directly in a standard div to guarantee visibility.
-            // This bypasses all library issues and proves the data flow is working.
             <Box
               component="div"
               fz="sm"
