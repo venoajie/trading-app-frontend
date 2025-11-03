@@ -17,11 +17,12 @@ import {
   IconAnalyze,
   IconAlertTriangle,
 } from '@tabler/icons-react';
-import Markdown from 'react-markdown';
+// CORRECTIVE ACTION: Do not import 'Markdown' directly here anymore.
 import {
   ChatMessage as ChatMessageType,
   StructuredInsightPayload,
 } from '../../store/chatStore';
+import { MarkdownRenderer } from '../common/MarkdownRenderer'; // Import the new wrapper.
 
 function StructuredInsight({ payload }: { payload: StructuredInsightPayload }) {
   return (
@@ -111,10 +112,9 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
           {isStructured && message.payload ? (
             <StructuredInsight payload={message.payload} />
           ) : (
-            // CORRECTIVE ACTION (TS2786): Replaced polymorphic <Text> with simpler <Box>
-            // to resolve component type inference conflict with react-markdown.
             <Box component="div" fz="sm" style={{ lineHeight: 1.6 }}>
-              <Markdown>{mainContent}</Markdown>
+              {/* FINAL CORRECTION (TS2786): Use the dedicated wrapper component. */}
+              <MarkdownRenderer content={mainContent} />
             </Box>
           )}
         </Paper>
