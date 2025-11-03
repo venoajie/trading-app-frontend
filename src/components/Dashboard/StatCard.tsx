@@ -4,7 +4,7 @@ import classes from './StatCard.module.css';
 
 interface StatCardProps {
   title: string;
-  value: string;
+  value?: string; // FIX: Made the 'value' prop optional to accommodate all use cases.
   change?: string | number;
   changeColor?: MantineColor;
   variant?: 'default' | 'minimal';
@@ -25,7 +25,8 @@ export function StatCard({
           {title}
         </Text>
         <Group gap="xs" align="baseline">
-          <Text className={classes.minimalValue}>{value}</Text>
+          {/* The component logic already handles an undefined value correctly. */}
+          {value && <Text className={classes.minimalValue}>{value}</Text>}
           {change && (
             <Text c={changeColor} fz="sm" fw={500}>
               {change}
