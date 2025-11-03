@@ -14,7 +14,6 @@ interface UiState {
   isTransactionModalOpen: boolean;
   openTransactionModal: () => void;
   closeTransactionModal: () => void;
-  // Add the missing action signature
   setAiAssistantAvailability: (isAvailable: boolean) => void;
 }
 
@@ -41,17 +40,16 @@ export const useUiStore = create<UiState>()(
       openTransactionModal: () => set({ isTransactionModalOpen: true }),
       closeTransactionModal: () => set({ isTransactionModalOpen: false }),
 
-      // Add the missing action implementation
       setAiAssistantAvailability: (isAvailable) =>
         set({ isAiAssistantAvailable: isAvailable }),
     }),
     {
       name: 'ui-storage',
-      // It is also advisable to persist only specific UI settings to prevent
-      // feature flag states from becoming stuck in localStorage.
+      // FIX: Add 'isTransactionModalOpen' to the list of persisted state properties.
       partialize: (state) => ({
         colorScheme: state.colorScheme,
         isAiSidebarVisible: state.isAiSidebarVisible,
+        isTransactionModalOpen: state.isTransactionModalOpen, // This line is added
       }),
     }
   )
