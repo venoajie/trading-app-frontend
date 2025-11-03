@@ -24,6 +24,7 @@ import {
 } from '../../store/chatStore';
 
 function StructuredInsight({ payload }: { payload: StructuredInsightPayload }) {
+  // ... content unchanged
   return (
     <Stack gap="xs">
       <Group>

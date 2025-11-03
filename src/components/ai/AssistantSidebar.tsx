@@ -43,7 +43,6 @@ export function AssistantSidebar() {
     }
   }, [isOnDecisionWorkspace, tradeIdea, clearChat]);
 
-  // Restored legacy dependency array for simplicity and robustness.
   useEffect(() => {
     if (viewport.current) {
       viewport.current.scrollTo({
@@ -82,7 +81,6 @@ export function AssistantSidebar() {
   return (
     <Stack h="100%" gap="md">
       <Title order={4}>AI Coach</Title>
-
       <Alert
         variant="light"
         color="yellow"
@@ -93,9 +91,6 @@ export function AssistantSidebar() {
         This AI provides analysis to improve your decision-making process. It is
         not financial advice.
       </Alert>
-
-      {/* RESTORED LEGACY PATTERN: Using 'flex: 1' is the correct way to make the
-          ScrollArea expand to fill the remaining space in the parent Stack. */}
       <ScrollArea style={{ flex: 1 }} viewportRef={viewport}>
         <Stack gap="lg" p="xs">
           {messages.map((msg, index) => (
@@ -103,7 +98,6 @@ export function AssistantSidebar() {
           ))}
         </Stack>
       </ScrollArea>
-
       <Stack gap="xs">
         {isOnDecisionWorkspace && (
           <>
