@@ -31,17 +31,14 @@ import {
 import { useEffect } from 'react';
 
 import { useUiStore } from '../store/uiStore';
-// --- FIX: Use named import for Zustand store ---
 import { useAuthStore } from '../store/authStore';
-// NOTE: Assuming placeholder files from previous step exist for these
-import useDashboardStore from '../store/dashboardStore';
+import { useDashboardStore } from '../store/dashboardStore';
 import { MainNav } from '../components/Navigation/MainNav';
-import { AssistantSidebar } from '../components/AssistantSidebar/AssistantSidebar';
-import { StatCard } from '../pages/PortfolioDashboardPage/components/StatCard';
+import { AssistantSidebar } from '../components/ai/AssistantSidebar';
+import { StatCard } from '../pages/DashboardPage/components/StatCard';
 import classes from './AppLayout.module.css';
 
-// Helper to format currency with explicit typing
-const formatCurrency = (value: number): string =>
+const formatCurrency = (value: number) =>
   new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -49,14 +46,12 @@ const formatCurrency = (value: number): string =>
     maximumFractionDigits: 0,
   }).format(value);
 
-// --- FIX: Use 'export default' to comply with React.lazy ---
-export default function AppLayout() {
+export function AppLayout() {
   const [mobileNavOpened, { toggle: toggleMobileNav, close: closeMobileNav }] =
     useDisclosure();
   const [mobileAiDrawerOpened, { open: openAiDrawer, close: closeAiDrawer }] =
     useDisclosure();
 
-  // --- FIX: All properties now correctly exist on the updated UiState ---
   const {
     colorScheme,
     toggleColorScheme,
@@ -64,7 +59,6 @@ export default function AppLayout() {
     toggleAiSidebar,
     isAiAssistantAvailable,
   } = useUiStore();
-
   const { isAuthenticated, logout, user, isLoadingUser } = useAuthStore();
   const {
     kpis,
@@ -105,7 +99,6 @@ export default function AppLayout() {
         </Group>
       );
     }
-
     return (
       <Group gap="md">
         <ActionIcon
@@ -120,7 +113,6 @@ export default function AppLayout() {
             <IconMoon size={18} />
           )}
         </ActionIcon>
-
         {!isMobile && isAiAssistantAvailable && (
           <ActionIcon
             variant="default"
@@ -191,7 +183,6 @@ export default function AppLayout() {
                   size="sm"
                 />
               )}
-              {/* --- FIX: Use standard component composition for type safety with react-router --- */}
               <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                 <Title order={3}>Portopilot</Title>
               </Link>
@@ -199,7 +190,6 @@ export default function AppLayout() {
                 <MainNav orientation="horizontal" />
               )}
             </Group>
-
             <Group visibleFrom="lg">
               {isAuthenticated &&
                 (isDashboardLoading ? (
@@ -225,7 +215,6 @@ export default function AppLayout() {
                   </>
                 ))}
             </Group>
-
             {renderUserArea()}
           </Group>
         </AppShell.Header>
@@ -240,7 +229,7 @@ export default function AppLayout() {
           <Outlet />
         </AppShell.Main>
 
-        <AppShell.Footer p="md">
+        <AppShell.Footer p="md" hiddenFrom="sm">
           <Group justify="center" gap="xl">
             <Text size="sm" c="dimmed">
               &copy; {new Date().getFullYear()} Portopilot
@@ -265,7 +254,7 @@ export default function AppLayout() {
 
       {isMobile && isAuthenticated && isAiAssistantAvailable && (
         <>
-          <Affix position={{ bottom: 80, right: 20 }}>
+          <Affix position={{ bottom: 20, right: 20 }}>
             <Button
               leftSection={<IconMessageCircle size={16} />}
               onClick={openAiDrawer}
