@@ -43,13 +43,15 @@ export function AssistantSidebar() {
     }
   }, [isOnDecisionWorkspace, tradeIdea, clearChat]);
 
-  const lastMessageContent = messages[messages.length - 1]?.content;
+  // Restored legacy dependency array for simplicity and robustness.
   useEffect(() => {
-    viewport.current?.scrollTo({
-      top: viewport.current.scrollHeight,
-      behavior: 'smooth',
-    });
-  }, [messages.length, lastMessageContent]);
+    if (viewport.current) {
+      viewport.current.scrollTo({
+        top: viewport.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [messages]);
 
   const handleSendMessage = (prompt: string) => {
     if (!prompt || !prompt.trim()) return;
@@ -92,8 +94,10 @@ export function AssistantSidebar() {
         not financial advice.
       </Alert>
 
-      <ScrollArea h="100%" viewportRef={viewport}>
-        <Stack gap="lg" p="xs" style={{ minHeight: '1px' }}>
+      {/* RESTORED LEGACY PATTERN: Using 'flex: 1' is the correct way to make the
+          ScrollArea expand to fill the remaining space in the parent Stack. */}
+      <ScrollArea style={{ flex: 1 }} viewportRef={viewport}>
+        <Stack gap="lg" p="xs">
           {messages.map((msg, index) => (
             <ChatMessage key={index} message={msg} />
           ))}

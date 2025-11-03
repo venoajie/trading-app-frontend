@@ -99,15 +99,13 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
           p="md"
           radius="lg"
           withBorder
-          // CORRECTIVE ACTION (TS7006): Explicitly typed 'theme' to prevent 'any' type error.
           styles={(theme: MantineTheme) => ({
             root: {
               backgroundColor: isAssistant
                 ? isDark
                   ? theme.colors.dark[8]
                   : theme.colors.gray[0]
-                : // Typo fix: Changed 1.srem to 1.5rem for user avatar
-                  isDark
+                : isDark
                   ? theme.colors.dark[6]
                   : theme.white,
             },
