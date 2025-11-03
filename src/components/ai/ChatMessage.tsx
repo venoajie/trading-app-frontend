@@ -51,7 +51,6 @@ function StructuredInsight({ payload }: { payload: StructuredInsightPayload }) {
 const DISCLAIMER_TEXT = 'Disclaimer: This is not financial advice.';
 
 export function ChatMessage({ message }: { message: ChatMessageType }) {
-  // CORRECTIVE ACTION (TS2339): Use hook to get reliable color scheme state.
   const { colorScheme } = useMantineColorScheme();
   const isDark = colorScheme === 'dark';
 
@@ -109,14 +108,14 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
             },
           })}
         >
-          {/* CORRECTIVE ACTION (TS2322): Added explicit payload check for type safety. */}
           {isStructured && message.payload ? (
             <StructuredInsight payload={message.payload} />
           ) : (
-            <Text component="div" size="sm" style={{ lineHeight: 1.6 }}>
-              {/* CORRECTIVE ACTION (TS2786): Use explicit 'children' prop to fix type error. */}
-              <Markdown children={mainContent} />
-            </Text>
+            // CORRECTIVE ACTION (TS2786): Replaced polymorphic <Text> with simpler <Box>
+            // to resolve component type inference conflict with react-markdown.
+            <Box component="div" fz="sm" style={{ lineHeight: 1.6 }}>
+              <Markdown>{mainContent}</Markdown>
+            </Box>
           )}
         </Paper>
         {disclaimer && (
