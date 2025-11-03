@@ -32,10 +32,13 @@ import { useEffect } from 'react';
 
 import { useUiStore } from '../store/uiStore';
 import { useAuthStore } from '../store/authStore';
-import { useDashboardStore } from '../store/dashboardStore';
+// FIX: Changed to a default import to match the module's export type.
+import useDashboardStore from '../store/dashboardStore';
 import { MainNav } from '../components/Navigation/MainNav';
 import { AssistantSidebar } from '../components/ai/AssistantSidebar';
-import { StatCard } from '../pages/DashboardPage/components/StatCard';
+// FIX: Corrected path. Shared components like StatCard belong in the /components directory,
+// not nested within a specific page, to be consistent with application structure.
+import { StatCard } from '../components/Dashboard/StatCard';
 import classes from './AppLayout.module.css';
 
 const formatCurrency = (value: number) =>
@@ -46,7 +49,8 @@ const formatCurrency = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
-export function AppLayout() {
+// FIX: Changed to a default export to satisfy the requirement of React.lazy.
+export default function AppLayout() {
   const [mobileNavOpened, { toggle: toggleMobileNav, close: closeMobileNav }] =
     useDisclosure();
   const [mobileAiDrawerOpened, { open: openAiDrawer, close: closeAiDrawer }] =
