@@ -32,13 +32,11 @@ import { useEffect } from 'react';
 
 import { useUiStore } from '../store/uiStore';
 import { useAuthStore } from '../store/authStore';
-// FIX: Changed to a default import to match the module's export type.
 import useDashboardStore from '../store/dashboardStore';
 import { MainNav } from '../components/Navigation/MainNav';
 import { AssistantSidebar } from '../components/ai/AssistantSidebar';
-// FIX: Corrected path. Shared components like StatCard belong in the /components directory,
-// not nested within a specific page, to be consistent with application structure.
 import { StatCard } from '../components/Dashboard/StatCard';
+import { TransactionModal } from '../pages/TransactionsPage/components/TransactionModal';
 import classes from './AppLayout.module.css';
 
 const formatCurrency = (value: number) =>
@@ -49,7 +47,6 @@ const formatCurrency = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
-// FIX: Changed to a default export to satisfy the requirement of React.lazy.
 export default function AppLayout() {
   const [mobileNavOpened, { toggle: toggleMobileNav, close: closeMobileNav }] =
     useDisclosure();
@@ -62,6 +59,8 @@ export default function AppLayout() {
     isAiSidebarVisible,
     toggleAiSidebar,
     isAiAssistantAvailable,
+    isTransactionModalOpen,
+    closeTransactionModal,
   } = useUiStore();
   const { isAuthenticated, logout, user, isLoadingUser } = useAuthStore();
   const {
@@ -166,6 +165,11 @@ export default function AppLayout() {
 
   return (
     <>
+      <TransactionModal
+        opened={isTransactionModalOpen}
+        onClose={closeTransactionModal}
+      />
+
       <AppShell
         header={{ height: 70 }}
         aside={{
@@ -213,7 +217,7 @@ export default function AppLayout() {
                     <StatCard
                       variant="minimal"
                       title="YTD Return"
-                      change={kpis.ytdReturnPct}
+                      change={`${(kpis.ytdReturnPct * 100).toFixed(2)}%`}
                       changeColor={kpis.ytdReturn >= 0 ? 'teal' : 'red'}
                     />
                   </>
