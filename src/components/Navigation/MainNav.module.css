@@ -1,0 +1,17 @@
+
+/* src/components/Navigation/MainNav.module.css */
+
+.navButton {
+  color: var(--mantine-color-text);
+  font-weight: 500;
+  transition: background-color 150ms ease, color 150ms ease;
+  height: 40px;
+}
+
+.navButton:hover {
+  background-color: var(--mantine-color-gray-0);
+}
+
+[data-mantine-color-scheme='dark'] .navButton:hover {
+  background-color: var(--mantine-color-dark-5);
+}
