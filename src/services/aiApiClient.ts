@@ -1,5 +1,7 @@
 // src/services/aiApiClient.ts
 
+import { useAuthStore } from '../store/authStore'; // Import the Zustand store.
+
 interface StreamerCallbacks {
   onToken: (token: string) => void;
   onComplete: () => void;
@@ -19,9 +21,9 @@ const streamChatWithFetch = (
 
   const executeFetch = async () => {
     try {
-      // FIX: Correctly retrieve the token from the 'auth-storage' object in localStorage.
-      const authStorage = localStorage.getItem('auth-storage');
-      const token = authStorage ? JSON.parse(authStorage).state.token : null;
+      // FIX: Retrieve the token directly from the authStore's state.
+      // This is the single source of truth and avoids localStorage issues.
+      const token = useAuthStore.getState().token;
 
       if (!token) {
         throw new Error('Authentication token not found.');
@@ -41,7 +43,6 @@ const streamChatWithFetch = (
         const errorBody = await response
           .json()
           .catch(() => ({ detail: 'Failed to parse error response.' }));
-        // If the token is invalid, the server will respond with a 401.
         if (response.status === 401) {
           throw new Error(errorBody.detail || 'Could not validate credentials');
         }
