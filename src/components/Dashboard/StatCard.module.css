@@ -1,0 +1,19 @@
+/* src/components/Dashboard/StatCard.module.css */
+
+/* Default Card Variant */
+.value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Minimal Header Variant (KPIs) */
+.minimalRoot {
+  padding: 0 var(--mantine-spacing-md);
+}
+
+.minimalValue {
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1;
+}
