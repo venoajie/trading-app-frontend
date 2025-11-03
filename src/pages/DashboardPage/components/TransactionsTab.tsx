@@ -1,5 +1,13 @@
 // src/pages/DashboardPage/components/TransactionsTab.tsx
-import { Stack, Button, Skeleton, Center, Alert, Text } from '@mantine/core'; // REMOVED: Group
+import {
+  Stack,
+  Button,
+  Skeleton,
+  Center,
+  Alert,
+  Text,
+  Group,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useTransactions } from '../../TransactionsPage/hooks/useTransactions';
@@ -7,6 +15,7 @@ import { TransactionsTable } from '../../TransactionsPage/components/Transaction
 import { TransactionModal } from '../../TransactionsPage/components/TransactionModal';
 
 export function TransactionsTab() {
+  // --- FIX: Removed the erroneous "a=" typo to correct the syntax ---
   const [modalOpened, { open: openModal, close: closeModal }] =
     useDisclosure(false);
   const { data: transactions, isLoading, isError, error } = useTransactions();
@@ -36,11 +45,10 @@ export function TransactionsTab() {
   return (
     <>
       <TransactionModal opened={modalOpened} onClose={closeModal} />
-      {/* --- FIX: Replaced <Group> with a more direct alignment on the <Button> --- */}
       <Stack>
-        <Button onClick={openModal} style={{ alignSelf: 'flex-end' }}>
-          Add Transaction
-        </Button>
+        <Group justify="flex-end">
+          <Button onClick={openModal}>Add Transaction</Button>
+        </Group>
         {renderContent()}
       </Stack>
     </>
