@@ -12,7 +12,7 @@ import {
   Text,
 } from '@mantine/core';
 import { IconInfoCircle, IconMoodSad } from '@tabler/icons-react';
-import { useChatStore } from '../../store/chatStore';
+import { useChatStore, ChatContext } from '../../store/chatStore'; // CORRECTIVE ACTION: Import ChatContext
 import { useDecisionStore } from '../../store/decisionStore';
 import { useUiStore } from '../../store/uiStore';
 import { ChatMessage } from './ChatMessage';
@@ -43,18 +43,20 @@ export function AssistantSidebar() {
     }
   }, [isOnDecisionWorkspace, tradeIdea, clearChat]);
 
-  // CORRECTIVE ACTION: Extracted complex expression to satisfy 'exhaustive-deps' rule.
   const lastMessageContent = messages[messages.length - 1]?.content;
   useEffect(() => {
     viewport.current?.scrollTo({
       top: viewport.current.scrollHeight,
       behavior: 'smooth',
     });
-  }, [messages.length, lastMessageContent]); // Now using the stable variable.
+  }, [messages.length, lastMessageContent]);
 
   const handleSendMessage = (prompt: string) => {
     if (!prompt || !prompt.trim()) return;
-    let context = null;
+
+    // CORRECTIVE ACTION: Use the imported ChatContext type to eliminate 'any'.
+    let context: ChatContext | undefined = undefined;
+
     if (isOnDecisionWorkspace) {
       context = { tradeIdea, assumptions };
     }

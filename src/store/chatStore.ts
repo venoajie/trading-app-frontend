@@ -1,18 +1,18 @@
 // src/store/chatStore.ts
 import { create } from 'zustand';
 import aiApiClient, { StreamController } from '../services/aiApiClient';
+import { Assumption } from './decisionStore'; // CORRECTIVE ACTION: Import canonical type.
 
-// CORRECTIVE ACTION: Defined specific types to eliminate 'any'.
 export interface StructuredInsightPayload {
   title: string;
   points: string[];
   conclusion?: string;
 }
 
+// CORRECTIVE ACTION: Use the imported Assumption type for consistency.
 export interface ChatContext {
   tradeIdea: string;
-  // A more specific type for an assumption object.
-  assumptions: { scenario: string; probability: number; outcome: number }[];
+  assumptions: Assumption[];
 }
 
 export interface ChatMessage {
@@ -20,7 +20,7 @@ export interface ChatMessage {
   content: string;
   isError?: boolean;
   type?: 'structured_insight';
-  payload?: StructuredInsightPayload; // Replaced 'any'
+  payload?: StructuredInsightPayload;
 }
 
 export interface ChatState {
@@ -28,7 +28,7 @@ export interface ChatState {
   isLoading: boolean;
   conversationId: string | null;
   activeStreamController: StreamController | null;
-  sendMessage: (prompt: string, context?: ChatContext) => Promise<void>; // Replaced 'any'
+  sendMessage: (prompt: string, context?: ChatContext) => Promise<void>;
   stopGeneration: () => void;
   clearChat: () => void;
 }
@@ -67,7 +67,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
       ${context.assumptions.map((a) => `- ${a.scenario}: Probability ${a.probability * 100}%, Outcome $${a.outcome}`).join('\n')}
       User's Question:
     `
-      : ''; // CORRECTIVE ACTION: Type inference now works, 'any' is removed.
+      : '';
     const fullPrompt = formattedContext + prompt;
 
     const streamController = aiApiClient.streamChat(fullPrompt, {

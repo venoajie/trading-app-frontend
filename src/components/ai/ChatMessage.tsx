@@ -9,6 +9,7 @@ import {
   List,
   Alert,
   Box,
+  useMantineColorScheme,
 } from '@mantine/core';
 import {
   IconUser,
@@ -17,13 +18,10 @@ import {
   IconAlertTriangle,
 } from '@tabler/icons-react';
 import Markdown from 'react-markdown';
-import { ChatMessage as ChatMessageType } from '../../store/chatStore';
-
-interface StructuredInsightPayload {
-  title: string;
-  points: string[];
-  conclusion?: string;
-}
+import {
+  ChatMessage as ChatMessageType,
+  StructuredInsightPayload,
+} from '../../store/chatStore';
 
 function StructuredInsight({ payload }: { payload: StructuredInsightPayload }) {
   return (
@@ -53,6 +51,10 @@ function StructuredInsight({ payload }: { payload: StructuredInsightPayload }) {
 const DISCLAIMER_TEXT = 'Disclaimer: This is not financial advice.';
 
 export function ChatMessage({ message }: { message: ChatMessageType }) {
+  // CORRECTIVE ACTION (TS2339): Use hook to get reliable color scheme state.
+  const { colorScheme } = useMantineColorScheme();
+  const isDark = colorScheme === 'dark';
+
   if (message.isError) {
     return (
       <Alert
@@ -98,20 +100,22 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
           styles={(theme) => ({
             root: {
               backgroundColor: isAssistant
-                ? theme.colorScheme === 'dark'
+                ? isDark
                   ? theme.colors.dark[8]
                   : theme.colors.gray[0]
-                : theme.colorScheme === 'dark'
+                : isDark
                   ? theme.colors.dark[6]
                   : theme.white,
             },
           })}
         >
-          {isStructured ? (
+          {/* CORRECTIVE ACTION (TS2322): Added explicit payload check for type safety. */}
+          {isStructured && message.payload ? (
             <StructuredInsight payload={message.payload} />
           ) : (
             <Text component="div" size="sm" style={{ lineHeight: 1.6 }}>
-              <Markdown>{mainContent}</Markdown>
+              {/* CORRECTIVE ACTION (TS2786): Use explicit 'children' prop to fix type error. */}
+              <Markdown children={mainContent} />
             </Text>
           )}
         </Paper>

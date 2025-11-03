@@ -5,11 +5,9 @@ import { useChatStore } from './chatStore';
 import aiApiClient from '../services/aiApiClient';
 import { StreamController } from '../services/aiApiClient';
 
-// Mock the AI API client to control the stream
 vi.mock('../services/aiApiClient');
 
 describe('chatStore (Streaming)', () => {
-  // Define a type for our mock callbacks for type safety
   interface MockStreamCallbacks {
     onToken: (token: string) => void;
     onComplete: () => void;
@@ -20,15 +18,14 @@ describe('chatStore (Streaming)', () => {
   let mockCancel = vi.fn();
 
   beforeEach(() => {
-    // Reset Zustand store to a clean state before each test
     act(() => {
       useChatStore.getState().clearChat();
     });
 
-    // Reset the mock implementation for each test
     mockCancel.mockClear();
+    // CORRECTIVE ACTION (TS6133): Prefixed unused variable with underscore.
     vi.mocked(aiApiClient.streamChat).mockImplementation(
-      (prompt: string, callbacks: any): StreamController => {
+      (_prompt: string, callbacks: any): StreamController => {
         streamCallbacks = callbacks;
         return { cancel: mockCancel };
       }
@@ -95,8 +92,6 @@ describe('chatStore (Streaming)', () => {
     });
 
     expect(mockCancel).toHaveBeenCalledOnce();
-    // The store's stopGeneration relies on the stream's cancel() to call onComplete(),
-    // which in turn sets isLoading to false.
     act(() => {
       streamCallbacks.onComplete();
     });
