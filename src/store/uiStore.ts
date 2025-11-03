@@ -11,6 +11,9 @@ interface UiState {
   setColorScheme: (scheme: MantineColorScheme) => void;
   toggleColorScheme: () => void;
   toggleAiSidebar: () => void;
+  isTransactionModalOpen: boolean;
+  openTransactionModal: () => void;
+  closeTransactionModal: () => void;
   // Add the missing action signature
   setAiAssistantAvailability: (isAvailable: boolean) => void;
 }
@@ -33,6 +36,10 @@ export const useUiStore = create<UiState>()(
         set((state) => ({
           isAiSidebarVisible: !state.isAiSidebarVisible,
         })),
+
+      isTransactionModalOpen: false,
+      openTransactionModal: () => set({ isTransactionModalOpen: true }),
+      closeTransactionModal: () => set({ isTransactionModalOpen: false }),
 
       // Add the missing action implementation
       setAiAssistantAvailability: (isAvailable) =>
