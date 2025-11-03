@@ -10,7 +10,8 @@ import {
   Alert,
   Box,
   useMantineColorScheme,
-} from '@mantine-core';
+  MantineTheme,
+} from '@mantine/core';
 import {
   IconUser,
   IconRobot,
@@ -86,7 +87,7 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
     </Avatar>
   ) : (
     <Avatar color="gray" radius="xl">
-      <IconUser size="1.srem" />
+      <IconUser size="1.5rem" />
     </Avatar>
   );
 
@@ -98,13 +99,15 @@ export function ChatMessage({ message }: { message: ChatMessageType }) {
           p="md"
           radius="lg"
           withBorder
-          styles={(theme) => ({
+          // CORRECTIVE ACTION (TS7006): Explicitly typed 'theme' to prevent 'any' type error.
+          styles={(theme: MantineTheme) => ({
             root: {
               backgroundColor: isAssistant
                 ? isDark
                   ? theme.colors.dark[8]
                   : theme.colors.gray[0]
-                : isDark
+                : // Typo fix: Changed 1.srem to 1.5rem for user avatar
+                  isDark
                   ? theme.colors.dark[6]
                   : theme.white,
             },
